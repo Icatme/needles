@@ -3,46 +3,55 @@ class LevelSelectScene extends Phaser.Scene {
         super({ key: 'LevelSelectScene' });
     }
 
-    init(data) {
-        this.requestedPackId = data?.packId || null;
-        this.requestedChapter = data?.chapter || null;
+    init(data = {}) {
+        this.requestedPackId = data.packId || null;
+        this.requestedChapterId = data.chapterId || null;
+        this.requestedPage = data.page || 1;
+        this.pageSize = 10;
     }
 
     create() {
         this.themeManager = new ThemeManager();
-        this.levelManager = new LevelManager(this.requestedPackId);
+        this.packId = APP_CONTEXT.catalog.getPack(
+            this.requestedPackId || APP_CONTEXT.getActivePackId()
+        ).id;
+        APP_CONTEXT.setActivePackId(this.packId);
+        this.pack = APP_CONTEXT.catalog.getPack(this.packId);
+        this.chapters = APP_CONTEXT.catalog.listChapters(this.packId);
 
-        if (this.requestedPackId) {
-            this.levelManager.setActivePack(this.requestedPackId);
-        }
-
-        this.chapter = this.clampChapter(
-            this.requestedChapter
-                || Math.ceil(this.levelManager.maxUnlockedLevel / 10)
+        const resume = APP_CONTEXT.progress.getResumeLevel(this.pack);
+        const resumeChapter = APP_CONTEXT.catalog.getChapterForLevel(
+            this.packId,
+            resume.packLevelId || resume.id
         );
+        this.chapterId = this.resolveChapterId(
+            this.requestedChapterId || resumeChapter?.id
+        );
+        this.page = this.clampPage(this.requestedPage);
 
         SceneUI.createBackdrop(this, 'menu');
         this.createHeader();
         this.createPackPicker();
-        this.createChapterPicker();
+        this.createChapterNavigator();
         this.createLevelGrid();
         this.createDetailPanel();
+        this.createKeyboardBindings();
+    }
 
-        this.input.keyboard.on('keydown-LEFT', () => {
-            this.switchChapter(this.chapter - 1);
-        });
-        this.input.keyboard.on('keydown-RIGHT', () => {
-            this.switchChapter(this.chapter + 1);
-        });
+    createKeyboardBindings() {
+        this.input.keyboard.on('keydown-LEFT', () => this.switchChapterByOffset(-1));
+        this.input.keyboard.on('keydown-RIGHT', () => this.switchChapterByOffset(1));
         this.input.keyboard.on('keydown-UP', () => this.switchPackByOffset(-1));
         this.input.keyboard.on('keydown-DOWN', () => this.switchPackByOffset(1));
-        this.input.keyboard.once('keydown-ESC', () => this.scene.start('MenuScene'));
+        this.input.keyboard.on('keydown-PAGEUP', () => this.switchPage(this.page - 1));
+        this.input.keyboard.on('keydown-PAGEDOWN', () => this.switchPage(this.page + 1));
+        this.input.keyboard.once('keydown-ESC', () => APP_CONTEXT.router.startMenu(this));
     }
 
     createHeader() {
         const ui = SceneUI.getPalette();
         SceneUI.createButton(this, 74, 50, '← 菜单', () => {
-            this.scene.start('MenuScene');
+            APP_CONTEXT.router.startMenu(this);
         }, {
             width: 112,
             height: 40,
@@ -57,7 +66,7 @@ class LevelSelectScene extends Phaser.Scene {
             fontStyle: 'bold'
         });
 
-        const note = this.add.text(546, 98, '任意关卡可直达\n测试不写入解锁进度', {
+        const note = this.add.text(546, 98, '任意关卡可直达\n测试不会写入进度', {
             fontFamily: ui.BODY_FONT,
             fontSize: '12px',
             color: ui.TEXT_MUTED,
@@ -68,73 +77,108 @@ class LevelSelectScene extends Phaser.Scene {
     }
 
     createPackPicker() {
-        const packs = this.levelManager.getPacks();
+        const packs = APP_CONTEXT.catalog.listPacks();
+        const width = Math.min(232, Math.floor(500 / Math.max(1, packs.length)) - 12);
+        const gap = 12;
+        const totalWidth = packs.length * width + (packs.length - 1) * gap;
+        const startX = 300 - totalWidth / 2 + width / 2;
 
         packs.forEach((pack, index) => {
-            const active = pack.id === this.levelManager.activePackId;
-            const x = packs.length === 1
-                ? 300
-                : 172 + index * 256;
-
-            SceneUI.createButton(this, x, 164, pack.name, () => {
+            SceneUI.createButton(this, startX + index * (width + gap), 164, pack.name, () => {
                 this.switchPack(pack.id);
             }, {
-                width: packs.length === 1 ? 280 : 232,
+                width,
                 height: 48,
-                variant: active ? 'primary' : 'secondary',
+                variant: pack.id === this.packId ? 'primary' : 'secondary',
                 fontSize: '15px'
             });
         });
     }
 
-    createChapterPicker() {
-        const pack = this.levelManager.getActivePack();
+    createChapterNavigator() {
         const ui = SceneUI.getPalette();
-        const chapters = pack.chapters || [];
+        const chapter = this.getCurrentChapter();
+        const chapterIndex = this.chapters.findIndex(item => item.id === chapter.id);
 
-        chapters.forEach((name, index) => {
-            const chapter = index + 1;
-            const active = chapter === this.chapter;
-            SceneUI.createButton(this, 78 + index * 111, 226, `${chapter} · ${name}`, () => {
-                this.switchChapter(chapter);
-            }, {
-                width: 101,
-                height: 42,
-                variant: active ? 'primary' : 'quiet',
-                fontSize: '12px'
-            });
+        SceneUI.createButton(this, 84, 226, '← 上一章', () => {
+            this.switchChapterByOffset(-1);
+        }, {
+            width: 116,
+            height: 42,
+            variant: 'quiet',
+            fontSize: '12px'
+        });
+        SceneUI.createButton(this, 516, 226, '下一章 →', () => {
+            this.switchChapterByOffset(1);
+        }, {
+            width: 116,
+            height: 42,
+            variant: 'quiet',
+            fontSize: '12px'
         });
 
-        const hint = this.add.text(546, 259, '← → 章节  ·  ↑ ↓ 方案', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '10px',
-            color: ui.TEXT_MUTED,
-            letterSpacing: 0.7
+        const title = this.add.text(300, 218, chapter.title, {
+            fontFamily: ui.DISPLAY_FONT,
+            fontSize: '21px',
+            color: ui.TEXT_COLOR,
+            fontStyle: 'bold'
         });
-        hint.setOrigin(1, 0.5);
+        title.setOrigin(0.5);
+        const counter = this.add.text(
+            300,
+            244,
+            `章节 ${chapterIndex + 1} / ${this.chapters.length}`,
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '10px',
+                color: ui.TEXT_MUTED,
+                letterSpacing: 0.8
+            }
+        );
+        counter.setOrigin(0.5);
     }
 
     createLevelGrid() {
-        const startLevel = (this.chapter - 1) * 10 + 1;
+        const levels = this.getChapterLevels();
+        const pageLevels = levels.slice(
+            (this.page - 1) * this.pageSize,
+            this.page * this.pageSize
+        );
 
-        for (let index = 0; index < 10; index++) {
-            const levelId = startLevel + index;
+        pageLevels.forEach((level, index) => {
             const column = index % 5;
             const row = Math.floor(index / 5);
             const x = 80 + column * 110;
             const y = 342 + row * 128;
-            this.createLevelCard(levelId, x, y);
+            this.createLevelCard(level, x, y, index === 0);
+        });
+
+        const pageCount = this.getPageCount();
+        if (pageCount > 1) {
+            const ui = SceneUI.getPalette();
+            SceneUI.createButton(this, 192, 510, '← 上一页', () => {
+                this.switchPage(this.page - 1);
+            }, { width: 130, height: 38, variant: 'quiet', fontSize: '12px' });
+            SceneUI.createButton(this, 408, 510, '下一页 →', () => {
+                this.switchPage(this.page + 1);
+            }, { width: 130, height: 38, variant: 'quiet', fontSize: '12px' });
+            const pageText = this.add.text(300, 510, `${this.page} / ${pageCount}`, {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '11px',
+                color: ui.TEXT_MUTED
+            });
+            pageText.setOrigin(0.5);
         }
     }
 
-    createLevelCard(levelId, x, y) {
+    createLevelCard(level, x, y, initial = false) {
         const ui = SceneUI.getPalette();
-        const config = this.levelManager.getLevelConfig(levelId);
-        const unlocked = levelId <= this.levelManager.maxUnlockedLevel;
+        const config = APP_CONTEXT.catalog.getLevelConfig(this.packId, level.packLevelId || level.id);
+        const unlocked = APP_CONTEXT.progress.isUnlocked(this.pack, config.packLevelId);
         const milestone = config.designIntent?.milestone;
         const container = this.add.container(x, y);
         const background = this.add.graphics();
-        const number = this.add.text(0, -34, String(levelId).padStart(2, '0'), {
+        const number = this.add.text(0, -34, String(config.order).padStart(2, '0'), {
             fontFamily: ui.MONO_FONT,
             fontSize: '14px',
             color: milestone ? ui.TEXT_ACCENT : ui.TEXT_MUTED,
@@ -168,10 +212,7 @@ class LevelSelectScene extends Phaser.Scene {
 
         const draw = (hover = false) => {
             background.clear();
-            background.fillStyle(
-                hover ? ui.SURFACE : ui.BACKGROUND_ALT,
-                hover ? 1 : 0.88
-            );
+            background.fillStyle(hover ? ui.SURFACE : ui.BACKGROUND_ALT, hover ? 1 : 0.88);
             background.fillRoundedRect(-50, -56, 100, 112, 12);
             background.lineStyle(
                 milestone ? 2 : 1,
@@ -196,13 +237,10 @@ class LevelSelectScene extends Phaser.Scene {
         container.on('pointerdown', () => container.setScale(0.97));
         container.on('pointerup', () => {
             container.setScale(1);
-            this.startTest(levelId);
+            this.startTest(config.packLevelId);
         });
         draw(false);
-
-        if (levelId === (this.chapter - 1) * 10 + 1) {
-            this.initialDetailConfig = config;
-        }
+        if (initial) this.initialDetailConfig = config;
     }
 
     createDetailPanel() {
@@ -234,81 +272,95 @@ class LevelSelectScene extends Phaser.Scene {
         [this.detailTitle, this.detailRule, this.detailMetrics]
             .forEach(element => element.setDepth(11));
 
-        const footer = this.add.text(300, 746, '点击关卡立即测试  ·  ESC 返回菜单', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '11px',
-            color: ui.TEXT_MUTED,
-            letterSpacing: 0.8
-        });
+        const footer = this.add.text(
+            300,
+            746,
+            '点击关卡立即测试 · ← → 章节 · ↑ ↓ 方案 · PgUp/PgDn 翻页',
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '10px',
+                color: ui.TEXT_MUTED,
+                letterSpacing: 0.5
+            }
+        );
         footer.setOrigin(0.5);
-
         this.updateDetail(this.initialDetailConfig);
     }
 
     updateDetail(config) {
         if (!config || !this.detailTitle) return;
-
         const drivers = (config.difficulty.drivers || [])
             .slice(0, 2)
             .map(driver => driver.label)
             .join(' / ');
-        const segmentCount = config.rhythm.segments.length;
-        const obstacleCount = config.layout.obstacleAngles.length;
-
-        this.detailTitle.setText(
-            `第 ${String(config.id).padStart(2, '0')} 关 · ${config.name}`
-        );
+        this.detailTitle.setText(`第 ${String(config.order).padStart(2, '0')} 关 · ${config.name}`);
         this.detailRule.setText(config.rule);
         this.detailMetrics.setText(
             `难度 ${config.difficulty.score.toFixed(1)} / 100`
                 + `  ·  主压力 ${drivers || '综合'}`
                 + `  ·  ${config.needleCount} 针`
-                + `  ·  ${obstacleCount} 障碍`
-                + `  ·  ${segmentCount} 段`
+                + `  ·  ${config.layout.obstacleAngles.length} 障碍`
+                + `  ·  ${config.rhythm.segments.length} 段`
         );
     }
 
     startTest(levelId) {
-        try {
-            if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.setItem('needle_game_test_mode', '1');
-            }
-        } catch (error) {
-            console.warn('无法进入测试模式:', error);
-        }
-        this.scene.start('GameScene', { level: levelId });
+        APP_CONTEXT.router.startLevel(this, {
+            packId: this.packId,
+            levelId,
+            mode: 'test'
+        });
     }
 
     switchPack(packId) {
-        this.levelManager.setActivePack(packId);
-        this.scene.restart({
-            packId,
-            chapter: this.clampChapter(this.chapter)
-        });
+        APP_CONTEXT.setActivePackId(packId);
+        this.scene.restart({ packId, page: 1 });
     }
 
     switchPackByOffset(offset) {
-        const packs = this.levelManager.getPacks();
+        const packs = APP_CONTEXT.catalog.listPacks();
         if (packs.length <= 1) return;
-
-        const currentIndex = packs.findIndex(pack => (
-            pack.id === this.levelManager.activePackId
-        ));
-        const nextIndex = (currentIndex + offset + packs.length) % packs.length;
-        this.switchPack(packs[nextIndex].id);
+        const index = packs.findIndex(pack => pack.id === this.packId);
+        const next = packs[(index + offset + packs.length) % packs.length];
+        this.switchPack(next.id);
     }
 
-    switchChapter(chapter) {
-        const clamped = this.clampChapter(chapter);
-        if (clamped === this.chapter) return;
+    switchChapterByOffset(offset) {
+        const index = this.chapters.findIndex(chapter => chapter.id === this.chapterId);
+        const next = this.chapters[(index + offset + this.chapters.length) % this.chapters.length];
+        this.scene.restart({ packId: this.packId, chapterId: next.id, page: 1 });
+    }
+
+    switchPage(page) {
+        const clamped = Math.max(1, Math.min(page, this.getPageCount()));
+        if (clamped === this.page) return;
         this.scene.restart({
-            packId: this.levelManager.activePackId,
-            chapter: clamped
+            packId: this.packId,
+            chapterId: this.chapterId,
+            page: clamped
         });
     }
 
-    clampChapter(chapter) {
-        const chapterCount = Math.ceil(this.levelManager.getLevelCount() / 10);
-        return Math.max(1, Math.min(Math.floor(Number(chapter) || 1), chapterCount));
+    resolveChapterId(chapterId) {
+        return this.chapters.some(chapter => chapter.id === chapterId)
+            ? chapterId
+            : this.chapters[0].id;
+    }
+
+    getCurrentChapter() {
+        return this.chapters.find(chapter => chapter.id === this.chapterId)
+            || this.chapters[0];
+    }
+
+    getChapterLevels() {
+        return APP_CONTEXT.catalog.listLevels(this.packId, this.chapterId);
+    }
+
+    getPageCount() {
+        return Math.max(1, Math.ceil(this.getChapterLevels().length / this.pageSize));
+    }
+
+    clampPage(page) {
+        return Math.max(1, Math.min(Math.floor(Number(page) || 1), this.getPageCount()));
     }
 }
