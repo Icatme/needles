@@ -9,7 +9,7 @@ permissions:
 jobs:
   node-tests:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -17,5 +17,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
       - name: Run all tests
-        run: node --test tests/*.test.js
+        run: npm test
+      - name: Validate level packs against formal schemas
+        run: npm run validate:packs
