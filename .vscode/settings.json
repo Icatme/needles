@@ -26,6 +26,10 @@
       "url": "./schemas/level-list.v1.schema.json"
     },
     {
+      "fileMatch": ["/playtests/campaigns/*.json"],
+      "url": "./schemas/playtest-campaign.v1.schema.json"
+    },
+    {
       "fileMatch": ["**/needles-playtests-*.json"],
       "url": "./schemas/playtest-export.v1.schema.json"
     }
