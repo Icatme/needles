@@ -2,6 +2,9 @@ const LEVEL_AUDIT_CACHE = new Map();
 
 class LevelManager {
     constructor(packId = null) {
+        this.packRegistry = typeof LEVEL_PACK_REGISTRY !== 'undefined'
+            ? LEVEL_PACK_REGISTRY
+            : null;
         this.packs = this.getPackCatalog();
         this.activePackId = this.resolvePackId(packId || this.loadActivePackId());
         this.difficultyManager = this.createDifficultyManager(this.activePackId);
@@ -12,23 +15,38 @@ class LevelManager {
     }
 
     getPackCatalog() {
+        if (this.packRegistry?.size > 0) {
+            return Object.fromEntries(
+                this.packRegistry.getAll().map(pack => [pack.id, pack])
+            );
+        }
+
+        // Compatibility path for Node migration/equivalence tests only.
         if (typeof LEVEL_PACKS !== 'undefined') {
             return LEVEL_PACKS;
         }
 
-        return {
-            legacy: {
-                id: 'legacy',
-                name: '默认关卡',
-                caption: '',
-                difficultyModel: 'legacy-linear',
-                chapters: ['第一章', '第二章', '第三章', '第四章', '第五章'],
-                levels: LEVEL_DEFINITIONS
-            }
-        };
+        if (typeof LEVEL_DEFINITIONS !== 'undefined') {
+            return {
+                legacy: {
+                    id: 'legacy',
+                    version: 'legacy-js',
+                    name: '默认关卡',
+                    caption: '',
+                    difficultyModel: 'legacy-linear',
+                    chapters: ['第一章', '第二章', '第三章', '第四章', '第五章'],
+                    levels: LEVEL_DEFINITIONS
+                }
+            };
+        }
+
+        throw new Error('没有可用的关卡包；BootScene 必须先完成 PackLoader');
     }
 
     getDefaultPackId() {
+        if (this.packRegistry?.defaultPackId && this.packs[this.packRegistry.defaultPackId]) {
+            return this.packRegistry.defaultPackId;
+        }
         if (
             typeof DEFAULT_LEVEL_PACK_ID !== 'undefined'
             && this.packs[DEFAULT_LEVEL_PACK_ID]
@@ -84,9 +102,17 @@ class LevelManager {
     getPacks() {
         return Object.values(this.packs).map(pack => ({
             id: pack.id,
+            version: pack.version || 'legacy',
             name: pack.name,
             caption: pack.caption,
-            chapters: [...(pack.chapters || [])],
+            chapters: (pack.chapters || []).map(chapter => (
+                typeof chapter === 'string' ? chapter : chapter.title
+            )),
+            chapterDescriptors: (pack.chapters || []).map((chapter, index) => (
+                typeof chapter === 'string'
+                    ? { id: `chapter-${index + 1}`, order: index + 1, title: chapter }
+                    : { ...chapter }
+            )),
             levelCount: pack.levels.length
         }));
     }
@@ -163,7 +189,8 @@ class LevelManager {
         const level = this.clampLevel(levelId);
         const definitions = this.getLevelDefinitions();
         const config = JSON.parse(JSON.stringify(definitions[level - 1]));
-        const cacheKey = `${this.activePackId}:${level}`;
+        const packVersion = this.getActivePack().version || 'legacy';
+        const cacheKey = `${this.activePackId}@${packVersion}:${level}`;
         let audit = LEVEL_AUDIT_CACHE.get(cacheKey);
 
         if (!audit) {
@@ -176,6 +203,7 @@ class LevelManager {
         }
 
         config.packId = this.activePackId;
+        config.packVersion = packVersion;
         config.difficulty = audit.analysis;
         return config;
     }
