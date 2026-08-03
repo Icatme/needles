@@ -1,0 +1,40 @@
+name: Browser smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Optional deployed URL; leave blank to test the checked-out branch locally
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  chromium-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      PLAYWRIGHT_TEST_BASE_URL: ${{ inputs.base_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: npm run test:e2e
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
