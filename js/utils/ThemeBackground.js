@@ -22,12 +22,14 @@ class ThemeBackground {
 		const mode = ThemeBackground.getMode(variant);
 		const reduced = SceneUI.prefersReducedMotion();
 		const root = scene.add.container(0, 0).setDepth(-10);
-		const animationTargets = themeId === "gilded-jewel-box"
-			? ThemeBackground.drawJewelBox(scene, root, mode)
-			: ThemeBackground.drawObservatory(scene, root, mode);
-		const tweens = reduced || mode === "game-over"
-			? []
-			: ThemeBackground.animate(scene, themeId, animationTargets);
+		const animationTargets =
+			themeId === "gilded-jewel-box"
+				? ThemeBackground.drawJewelBox(scene, root, mode)
+				: ThemeBackground.drawObservatory(scene, root, mode);
+		const tweens =
+			reduced || mode === "game-over"
+				? []
+				: ThemeBackground.animate(scene, themeId, animationTargets);
 
 		root.themeId = themeId;
 		root.mode = mode;
@@ -56,11 +58,21 @@ class ThemeBackground {
 		root.add(starGroup);
 		const stars = scene.add.graphics();
 		starGroup.add(stars);
-		const starMultiplier = mode === "menu" ? 1.3 : mode === "game-over" ? 0.65 : 1;
+		const starMultiplier =
+			mode === "menu" ? 1.3 : mode === "game-over" ? 0.65 : 1;
 		const starPoints = [
-			[58, 50, 1.5], [112, 78, 1], [176, 45, 1.5], [239, 87, 1],
-			[324, 55, 1.5], [388, 92, 1], [447, 42, 1.5], [525, 74, 1],
-			[90, 160, 1], [206, 142, 1.5], [352, 168, 1], [492, 145, 1.5],
+			[58, 50, 1.5],
+			[112, 78, 1],
+			[176, 45, 1.5],
+			[239, 87, 1],
+			[324, 55, 1.5],
+			[388, 92, 1],
+			[447, 42, 1.5],
+			[525, 74, 1],
+			[90, 160, 1],
+			[206, 142, 1.5],
+			[352, 168, 1],
+			[492, 145, 1.5],
 		];
 		stars.fillStyle(0x91aaa7, 0.18 * starMultiplier);
 		starPoints.forEach(([x, y, radius]) => stars.fillCircle(x, y, radius));
@@ -68,7 +80,7 @@ class ThemeBackground {
 		stars.lineBetween(58, 50, 112, 78);
 		stars.lineBetween(176, 45, 239, 87);
 		stars.lineBetween(388, 92, 447, 42);
-		stars.lineStyle(1, 0xa67c39, 0.10);
+		stars.lineStyle(1, 0xa67c39, 0.1);
 		ThemeBackground.strokeArc(stars, 300, 40, 220, 0.2, 2.94);
 
 		const halo = ThemeBackground.addGraphics(scene, root);
@@ -87,13 +99,13 @@ class ThemeBackground {
 		instruments.lineStyle(2, 0xa67c39, mode === "menu" ? 0.21 : 0.18);
 		ThemeBackground.strokeArc(instruments, 300, 330, 158, 3.48, 5.93);
 		instruments.lineStyle(1, 0x4e7b73, mode === "menu" ? 0.16 : 0.14);
-		ThemeBackground.strokeArc(instruments, 300, 330, 182, 3.30, 6.18);
+		ThemeBackground.strokeArc(instruments, 300, 330, 182, 3.3, 6.18);
 		instruments.lineStyle(1, 0xa67c39, 0.12);
 		ThemeBackground.strokeArc(instruments, 300, 330, 214, 2.78, 3.92);
-		ThemeBackground.strokeArc(instruments, 300, 330, 214, 5.50, 6.62);
+		ThemeBackground.strokeArc(instruments, 300, 330, 214, 5.5, 6.62);
 		instruments.lineStyle(1, 0xc89c52, 0.16);
 		for (let index = 0; index < 24; index++) {
-			const angle = index / 24 * Math.PI * 2;
+			const angle = (index / 24) * Math.PI * 2;
 			instruments.lineBetween(
 				300 + Math.cos(angle) * 174,
 				330 + Math.sin(angle) * 174,
@@ -101,20 +113,20 @@ class ThemeBackground {
 				330 + Math.sin(angle) * 182,
 			);
 		}
-		instruments.lineStyle(2, 0xa67c39, 0.10);
+		instruments.lineStyle(2, 0xa67c39, 0.1);
 		instruments.lineBetween(72, 250, 148, 470);
 		instruments.lineStyle(2, 0xa67c39, 0.08);
 		instruments.lineBetween(528, 230, 460, 455);
 
 		const quietZones = ThemeBackground.addGraphics(scene, root);
-		quietZones.fillStyle(0x0c1115, 0.30);
+		quietZones.fillStyle(0x0c1115, 0.3);
 		quietZones.fillRect(252, 420, 96, 300);
-		quietZones.lineStyle(1, 0x4e7b73, 0.10);
+		quietZones.lineStyle(1, 0x4e7b73, 0.1);
 		quietZones.lineBetween(248, 452, 248, 720);
 		quietZones.lineBetween(352, 452, 352, 720);
 		ThemeBackground.drawBackings(quietZones, {
 			hud: 0x0e1317,
-			hudAlpha: 0.60,
+			hudAlpha: 0.6,
 			divider: 0xa67c39,
 			dividerAlpha: 0.16,
 			panel: 0x0d1216,
@@ -128,7 +140,7 @@ class ThemeBackground {
 			const result = ThemeBackground.addGraphics(scene, root);
 			result.fillStyle(0x081015, 0.24);
 			result.fillRect(0, 0, CONSTANTS.WIDTH, CONSTANTS.HEIGHT);
-			result.lineStyle(2, 0xa67c39, 0.10);
+			result.lineStyle(2, 0xa67c39, 0.1);
 			result.strokeCircle(300, 330, 124);
 		}
 
@@ -146,7 +158,7 @@ class ThemeBackground {
 		base.fillRoundedRect(18, 18, 564, 764, 28);
 		base.lineStyle(2, 0x9a6b57, 0.28);
 		base.strokeRoundedRect(18, 18, 564, 764, 28);
-		base.lineStyle(1, 0xd7b27a, 0.10);
+		base.lineStyle(1, 0xd7b27a, 0.1);
 		base.strokeRoundedRect(24, 24, 552, 752, 24);
 		base.fillStyle(0x4a2034, 0.16);
 		base.fillEllipse(300, 180, 390, 150);
@@ -168,7 +180,8 @@ class ThemeBackground {
 		}
 
 		const facets = ThemeBackground.addGraphics(scene, root);
-		const facetMultiplier = mode === "menu" ? 1.25 : mode === "game-over" ? 0.7 : 1;
+		const facetMultiplier =
+			mode === "menu" ? 1.25 : mode === "game-over" ? 0.7 : 1;
 		facets.fillStyle(0xc38a89, 0.08 * facetMultiplier);
 		facets.fillTriangle(34, 32, 92, 32, 70, 70);
 		facets.fillTriangle(508, 32, 566, 32, 530, 70);
@@ -178,7 +191,7 @@ class ThemeBackground {
 
 		const trimMultiplier = mode === "menu" ? 1.2 : 1;
 		const quietZones = ThemeBackground.addGraphics(scene, root);
-		quietZones.fillStyle(0x9a6b57, 0.10 * trimMultiplier);
+		quietZones.fillStyle(0x9a6b57, 0.1 * trimMultiplier);
 		quietZones.fillRect(34, 150, 12, 430);
 		quietZones.fillRect(554, 150, 12, 430);
 		quietZones.fillStyle(0x22101d, 0.34);
@@ -204,7 +217,7 @@ class ThemeBackground {
 			const result = ThemeBackground.addGraphics(scene, root);
 			result.fillStyle(0x160a12, 0.22);
 			result.fillRect(0, 0, CONSTANTS.WIDTH, CONSTANTS.HEIGHT);
-			result.lineStyle(2, 0xd7b27a, 0.10);
+			result.lineStyle(2, 0xd7b27a, 0.1);
 			result.strokeCircle(300, 330, 124);
 		}
 
@@ -237,7 +250,10 @@ class ThemeBackground {
 				}
 			}
 			const span = Math.max(0.0001, end.at - start.at);
-			const localProgress = Math.max(0, Math.min(1, (progress - start.at) / span));
+			const localProgress = Math.max(
+				0,
+				Math.min(1, (progress - start.at) / span),
+			);
 			graphics.fillStyle(
 				ThemeBackground.mixColor(start.color, end.color, localProgress),
 				1,
@@ -273,7 +289,7 @@ class ThemeBackground {
 
 	static animate(scene, themeId, targets) {
 		if (themeId === "gilded-jewel-box") {
-			targets.ambient.setAlpha(0.60);
+			targets.ambient.setAlpha(0.6);
 			targets.focus.setAlpha(0.88);
 			return [
 				scene.tweens.add({
