@@ -1,0 +1,20 @@
+{
+  "schema": "needles.level-pack/v1",
+  "id": "balanced-v2",
+  "version": "1.0.0",
+  "title": "平滑曲线 V2",
+  "caption": "非线性密度与节奏耦合 · 推荐试玩",
+  "engineCompatibility": "classic-v1",
+  "difficultyModel": "nonlinear-v2",
+  "chapters": [
+    { "id": "chapter-1", "order": 1, "title": "校准与留白" },
+    { "id": "chapter-2", "order": 2, "title": "分区判断" },
+    { "id": "chapter-3", "order": 3, "title": "节奏控制" },
+    { "id": "chapter-4", "order": 4, "title": "复合压力" },
+    { "id": "chapter-5", "order": 5, "title": "专家终曲" }
+  ],
+  "resources": {
+    "presets": "presets.json",
+    "levels": "levels.json"
+  }
+}
