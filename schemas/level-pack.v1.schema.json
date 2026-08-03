@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/level-pack.v1.schema.json",
+  "title": "Needles Level Pack Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "version",
+    "title",
+    "engineCompatibility",
+    "chapters",
+    "resources"
+  ],
+  "properties": {
+    "schema": { "const": "needles.level-pack/v1" },
+    "id": { "$ref": "#/$defs/id" },
+    "version": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "caption": { "type": "string" },
+    "engineCompatibility": { "const": "classic-v1" },
+    "difficultyModel": { "type": "string", "minLength": 1 },
+    "chapters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "order", "title"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "order": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["presets", "levels"],
+      "properties": {
+        "presets": { "type": "string", "minLength": 1 },
+        "levels": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    }
+  }
+}
