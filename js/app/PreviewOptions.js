@@ -16,6 +16,7 @@ class PreviewOptions {
             || this.lab
             || this.chapterId
         );
+        this.restoreTheme = null;
     }
 
     static fromLocation(locationObject = null) {
@@ -44,6 +45,28 @@ class PreviewOptions {
 
     static boolean(value) {
         return ['1', 'true', 'yes'].includes(String(value || '').toLowerCase());
+    }
+
+    installTemporarySkin() {
+        if (
+            !this.skinId
+            || typeof window === 'undefined'
+            || typeof localStorage === 'undefined'
+            || typeof VISUAL_SKIN_REGISTRY === 'undefined'
+            || !VISUAL_SKIN_REGISTRY.has(this.skinId)
+        ) {
+            return false;
+        }
+
+        const storageKey = CONSTANTS.THEME_STORAGE_KEY;
+        const previous = localStorage.getItem(storageKey);
+        localStorage.setItem(storageKey, this.skinId);
+        this.restoreTheme = () => {
+            if (previous === null) localStorage.removeItem(storageKey);
+            else localStorage.setItem(storageKey, previous);
+        };
+        window.addEventListener('pagehide', this.restoreTheme, { once: true });
+        return true;
     }
 
     resolve(appContext) {
@@ -98,3 +121,4 @@ class PreviewOptions {
 }
 
 const PREVIEW_OPTIONS = PreviewOptions.fromLocation();
+PREVIEW_OPTIONS.installTemporarySkin();
