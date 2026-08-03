@@ -18,7 +18,9 @@ class GameScene extends Phaser.Scene {
         this.levelConfig = this.levelManager.startLevel(this.route.levelId);
         this.route = this.levelManager.getCurrentRoute();
         this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig);
-        this.session = new GameSession(this.levelConfig);
+        this.session = this.route.mode === 'test'
+            ? new PlaytestSession(this.levelConfig)
+            : new GameSession(this.levelConfig);
 
         this.insertedNeedles = [];
         this.obstacles = [];
