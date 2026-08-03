@@ -7,9 +7,16 @@
     "test": "node --test tests/*.test.js",
     "serve": "node scripts/serve-static.js",
     "test:e2e": "playwright test --project=chromium",
-    "test:e2e:headed": "playwright test --project=chromium --headed"
+    "test:e2e:headed": "playwright test --project=chromium --headed",
+    "report:playtests": "node scripts/analyze-playtests.js",
+    "validate:packs": "node scripts/validate-packs.js",
+    "pack": "node scripts/pack.js",
+    "preview:pack": "node scripts/preview-pack.js",
+    "campaign": "node scripts/campaign.js",
+    "review:balance": "node scripts/review-balance.js"
   },
   "devDependencies": {
-    "@playwright/test": "1.62.0"
+    "@playwright/test": "1.62.0",
+    "ajv": "8.17.1"
   }
 }

@@ -78,19 +78,26 @@ class BootScene extends Phaser.Scene {
                 (sum, pack) => sum + pack.levels.length,
                 0
             );
+            const destination = PREVIEW_OPTIONS.resolve(APP_CONTEXT);
             status.setText(
-                result.errors.length > 0
-                    ? `已载入 ${result.loadedPacks.length} 个包；${result.errors.length} 个包不可用`
-                    : `已载入 ${result.loadedPacks.length} 个关卡包 · ${levelCount} 关`
+                PREVIEW_OPTIONS.enabled
+                    ? this.getPreviewStatus(destination)
+                    : (result.errors.length > 0
+                        ? `已载入 ${result.loadedPacks.length} 个包；${result.errors.length} 个包不可用`
+                        : `已载入 ${result.loadedPacks.length} 个关卡包 · ${levelCount} 关`)
             );
 
             this.time.delayedCall(SceneUI.prefersReducedMotion() ? 80 : 260, () => {
-                this.scene.start('MenuScene');
+                this.scene.start(destination.scene, destination.data);
             });
         } catch (error) {
             console.error('关卡包启动失败:', error);
             status.setColor(ui.TEXT_ERROR);
-            status.setText('关卡包加载失败，请检查文件或刷新重试。');
+            status.setText(
+                PREVIEW_OPTIONS.enabled
+                    ? `预览启动失败：${error.message}`
+                    : '关卡包加载失败，请检查文件或刷新重试。'
+            );
             progress.setFillStyle(ui.ERROR);
             progress.setScale(1, 1);
 
@@ -102,5 +109,17 @@ class BootScene extends Phaser.Scene {
                 variant: 'danger'
             });
         }
+    }
+
+    getPreviewStatus(destination) {
+        if (destination.scene === 'GameScene') {
+            return `预览关卡 · ${destination.data.route.packId} / ${destination.data.route.levelId}`;
+        }
+        if (destination.scene === 'LevelSelectScene') {
+            return `预览实验室 · ${destination.data.packId}`;
+        }
+        return PREVIEW_OPTIONS.packId
+            ? `预览关卡包 · ${PREVIEW_OPTIONS.packId}`
+            : '预览外观已应用';
     }
 }

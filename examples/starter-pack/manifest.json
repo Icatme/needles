@@ -1,0 +1,20 @@
+{
+  "schema": "needles.level-pack/v1",
+  "id": "starter-example",
+  "version": "0.1.0",
+  "title": "Starter Example",
+  "caption": "复制后修改 ID，并通过 pack create 或手工注册",
+  "engineCompatibility": "classic-v1",
+  "difficultyModel": "nonlinear-v2",
+  "chapters": [
+    {
+      "id": "chapter-1",
+      "order": 1,
+      "title": "第一章"
+    }
+  ],
+  "resources": {
+    "presets": "presets.json",
+    "levels": "levels.json"
+  }
+}

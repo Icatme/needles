@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/level-list.v1.schema.json",
+  "title": "Needles Level List v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "levels"],
+  "properties": {
+    "schema": { "const": "needles.level-list/v1" },
+    "levels": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/level" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "referenceId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "chapterId",
+        "order",
+        "title",
+        "instruction",
+        "objective",
+        "layoutRef",
+        "rhythm"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "legacyNumericId": { "type": "integer", "minimum": 1 },
+        "chapterId": { "$ref": "#/$defs/id" },
+        "order": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "instruction": { "type": "string" },
+        "objective": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["insertCount"],
+          "properties": {
+            "insertCount": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "layoutRef": { "$ref": "#/$defs/referenceId" },
+        "rhythm": { "$ref": "#/$defs/rhythm" },
+        "presentation": { "$ref": "#/$defs/presentation" },
+        "tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "rhythm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segments"],
+      "properties": {
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/segment" }
+        },
+        "shotModifier": { "$ref": "#/$defs/shotModifier" }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["durationMs"],
+      "properties": {
+        "durationMs": { "type": "number", "exclusiveMinimum": 0 },
+        "velocity": { "type": "number" },
+        "fromVelocity": { "type": "number" },
+        "toVelocity": { "type": "number" },
+        "easing": { "enum": ["linear", "sine"] }
+      },
+      "oneOf": [
+        {
+          "properties": { "velocity": {} },
+          "required": ["velocity"],
+          "not": {
+            "anyOf": [
+              {
+                "properties": { "fromVelocity": {} },
+                "required": ["fromVelocity"]
+              },
+              {
+                "properties": { "toVelocity": {} },
+                "required": ["toVelocity"]
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "fromVelocity": {},
+            "toVelocity": {}
+          },
+          "required": ["fromVelocity", "toVelocity"],
+          "not": {
+            "properties": { "velocity": {} },
+            "required": ["velocity"]
+          }
+        }
+      ]
+    },
+    "shotModifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "flipEvery": { "type": "integer", "minimum": 1 },
+        "speedStep": { "type": "number", "exclusiveMinimum": 0 },
+        "maxAbsSpeed": { "type": "number", "exclusiveMinimum": 0 },
+        "phaseShiftEvery": { "type": "integer", "minimum": 1 },
+        "phaseShiftMs": { "type": "number" }
+      },
+      "dependentRequired": {
+        "speedStep": ["maxAbsSpeed"],
+        "phaseShiftEvery": ["phaseShiftMs"]
+      }
+    },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": { "type": "integer", "minimum": 1 },
+        "milestone": { "type": "boolean" },
+        "focus": { "type": "string", "minLength": 1 },
+        "family": { "type": "string", "minLength": 1 },
+        "variant": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

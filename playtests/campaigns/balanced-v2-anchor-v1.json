@@ -1,0 +1,31 @@
+{
+  "schema": "needles.playtest-campaign/v1",
+  "id": "balanced-v2-anchor-v1",
+  "title": "Balanced V2 锚点试玩 Pilot",
+  "purpose": "用少量代表性关卡定位真实体验跳幅，再按异常点扩展到相邻关卡；pilot 门槛只表示可进入人工复查，不代表统计显著性。",
+  "packId": "balanced-v2",
+  "packVersion": "1.0.0",
+  "comparisonPackId": "legacy",
+  "defaultSkinId": "clockwork-observatory",
+  "pilotTargets": {
+    "attemptsPerLevel": 5,
+    "sourcesPerLevel": 2
+  },
+  "anchors": [
+    { "levelId": "balanced-v2-01", "order": 1, "reason": "首关基线与输入理解" },
+    { "levelId": "balanced-v2-03", "order": 3, "reason": "早期固定节奏基线" },
+    { "levelId": "balanced-v2-05", "order": 5, "reason": "第一阶段中点" },
+    { "levelId": "balanced-v2-07", "order": 7, "reason": "首章后半段压力" },
+    { "levelId": "balanced-v2-09", "order": 9, "reason": "原难度断崖前置锚点" },
+    { "levelId": "balanced-v2-10", "order": 10, "reason": "重点验证重做后的第十关" },
+    { "levelId": "balanced-v2-12", "order": 12, "reason": "进入分区章节后的适应" },
+    { "levelId": "balanced-v2-15", "order": 15, "reason": "第二章中点" },
+    { "levelId": "balanced-v2-20", "order": 20, "reason": "第二章里程碑" },
+    { "levelId": "balanced-v2-25", "order": 25, "reason": "节奏控制章节中点" },
+    { "levelId": "balanced-v2-30", "order": 30, "reason": "第三章里程碑" },
+    { "levelId": "balanced-v2-35", "order": 35, "reason": "复合压力章节中点" },
+    { "levelId": "balanced-v2-40", "order": 40, "reason": "第四章里程碑" },
+    { "levelId": "balanced-v2-45", "order": 45, "reason": "专家章节中点" },
+    { "levelId": "balanced-v2-50", "order": 50, "reason": "终局体验与耐力峰值" }
+  ]
+}

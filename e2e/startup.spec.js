@@ -18,7 +18,7 @@ test('loads both level packs and reaches the menu without browser errors', async
     );
   });
 
-  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const response = await page.goto('./', { waitUntil: 'domcontentloaded' });
   expect(response?.ok(), 'index.html should load successfully').toBe(true);
   await expect(page.locator('#game-container canvas')).toBeVisible();
 

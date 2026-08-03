@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/replay.v1.schema.json",
+  "title": "Needles Replay v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "engineVersion",
+    "level",
+    "geometry",
+    "durationMs",
+    "commands",
+    "final",
+    "digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "needles.replay/v1"
+    },
+    "engineVersion": {
+      "const": "classic-v1"
+    },
+    "level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packId", "packVersion", "levelId", "order", "contentHash"],
+      "properties": {
+        "packId": { "type": ["string", "null"] },
+        "packVersion": { "type": ["string", "null"] },
+        "levelId": { "type": "string", "minLength": 1 },
+        "order": { "type": ["integer", "null"] },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$"
+        }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["impactAngle", "ringRadius", "needleRadius", "obstacleRadius"],
+      "properties": {
+        "impactAngle": { "type": "number" },
+        "ringRadius": { "type": "number", "exclusiveMinimum": 0 },
+        "needleRadius": { "type": "number", "exclusiveMinimum": 0 },
+        "obstacleRadius": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "atMs", "type", "expected"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1 },
+          "atMs": { "type": "number", "minimum": 0 },
+          "type": {
+            "enum": [
+              "begin-shot",
+              "resolve-impact",
+              "release-shot-lock"
+            ]
+          },
+          "expected": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "final": {
+      "type": "object",
+      "required": [
+        "status",
+        "wheelRotation",
+        "insertedCount",
+        "remainingCount",
+        "currentNeedleNumber",
+        "insertedNeedles",
+        "events",
+        "eventDigest"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["ready", "in-flight", "locked", "failed", "completed"]
+        },
+        "wheelRotation": { "type": "number" },
+        "insertedCount": { "type": "integer", "minimum": 0 },
+        "remainingCount": { "type": "integer", "minimum": 0 },
+        "currentNeedleNumber": { "type": "integer", "minimum": 0 },
+        "insertedNeedles": { "type": "array" },
+        "events": { "type": "array" },
+        "eventDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$"
+        }
+      }
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}$"
+    }
+  }
+}
