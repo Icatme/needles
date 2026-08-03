@@ -1,9 +1,10 @@
 class LevelResolver {
     resolvePack(manifest, presets, levelList) {
+        const chapterDescriptors = [...manifest.chapters]
+            .sort((a, b) => a.order - b.order)
+            .map(chapter => Object.freeze({ ...chapter }));
         const chapterOrder = new Map(
-            [...manifest.chapters]
-                .sort((a, b) => a.order - b.order)
-                .map(chapter => [chapter.id, chapter.order])
+            chapterDescriptors.map(chapter => [chapter.id, chapter.order])
         );
         const levels = [...levelList.levels]
             .sort((a, b) => a.order - b.order)
@@ -16,11 +17,9 @@ class LevelResolver {
             caption: manifest.caption || '',
             engineCompatibility: manifest.engineCompatibility,
             difficultyModel: manifest.difficultyModel || 'legacy-linear',
-            chapters: Object.freeze(
-                [...manifest.chapters]
-                    .sort((a, b) => a.order - b.order)
-                    .map(chapter => Object.freeze({ ...chapter }))
-            ),
+            // Existing scenes consume chapter titles; M2 will consume descriptors directly.
+            chapters: Object.freeze(chapterDescriptors.map(chapter => chapter.title)),
+            chapterDescriptors: Object.freeze(chapterDescriptors),
             levels: Object.freeze(levels),
             source: Object.freeze({
                 manifest: Object.freeze({ ...manifest }),
