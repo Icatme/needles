@@ -11,10 +11,7 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='24' r='16' fill='%23172126'/%3E%3Cpath d='M32 40v16' stroke='%23e55a3c' stroke-width='5'/%3E%3C/svg%3E"
     />
-    <link
-      rel="stylesheet"
-      href="css/style.css?v=20260803-level-pack-m1"
-    />
+    <link rel="stylesheet" href="css/style.css?v=20260803-app-services-m2" />
   </head>
   <body>
     <main
@@ -24,49 +21,55 @@
       tabindex="0"
     ></main>
 
-    <!-- Phaser 3 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
     <!-- Utils -->
-    <script src="js/utils/constants.js?v=20260803-level-pack-m1"></script>
-    <script src="js/utils/GemRenderer.js?v=20260803-level-pack-m1"></script>
-    <script src="js/utils/SceneUI.js?v=20260803-level-pack-m1"></script>
-    <script src="js/utils/ThemeBackground.js?v=20260803-level-pack-m1"></script>
+    <script src="js/utils/constants.js?v=20260803-app-services-m2"></script>
+    <script src="js/utils/GemRenderer.js?v=20260803-app-services-m2"></script>
+    <script src="js/utils/SceneUI.js?v=20260803-app-services-m2"></script>
+    <script src="js/utils/ThemeBackground.js?v=20260803-app-services-m2"></script>
 
-    <!-- Loadable level-pack runtime; concrete packs are discovered from packs/index.json -->
-    <script src="js/packs/PackValidator.js?v=20260803-level-pack-m1"></script>
-    <script src="js/packs/LevelResolver.js?v=20260803-level-pack-m1"></script>
-    <script src="js/packs/PackRegistry.js?v=20260803-level-pack-m1"></script>
-    <script src="js/packs/PackLoader.js?v=20260803-level-pack-m1"></script>
+    <!-- Loadable level-pack runtime -->
+    <script src="js/packs/PackValidator.js?v=20260803-app-services-m2"></script>
+    <script src="js/packs/LevelResolver.js?v=20260803-app-services-m2"></script>
+    <script src="js/packs/PackRegistry.js?v=20260803-app-services-m2"></script>
+    <script src="js/packs/PackLoader.js?v=20260803-app-services-m2"></script>
 
-    <!-- Visual catalogs remain application resources, independent of level packs -->
-    <script src="js/data/wheelVisuals.js?v=20260803-level-pack-m1"></script>
-    <script src="js/data/jewelVisuals.js?v=20260803-level-pack-m1"></script>
+    <!-- Visual catalogs -->
+    <script src="js/data/wheelVisuals.js?v=20260803-app-services-m2"></script>
+    <script src="js/data/jewelVisuals.js?v=20260803-app-services-m2"></script>
 
     <!-- Entities -->
-    <script src="js/entities/JewelWheelRenderer.js?v=20260803-level-pack-m1"></script>
-    <script src="js/entities/Wheel.js?v=20260803-level-pack-m1"></script>
-    <script src="js/entities/Needle.js?v=20260803-level-pack-m1"></script>
-    <script src="js/entities/Obstacle.js?v=20260803-level-pack-m1"></script>
+    <script src="js/entities/JewelWheelRenderer.js?v=20260803-app-services-m2"></script>
+    <script src="js/entities/Wheel.js?v=20260803-app-services-m2"></script>
+    <script src="js/entities/Needle.js?v=20260803-app-services-m2"></script>
+    <script src="js/entities/Obstacle.js?v=20260803-app-services-m2"></script>
 
-    <!-- Managers -->
-    <script src="js/managers/RhythmManager.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/DifficultyManager.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/DifficultyModelV2.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/ThemeManager.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/LevelManager.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/CollisionManager.js?v=20260803-level-pack-m1"></script>
-    <script src="js/managers/UIManager.js?v=20260803-level-pack-m1"></script>
+    <!-- Domain managers used by application services -->
+    <script src="js/managers/RhythmManager.js?v=20260803-app-services-m2"></script>
+    <script src="js/managers/DifficultyManager.js?v=20260803-app-services-m2"></script>
+    <script src="js/managers/DifficultyModelV2.js?v=20260803-app-services-m2"></script>
+
+    <!-- Application layer -->
+    <script src="js/app/ProgressStore.js?v=20260803-app-services-m2"></script>
+    <script src="js/app/LevelCatalogService.js?v=20260803-app-services-m2"></script>
+    <script src="js/app/AppRouter.js?v=20260803-app-services-m2"></script>
+    <script src="js/app/AppContext.js?v=20260803-app-services-m2"></script>
+
+    <!-- UI/runtime managers -->
+    <script src="js/managers/ThemeManager.js?v=20260803-app-services-m2"></script>
+    <script src="js/managers/LevelManager.js?v=20260803-app-services-m2"></script>
+    <script src="js/managers/CollisionManager.js?v=20260803-app-services-m2"></script>
+    <script src="js/managers/UIManager.js?v=20260803-app-services-m2"></script>
 
     <!-- Scenes -->
-    <script src="js/scenes/BootScene.js?v=20260803-level-pack-m1"></script>
-    <script src="js/scenes/MenuScene.js?v=20260803-level-pack-m1"></script>
-    <script src="js/scenes/EnhancedMenuScene.js?v=20260803-level-pack-m1"></script>
-    <script src="js/scenes/LevelSelectScene.js?v=20260803-level-pack-m1"></script>
-    <script src="js/scenes/GameScene.js?v=20260803-level-pack-m1"></script>
-    <script src="js/scenes/GameOverScene.js?v=20260803-level-pack-m1"></script>
+    <script src="js/scenes/BootScene.js?v=20260803-app-services-m2"></script>
+    <script src="js/scenes/MenuScene.js?v=20260803-app-services-m2"></script>
+    <script src="js/scenes/EnhancedMenuScene.js?v=20260803-app-services-m2"></script>
+    <script src="js/scenes/LevelSelectScene.js?v=20260803-app-services-m2"></script>
+    <script src="js/scenes/GameScene.js?v=20260803-app-services-m2"></script>
+    <script src="js/scenes/GameOverScene.js?v=20260803-app-services-m2"></script>
 
-    <!-- Main -->
-    <script src="js/main.js?v=20260803-level-pack-m1"></script>
+    <script src="js/main.js?v=20260803-app-services-m2"></script>
   </body>
 </html>
