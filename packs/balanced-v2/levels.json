@@ -1,0 +1,1727 @@
+{
+  "schema": "needles.level-list/v1",
+  "levels": [
+    {
+      "id": "balanced-v2-01",
+      "legacyNumericId": 1,
+      "chapterId": "chapter-1",
+      "order": 1,
+      "title": "起针校准",
+      "instruction": "匀速顺时针 · 学习发射",
+      "objective": {
+        "insertCount": 10
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.36
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "timing"
+      },
+      "tags": [
+        "timing"
+      ]
+    },
+    {
+      "id": "balanced-v2-02",
+      "legacyNumericId": 2,
+      "chapterId": "chapter-1",
+      "order": 2,
+      "title": "留白加一",
+      "instruction": "只增加一针 · 感受密度",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.36
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-03",
+      "legacyNumericId": 3,
+      "chapterId": "chapter-1",
+      "order": 3,
+      "title": "单门巡航",
+      "instruction": "加入一枚锁针",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-04",
+      "legacyNumericId": 4,
+      "chapterId": "chapter-1",
+      "order": 4,
+      "title": "单门提速",
+      "instruction": "单门中稍微提速",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.52
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-05",
+      "legacyNumericId": 5,
+      "chapterId": "chapter-1",
+      "order": 5,
+      "title": "双门定拍",
+      "instruction": "两个分区 · 固定节拍",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.58
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-06",
+      "legacyNumericId": 6,
+      "chapterId": "chapter-1",
+      "order": 6,
+      "title": "双门呼吸",
+      "instruction": "长周期平滑变速",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2400,
+            "fromVelocity": 0.4,
+            "toVelocity": 0.62,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2400,
+            "fromVelocity": 0.62,
+            "toVelocity": 0.4,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-07",
+      "legacyNumericId": 7,
+      "chapterId": "chapter-1",
+      "order": 7,
+      "title": "长短双拍",
+      "instruction": "长慢拍接短快拍",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.64
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-08",
+      "legacyNumericId": 8,
+      "chapterId": "chapter-1",
+      "order": 8,
+      "title": "逐针升速",
+      "instruction": "每插一针轻微加速",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.42
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.02,
+          "maxAbsSpeed": 0.64
+        }
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-09",
+      "legacyNumericId": 9,
+      "chapterId": "chapter-1",
+      "order": 9,
+      "title": "三区双拍",
+      "instruction": "三区中保持双拍",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.64
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-10",
+      "legacyNumericId": 10,
+      "chapterId": "chapter-1",
+      "order": 10,
+      "title": "漂移转身",
+      "instruction": "长去程接短回摆",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2000,
+            "velocity": 0.56
+          },
+          {
+            "durationMs": 1500,
+            "velocity": -0.24
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": true,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction"
+      ]
+    },
+    {
+      "id": "balanced-v2-11",
+      "legacyNumericId": 11,
+      "chapterId": "chapter-2",
+      "order": 11,
+      "title": "三区进阶",
+      "instruction": "三区双拍 · 小幅提速",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1700,
+            "velocity": 0.46
+          },
+          {
+            "durationMs": 1100,
+            "velocity": 0.72
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-12",
+      "legacyNumericId": 12,
+      "chapterId": "chapter-2",
+      "order": 12,
+      "title": "四区呼吸",
+      "instruction": "四区中平滑变速",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2200,
+            "fromVelocity": 0.46,
+            "toVelocity": 0.8,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2200,
+            "fromVelocity": 0.8,
+            "toVelocity": 0.46,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-13",
+      "legacyNumericId": 13,
+      "chapterId": "chapter-2",
+      "order": 13,
+      "title": "四区增密",
+      "instruction": "保持节奏 · 增加一针",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1700,
+            "velocity": 0.46
+          },
+          {
+            "durationMs": 1100,
+            "velocity": 0.72
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-14",
+      "legacyNumericId": 14,
+      "chapterId": "chapter-2",
+      "order": 14,
+      "title": "四区长摆",
+      "instruction": "四区漂移回摆",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.64
+          },
+          {
+            "durationMs": 1300,
+            "velocity": -0.3
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction"
+      ]
+    },
+    {
+      "id": "balanced-v2-15",
+      "legacyNumericId": 15,
+      "chapterId": "chapter-2",
+      "order": 15,
+      "title": "五区巡航",
+      "instruction": "五区匀速巡航",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.7
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-16",
+      "legacyNumericId": 16,
+      "chapterId": "chapter-2",
+      "order": 16,
+      "title": "五区呼吸",
+      "instruction": "五区高幅呼吸",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2200,
+            "fromVelocity": 0.46,
+            "toVelocity": 0.8,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2200,
+            "fromVelocity": 0.8,
+            "toVelocity": 0.46,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-17",
+      "legacyNumericId": 17,
+      "chapterId": "chapter-2",
+      "order": 17,
+      "title": "五区高速",
+      "instruction": "保持五区 · 再增一针",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.76
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-18",
+      "legacyNumericId": 18,
+      "chapterId": "chapter-2",
+      "order": 18,
+      "title": "三相穿门",
+      "instruction": "慢快中三相循环",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1300,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.82
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.6
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-19",
+      "legacyNumericId": 19,
+      "chapterId": "chapter-2",
+      "order": 19,
+      "title": "五针换向",
+      "instruction": "双拍运行 · 每五针翻转",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1500,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.78
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 5
+        }
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-20",
+      "legacyNumericId": 20,
+      "chapterId": "chapter-2",
+      "order": 20,
+      "title": "密区漂移",
+      "instruction": "十五针 · 漂移回摆",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1600,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 1100,
+            "velocity": -0.36
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": true,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-21",
+      "legacyNumericId": 21,
+      "chapterId": "chapter-3",
+      "order": 21,
+      "title": "六区高速",
+      "instruction": "六区高速巡航",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.88
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-22",
+      "legacyNumericId": 22,
+      "chapterId": "chapter-3",
+      "order": 22,
+      "title": "短拍双速",
+      "instruction": "缩短双拍持续时间",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1300,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.92
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-23",
+      "legacyNumericId": 23,
+      "chapterId": "chapter-3",
+      "order": 23,
+      "title": "六区呼吸",
+      "instruction": "六区短周期呼吸",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1900,
+            "fromVelocity": 0.52,
+            "toVelocity": 1,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 1900,
+            "fromVelocity": 1,
+            "toVelocity": 0.52,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-24",
+      "legacyNumericId": 24,
+      "chapterId": "chapter-3",
+      "order": 24,
+      "title": "六区三相",
+      "instruction": "六区三相循环",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.94
+          },
+          {
+            "durationMs": 1300,
+            "velocity": 0.66
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-25",
+      "legacyNumericId": 25,
+      "chapterId": "chapter-3",
+      "order": 25,
+      "title": "七区巡航",
+      "instruction": "七区高速巡航",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.88
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-26",
+      "legacyNumericId": 26,
+      "chapterId": "chapter-3",
+      "order": 26,
+      "title": "四针移相",
+      "instruction": "每四针改变循环起点",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1400,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.82
+          },
+          {
+            "durationMs": 1500,
+            "velocity": 0.6
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 4,
+          "phaseShiftMs": 500
+        }
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-27",
+      "legacyNumericId": 27,
+      "chapterId": "chapter-3",
+      "order": 27,
+      "title": "密环呼吸",
+      "instruction": "十六针 · 高幅呼吸",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2000,
+            "fromVelocity": 0.5,
+            "toVelocity": 0.9,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2000,
+            "fromVelocity": 0.9,
+            "toVelocity": 0.5,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-28",
+      "legacyNumericId": 28,
+      "chapterId": "chapter-3",
+      "order": 28,
+      "title": "四相初见",
+      "instruction": "首次完整四相循环",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 1200,
+            "velocity": -0.32
+          },
+          {
+            "durationMs": 1500,
+            "velocity": 0.64
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-29",
+      "legacyNumericId": 29,
+      "chapterId": "chapter-3",
+      "order": 29,
+      "title": "密环三相",
+      "instruction": "十六针 · 三相短拍",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.94
+          },
+          {
+            "durationMs": 1300,
+            "velocity": 0.66
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-30",
+      "legacyNumericId": 30,
+      "chapterId": "chapter-3",
+      "order": 30,
+      "title": "四相合奏",
+      "instruction": "十六针 · 四相循环",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 1200,
+            "velocity": -0.32
+          },
+          {
+            "durationMs": 1500,
+            "velocity": 0.64
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": true,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-31",
+      "legacyNumericId": 31,
+      "chapterId": "chapter-4",
+      "order": 31,
+      "title": "八区呼吸",
+      "instruction": "八区高幅呼吸",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1900,
+            "fromVelocity": 0.52,
+            "toVelocity": 1,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 1900,
+            "fromVelocity": 1,
+            "toVelocity": 0.52,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-32",
+      "legacyNumericId": 32,
+      "chapterId": "chapter-4",
+      "order": 32,
+      "title": "八区极速",
+      "instruction": "八区匀速高压",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.94
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-33",
+      "legacyNumericId": 33,
+      "chapterId": "chapter-4",
+      "order": 33,
+      "title": "窄区巡航",
+      "instruction": "更碎的八区布局",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.88
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "zones"
+      },
+      "tags": [
+        "zones"
+      ]
+    },
+    {
+      "id": "balanced-v2-34",
+      "legacyNumericId": 34,
+      "chapterId": "chapter-4",
+      "order": 34,
+      "title": "窄区移相",
+      "instruction": "窄区三相 · 每四针移相",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1400,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.82
+          },
+          {
+            "durationMs": 1500,
+            "velocity": 0.6
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 4,
+          "phaseShiftMs": 500
+        }
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-35",
+      "legacyNumericId": 35,
+      "chapterId": "chapter-4",
+      "order": 35,
+      "title": "窄区长摆",
+      "instruction": "窄区高速漂移回摆",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1500,
+            "velocity": 0.8
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.42
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction"
+      ]
+    },
+    {
+      "id": "balanced-v2-36",
+      "legacyNumericId": 36,
+      "chapterId": "chapter-4",
+      "order": 36,
+      "title": "窄区呼吸",
+      "instruction": "窄区短周期呼吸",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1900,
+            "fromVelocity": 0.52,
+            "toVelocity": 1,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 1900,
+            "fromVelocity": 1,
+            "toVelocity": 0.52,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-37",
+      "legacyNumericId": 37,
+      "chapterId": "chapter-4",
+      "order": 37,
+      "title": "窄区三相",
+      "instruction": "窄区三相短拍",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.94
+          },
+          {
+            "durationMs": 1300,
+            "velocity": 0.66
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-38",
+      "legacyNumericId": 38,
+      "chapterId": "chapter-4",
+      "order": 38,
+      "title": "窄区高速",
+      "instruction": "窄区匀速高压",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.94
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-39",
+      "legacyNumericId": 39,
+      "chapterId": "chapter-4",
+      "order": 39,
+      "title": "四相门阵",
+      "instruction": "窄区四相方向切换",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1200,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 1200,
+            "velocity": -0.32
+          },
+          {
+            "durationMs": 1500,
+            "velocity": 0.64
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-40",
+      "legacyNumericId": 40,
+      "chapterId": "chapter-4",
+      "order": 40,
+      "title": "极限双速",
+      "instruction": "窄区短拍双速",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1100,
+            "velocity": 0.56
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.04
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": true,
+        "focus": "speed"
+      },
+      "tags": [
+        "speed"
+      ]
+    },
+    {
+      "id": "balanced-v2-41",
+      "legacyNumericId": 41,
+      "chapterId": "chapter-5",
+      "order": 41,
+      "title": "高密双速",
+      "instruction": "十七针 · 八区双速",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1100,
+            "velocity": 0.56
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.04
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-42",
+      "legacyNumericId": 42,
+      "chapterId": "chapter-5",
+      "order": 42,
+      "title": "高密呼吸",
+      "instruction": "十七针 · 窄区呼吸",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1900,
+            "fromVelocity": 0.52,
+            "toVelocity": 1,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 1900,
+            "fromVelocity": 1,
+            "toVelocity": 0.52,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-43",
+      "legacyNumericId": 43,
+      "chapterId": "chapter-5",
+      "order": 43,
+      "title": "高密巡航",
+      "instruction": "十七针 · 窄区高速",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.94
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "id": "balanced-v2-44",
+      "legacyNumericId": 44,
+      "chapterId": "chapter-5",
+      "order": 44,
+      "title": "四相换向",
+      "instruction": "四相循环 · 每六针翻转",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.02
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.7
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 6
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-45",
+      "legacyNumericId": 45,
+      "chapterId": "chapter-5",
+      "order": 45,
+      "title": "高密四相",
+      "instruction": "十七针 · 八区四相",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.02
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.7
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-46",
+      "legacyNumericId": 46,
+      "chapterId": "chapter-5",
+      "order": 46,
+      "title": "窄区换向",
+      "instruction": "窄区四相 · 每六针翻转",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.02
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.7
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 6
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-47",
+      "legacyNumericId": 47,
+      "chapterId": "chapter-5",
+      "order": 47,
+      "title": "窄区四相",
+      "instruction": "十七针 · 窄区四相",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.02
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.7
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    },
+    {
+      "id": "balanced-v2-48",
+      "legacyNumericId": 48,
+      "chapterId": "chapter-5",
+      "order": 48,
+      "title": "五相连奏",
+      "instruction": "五相循环 · 无额外修改",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.04
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 850,
+            "velocity": 0.84
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.68
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm"
+      ]
+    },
+    {
+      "id": "balanced-v2-49",
+      "legacyNumericId": 49,
+      "chapterId": "chapter-5",
+      "order": 49,
+      "title": "五相移位",
+      "instruction": "五相循环 · 每四针移相",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.04
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          },
+          {
+            "durationMs": 850,
+            "velocity": 0.84
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.68
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 4,
+          "phaseShiftMs": 500
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "modifier"
+      },
+      "tags": [
+        "modifier"
+      ]
+    },
+    {
+      "id": "balanced-v2-50",
+      "legacyNumericId": 50,
+      "chapterId": "chapter-5",
+      "order": 50,
+      "title": "全环终曲",
+      "instruction": "五相终曲 · 移相并翻转",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 750,
+            "velocity": 1.06
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.42
+          },
+          {
+            "durationMs": 850,
+            "velocity": 0.86
+          },
+          {
+            "durationMs": 1400,
+            "velocity": 0.68
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 4,
+          "phaseShiftMs": 500,
+          "flipEvery": 6
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": true,
+        "focus": "coupling"
+      },
+      "tags": [
+        "coupling"
+      ]
+    }
+  ]
+}

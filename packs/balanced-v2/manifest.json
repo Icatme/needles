@@ -7,11 +7,31 @@
   "engineCompatibility": "classic-v1",
   "difficultyModel": "nonlinear-v2",
   "chapters": [
-    { "id": "chapter-1", "order": 1, "title": "校准与留白" },
-    { "id": "chapter-2", "order": 2, "title": "分区判断" },
-    { "id": "chapter-3", "order": 3, "title": "节奏控制" },
-    { "id": "chapter-4", "order": 4, "title": "复合压力" },
-    { "id": "chapter-5", "order": 5, "title": "专家终曲" }
+    {
+      "id": "chapter-1",
+      "order": 1,
+      "title": "校准与留白"
+    },
+    {
+      "id": "chapter-2",
+      "order": 2,
+      "title": "分区判断"
+    },
+    {
+      "id": "chapter-3",
+      "order": 3,
+      "title": "节奏控制"
+    },
+    {
+      "id": "chapter-4",
+      "order": 4,
+      "title": "复合压力"
+    },
+    {
+      "id": "chapter-5",
+      "order": 5,
+      "title": "专家终曲"
+    }
   ],
   "resources": {
     "presets": "presets.json",

@@ -1,0 +1,1662 @@
+{
+  "schema": "needles.level-list/v1",
+  "levels": [
+    {
+      "id": "legacy-01",
+      "legacyNumericId": 1,
+      "chapterId": "chapter-1",
+      "order": 1,
+      "title": "校准",
+      "instruction": "匀速顺时针",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.42
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-02",
+      "legacyNumericId": 2,
+      "chapterId": "chapter-1",
+      "order": 2,
+      "title": "反向校准",
+      "instruction": "匀速逆时针",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": -0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-03",
+      "legacyNumericId": 3,
+      "chapterId": "chapter-1",
+      "order": 3,
+      "title": "单门",
+      "instruction": "避开一枚锁针",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.5
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-04",
+      "legacyNumericId": 4,
+      "chapterId": "chapter-1",
+      "order": 4,
+      "title": "双门",
+      "instruction": "处理两个分区",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.58
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-05",
+      "legacyNumericId": 5,
+      "chapterId": "chapter-1",
+      "order": 5,
+      "title": "呼吸窗",
+      "instruction": "转速平滑起伏",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1500,
+            "fromVelocity": 0.36,
+            "toVelocity": 0.68,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 1500,
+            "fromVelocity": 0.68,
+            "toVelocity": 0.36,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-06",
+      "legacyNumericId": 6,
+      "chapterId": "chapter-1",
+      "order": 6,
+      "title": "双拍转身",
+      "instruction": "每插两针反向",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z2B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.78
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 2
+        }
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-07",
+      "legacyNumericId": 7,
+      "chapterId": "chapter-1",
+      "order": 7,
+      "title": "逐针升压",
+      "instruction": "每插一针加速",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.38
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.055,
+          "maxAbsSpeed": 0.76
+        }
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-08",
+      "legacyNumericId": 8,
+      "chapterId": "chapter-1",
+      "order": 8,
+      "title": "长短拍",
+      "instruction": "一长一短双速循环",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1500,
+            "velocity": 0.38
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.78
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-09",
+      "legacyNumericId": 9,
+      "chapterId": "chapter-1",
+      "order": 9,
+      "title": "漂移钟摆",
+      "instruction": "回摆后角度继续漂移",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2200,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 1600,
+            "velocity": -0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-10",
+      "legacyNumericId": 10,
+      "chapterId": "chapter-1",
+      "order": 10,
+      "title": "基础合奏",
+      "instruction": "三相循环 · 三针反向",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z4A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 900,
+            "velocity": 0.5
+          },
+          {
+            "durationMs": 600,
+            "velocity": 0.92
+          },
+          {
+            "durationMs": 700,
+            "velocity": -0.78
+          },
+          {
+            "durationMs": 600,
+            "velocity": 0.92
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 2
+        }
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": true
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-11",
+      "legacyNumericId": 11,
+      "chapterId": "chapter-2",
+      "order": 11,
+      "title": "四窗巡航",
+      "instruction": "四区匀速巡航",
+      "objective": {
+        "insertCount": 10
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.68
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-12",
+      "legacyNumericId": 12,
+      "chapterId": "chapter-2",
+      "order": 12,
+      "title": "双速四窗",
+      "instruction": "长慢拍接短快拍",
+      "objective": {
+        "insertCount": 10
+      },
+      "layoutRef": "Z4A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 700,
+            "velocity": 0.92
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-13",
+      "legacyNumericId": 13,
+      "chapterId": "chapter-2",
+      "order": 13,
+      "title": "逆向切分",
+      "instruction": "逆向快慢切换",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": -0.82
+          },
+          {
+            "durationMs": 1400,
+            "velocity": -0.44
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-14",
+      "legacyNumericId": 14,
+      "chapterId": "chapter-2",
+      "order": 14,
+      "title": "长息四窗",
+      "instruction": "长周期平滑变速",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z4A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2100,
+            "fromVelocity": 0.35,
+            "toVelocity": 0.85,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2100,
+            "fromVelocity": 0.85,
+            "toVelocity": 0.35,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-15",
+      "legacyNumericId": 15,
+      "chapterId": "chapter-2",
+      "order": 15,
+      "title": "三针换向",
+      "instruction": "每插三针反向",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.66
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 3
+        }
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-16",
+      "legacyNumericId": 16,
+      "chapterId": "chapter-2",
+      "order": 16,
+      "title": "五区双拍",
+      "instruction": "五区等拍双速",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.45
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.85
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-17",
+      "legacyNumericId": 17,
+      "chapterId": "chapter-2",
+      "order": 17,
+      "title": "偏心长摆",
+      "instruction": "长去程 · 短回摆",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z5B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2500,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 1700,
+            "velocity": -0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-18",
+      "legacyNumericId": 18,
+      "chapterId": "chapter-2",
+      "order": 18,
+      "title": "三相穿门",
+      "instruction": "慢快中三相循环",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z5B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 900,
+            "velocity": 0.36
+          },
+          {
+            "durationMs": 700,
+            "velocity": 0.95
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.58
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-19",
+      "legacyNumericId": 19,
+      "chapterId": "chapter-2",
+      "order": 19,
+      "title": "四拍升压",
+      "instruction": "四档循环 · 逐针加速",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 900,
+            "velocity": 0.36
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.58
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.8
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.58
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.025,
+          "maxAbsSpeed": 0.98
+        }
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-20",
+      "legacyNumericId": 20,
+      "chapterId": "chapter-2",
+      "order": 20,
+      "title": "六门合奏",
+      "instruction": "四相循环 · 四针反向",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 800,
+            "velocity": 0.38
+          },
+          {
+            "durationMs": 600,
+            "velocity": 1
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.5
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.7
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 4
+        }
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": true
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-21",
+      "legacyNumericId": 21,
+      "chapterId": "chapter-3",
+      "order": 21,
+      "title": "六窗稳压",
+      "instruction": "六区高速巡航",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z6B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.74
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-22",
+      "legacyNumericId": 22,
+      "chapterId": "chapter-3",
+      "order": 22,
+      "title": "长周期呼吸",
+      "instruction": "五秒平滑呼吸",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2500,
+            "fromVelocity": 0.38,
+            "toVelocity": 0.94,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2500,
+            "fromVelocity": 0.94,
+            "toVelocity": 0.38,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-23",
+      "legacyNumericId": 23,
+      "chapterId": "chapter-3",
+      "order": 23,
+      "title": "逐针提速",
+      "instruction": "密度上升并逐针加速",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z6B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.44
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.04,
+          "maxAbsSpeed": 0.96
+        }
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-24",
+      "legacyNumericId": 24,
+      "chapterId": "chapter-3",
+      "order": 24,
+      "title": "二进一退",
+      "instruction": "两次前进夹一次回摆",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1400,
+            "velocity": 0.78
+          },
+          {
+            "durationMs": 900,
+            "velocity": -0.45
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.6
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-25",
+      "legacyNumericId": 25,
+      "chapterId": "chapter-3",
+      "order": 25,
+      "title": "双峰巡航",
+      "instruction": "一轮出现两次快拍",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z6B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 700,
+            "velocity": 0.95
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.38
+          },
+          {
+            "durationMs": 700,
+            "velocity": 0.95
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.52
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-26",
+      "legacyNumericId": 26,
+      "chapterId": "chapter-3",
+      "order": 26,
+      "title": "七门长摆",
+      "instruction": "七区长周期回摆",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.7
+          },
+          {
+            "durationMs": 2000,
+            "velocity": -0.44
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-27",
+      "legacyNumericId": 27,
+      "chapterId": "chapter-3",
+      "order": 27,
+      "title": "击中移相",
+      "instruction": "每两针跳过半拍",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1100,
+            "velocity": 0.4
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.96
+          },
+          {
+            "durationMs": 1300,
+            "velocity": 0.58
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 2,
+          "phaseShiftMs": 700
+        }
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-28",
+      "legacyNumericId": 28,
+      "chapterId": "chapter-3",
+      "order": 28,
+      "title": "三针回摆",
+      "instruction": "漂移回摆 · 三针反向",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2000,
+            "velocity": 0.78
+          },
+          {
+            "durationMs": 1400,
+            "velocity": -0.46
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 3
+        }
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-29",
+      "legacyNumericId": 29,
+      "chapterId": "chapter-3",
+      "order": 29,
+      "title": "五相巡航",
+      "instruction": "五种拍长与速度",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 600,
+            "velocity": 0.32
+          },
+          {
+            "durationMs": 500,
+            "velocity": 1.05
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 700,
+            "velocity": -0.42
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 0.76
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-30",
+      "legacyNumericId": 30,
+      "chapterId": "chapter-3",
+      "order": 30,
+      "title": "七门终测",
+      "instruction": "五相循环 · 五针反向",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 600,
+            "velocity": 1.1
+          },
+          {
+            "durationMs": 800,
+            "velocity": -0.58
+          },
+          {
+            "durationMs": 500,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 1200,
+            "velocity": -0.3
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 5
+        }
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": true
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-31",
+      "legacyNumericId": 31,
+      "chapterId": "chapter-4",
+      "order": 31,
+      "title": "逆向密环",
+      "instruction": "高密度逆向巡航",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": -0.82
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-32",
+      "legacyNumericId": 32,
+      "chapterId": "chapter-4",
+      "order": 32,
+      "title": "八门巡航",
+      "instruction": "八区高速巡航",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.76
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-33",
+      "legacyNumericId": 33,
+      "chapterId": "chapter-4",
+      "order": 33,
+      "title": "五针换向",
+      "instruction": "逐针加速 · 五针反向",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.42
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.032,
+          "maxAbsSpeed": 0.96,
+          "flipEvery": 5
+        }
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-34",
+      "legacyNumericId": 34,
+      "chapterId": "chapter-4",
+      "order": 34,
+      "title": "短窗切换",
+      "instruction": "短慢拍接短快拍",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 900,
+            "velocity": 0.4
+          },
+          {
+            "durationMs": 550,
+            "velocity": 1.05
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-35",
+      "legacyNumericId": 35,
+      "chapterId": "chapter-4",
+      "order": 35,
+      "title": "双针错拍",
+      "instruction": "每两针改变循环起点",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1100,
+            "velocity": 0.46
+          },
+          {
+            "durationMs": 700,
+            "velocity": 0.96
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.4
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 2,
+          "phaseShiftMs": 500
+        }
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-36",
+      "legacyNumericId": 36,
+      "chapterId": "chapter-4",
+      "order": 36,
+      "title": "长环三相",
+      "instruction": "长周期三相循环",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2000,
+            "velocity": 0.44
+          },
+          {
+            "durationMs": 1100,
+            "velocity": 0.95
+          },
+          {
+            "durationMs": 1500,
+            "velocity": -0.38
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-37",
+      "legacyNumericId": 37,
+      "chapterId": "chapter-4",
+      "order": 37,
+      "title": "过零呼吸",
+      "instruction": "平滑减速后自然反向",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z7A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2400,
+            "fromVelocity": -0.52,
+            "toVelocity": 1,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2400,
+            "fromVelocity": 1,
+            "toVelocity": -0.52,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-38",
+      "legacyNumericId": 38,
+      "chapterId": "chapter-4",
+      "order": 38,
+      "title": "四相变奏",
+      "instruction": "四相短循环",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 750,
+            "velocity": 0.35
+          },
+          {
+            "durationMs": 550,
+            "velocity": 1.15
+          },
+          {
+            "durationMs": 900,
+            "velocity": -0.55
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.72
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-39",
+      "legacyNumericId": 39,
+      "chapterId": "chapter-4",
+      "order": 39,
+      "title": "长摆短冲",
+      "instruction": "长慢拍中夹短冲刺",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 550,
+            "velocity": 1.18
+          },
+          {
+            "durationMs": 1700,
+            "velocity": -0.42
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-40",
+      "legacyNumericId": 40,
+      "chapterId": "chapter-4",
+      "order": 40,
+      "title": "密环考试",
+      "instruction": "五相密环 · 四针反向",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 800,
+            "velocity": 0.4
+          },
+          {
+            "durationMs": 500,
+            "velocity": 1.15
+          },
+          {
+            "durationMs": 700,
+            "velocity": -0.58
+          },
+          {
+            "durationMs": 900,
+            "velocity": 0.76
+          },
+          {
+            "durationMs": 1100,
+            "velocity": -0.32
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 4
+        }
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": true
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-41",
+      "legacyNumericId": 41,
+      "chapterId": "chapter-5",
+      "order": 41,
+      "title": "八窗逆流",
+      "instruction": "高密度逆向巡航",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": -0.92
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-42",
+      "legacyNumericId": 42,
+      "chapterId": "chapter-5",
+      "order": 42,
+      "title": "细密双速",
+      "instruction": "高密度短拍双速",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 850,
+            "velocity": 0.48
+          },
+          {
+            "durationMs": 550,
+            "velocity": 1.16
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-43",
+      "legacyNumericId": 43,
+      "chapterId": "chapter-5",
+      "order": 43,
+      "title": "三针移相",
+      "instruction": "四相循环 · 三针移相",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 750,
+            "velocity": 0.4
+          },
+          {
+            "durationMs": 600,
+            "velocity": 1.16
+          },
+          {
+            "durationMs": 1000,
+            "velocity": -0.5
+          },
+          {
+            "durationMs": 850,
+            "velocity": 0.78
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 3,
+          "phaseShiftMs": 800
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-44",
+      "legacyNumericId": 44,
+      "chapterId": "chapter-5",
+      "order": 44,
+      "title": "长周期四相",
+      "instruction": "长周期四相循环",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 1000,
+            "velocity": 1.08
+          },
+          {
+            "durationMs": 1400,
+            "velocity": -0.48
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.7
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-45",
+      "legacyNumericId": 45,
+      "chapterId": "chapter-5",
+      "order": 45,
+      "title": "阶梯钟摆",
+      "instruction": "漂移回摆 · 逐针升压",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1800,
+            "velocity": 0.62
+          },
+          {
+            "durationMs": 1200,
+            "velocity": -0.38
+          }
+        ],
+        "shotModifier": {
+          "speedStep": 0.018,
+          "maxAbsSpeed": 1.3
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-46",
+      "legacyNumericId": 46,
+      "chapterId": "chapter-5",
+      "order": 46,
+      "title": "平滑过零",
+      "instruction": "平滑减速并跨过零点",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "fromVelocity": -0.7,
+            "toVelocity": 1.06,
+            "easing": "sine"
+          },
+          {
+            "durationMs": 2600,
+            "fromVelocity": 1.06,
+            "toVelocity": -0.7,
+            "easing": "sine"
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-47",
+      "legacyNumericId": 47,
+      "chapterId": "chapter-5",
+      "order": 47,
+      "title": "异步门阵",
+      "instruction": "四相循环 · 移相并反向",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 1000,
+            "velocity": 0.38
+          },
+          {
+            "durationMs": 650,
+            "velocity": 1.18
+          },
+          {
+            "durationMs": 850,
+            "velocity": -0.56
+          },
+          {
+            "durationMs": 1200,
+            "velocity": 0.72
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 2,
+          "phaseShiftMs": 470,
+          "flipEvery": 5
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-48",
+      "legacyNumericId": 48,
+      "chapterId": "chapter-5",
+      "order": 48,
+      "title": "双层节拍",
+      "instruction": "两轮前进接一轮回摆",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 700,
+            "velocity": 0.45
+          },
+          {
+            "durationMs": 500,
+            "velocity": 1.15
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.65
+          },
+          {
+            "durationMs": 700,
+            "velocity": 0.45
+          },
+          {
+            "durationMs": 500,
+            "velocity": 1.15
+          },
+          {
+            "durationMs": 800,
+            "velocity": 0.65
+          },
+          {
+            "durationMs": 700,
+            "velocity": -0.2475
+          },
+          {
+            "durationMs": 500,
+            "velocity": -0.6325
+          },
+          {
+            "durationMs": 800,
+            "velocity": -0.3575
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-49",
+      "legacyNumericId": 49,
+      "chapterId": "chapter-5",
+      "order": 49,
+      "title": "五拍连锁",
+      "instruction": "五相循环 · 四针反向",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 550,
+            "velocity": 0.35
+          },
+          {
+            "durationMs": 450,
+            "velocity": 1.18
+          },
+          {
+            "durationMs": 700,
+            "velocity": -0.62
+          },
+          {
+            "durationMs": 650,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 900,
+            "velocity": -0.28
+          }
+        ],
+        "shotModifier": {
+          "flipEvery": 4
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false
+      },
+      "tags": []
+    },
+    {
+      "id": "legacy-50",
+      "legacyNumericId": 50,
+      "chapterId": "chapter-5",
+      "order": 50,
+      "title": "全环终曲",
+      "instruction": "五相终曲 · 移相并反向",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z8B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 800,
+            "velocity": 0.38
+          },
+          {
+            "durationMs": 550,
+            "velocity": 1.2
+          },
+          {
+            "durationMs": 900,
+            "velocity": -0.6
+          },
+          {
+            "durationMs": 650,
+            "velocity": 0.9
+          },
+          {
+            "durationMs": 1500,
+            "velocity": -0.26
+          }
+        ],
+        "shotModifier": {
+          "phaseShiftEvery": 2,
+          "phaseShiftMs": 550,
+          "flipEvery": 4
+        }
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": true
+      },
+      "tags": []
+    }
+  ]
+}
