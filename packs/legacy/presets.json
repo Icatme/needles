@@ -1,0 +1,21 @@
+{
+  "schema": "needles.level-presets/v1",
+  "layouts": {
+    "Z0": { "obstacleAngles": [] },
+    "Z1": { "obstacleAngles": [225] },
+    "Z2A": { "obstacleAngles": [348.75, 191.25] },
+    "Z2B": { "obstacleAngles": [11.25, 281.25] },
+    "Z3A": { "obstacleAngles": [337.5, 146.25, 236.25] },
+    "Z3B": { "obstacleAngles": [11.25, 180, 281.25] },
+    "Z4A": { "obstacleAngles": [348.75, 146.25, 225, 303.75] },
+    "Z4B": { "obstacleAngles": [11.25, 146.25, 236.25, 315] },
+    "Z5A": { "obstacleAngles": [348.75, 45, 146.25, 225, 292.5] },
+    "Z5B": { "obstacleAngles": [11.25, 135, 202.5, 270, 326.25] },
+    "Z6A": { "obstacleAngles": [348.75, 45, 135, 191.25, 247.5, 303.75] },
+    "Z6B": { "obstacleAngles": [11.25, 56.25, 146.25, 202.5, 258.75, 315] },
+    "Z7A": { "obstacleAngles": [348.75, 33.75, 135, 180, 225, 270, 315] },
+    "Z7B": { "obstacleAngles": [11.25, 45, 146.25, 191.25, 236.25, 281.25, 326.25] },
+    "Z8A": { "obstacleAngles": [348.75, 33.75, 56.25, 135, 180, 225, 270, 315] },
+    "Z8B": { "obstacleAngles": [11.25, 45, 135, 168.75, 213.75, 258.75, 303.75, 337.5] }
+  }
+}
