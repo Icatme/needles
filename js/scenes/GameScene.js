@@ -12,24 +12,19 @@ class GameScene extends Phaser.Scene {
             mode: this.route.mode
         });
         this.themeManager = new ThemeManager();
-        this.collisionManager = new CollisionManager();
     }
 
     create() {
         this.levelConfig = this.levelManager.startLevel(this.route.levelId);
         this.route = this.levelManager.getCurrentRoute();
         this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig);
+        this.session = new GameSession(this.levelConfig);
 
-        this.gameState = 'playing';
         this.insertedNeedles = [];
         this.obstacles = [];
         this.remainingNeedles = [];
         this.currentNeedle = null;
-        this.canShoot = true;
-        this.rhythmManager = new RhythmManager(
-            this.levelConfig.rhythm,
-            this.levelConfig.needleCount
-        );
+        this.completionHandled = false;
 
         this.createBackground();
         this.wheel = new Wheel(
@@ -39,7 +34,7 @@ class GameScene extends Phaser.Scene {
             CONSTANTS.WHEEL.RADIUS,
             this.levelVisual
         );
-        const initialRhythm = this.rhythmManager.getSnapshotAt(0, 0);
+        const initialRhythm = this.session.advance(0).rhythm;
 
         this.createObstacles();
         this.uiManager = new UIManager(this, this.levelConfig.needleCount);
@@ -60,9 +55,8 @@ class GameScene extends Phaser.Scene {
     }
 
     createObstacles() {
-        this.levelConfig.layout.obstacleAngles.forEach(degrees => {
-            const angle = degrees * Math.PI / 180;
-            const obstacle = new Obstacle(this, angle, this.levelVisual);
+        this.session.getSnapshot().obstacles.forEach(model => {
+            const obstacle = new Obstacle(this, model.angle, this.levelVisual);
             obstacle.updatePosition(this.wheel);
             this.obstacles.push(obstacle);
         });
@@ -77,42 +71,49 @@ class GameScene extends Phaser.Scene {
     }
 
     prepareNextNeedle() {
-        if (this.remainingNeedles.length === 0) {
+        const snapshot = this.session.getSnapshot();
+        if (snapshot.status === 'completed' || snapshot.remainingCount === 0) {
             this.onLevelComplete();
             return;
         }
+        if (snapshot.status !== 'ready') return;
+        if (this.remainingNeedles.length === 0) {
+            throw new Error('GameSession and needle view queue are out of sync');
+        }
 
         this.currentNeedle = this.remainingNeedles.shift();
+        if (this.currentNeedle.id !== snapshot.currentNeedleNumber) {
+            throw new Error(
+                `Needle view ${this.currentNeedle.id} does not match session `
+                    + snapshot.currentNeedleNumber
+            );
+        }
         this.currentNeedle.setReadyPosition(
             CONSTANTS.WIDTH / 2,
             CONSTANTS.NEEDLE.READY_Y
         );
-        this.uiManager.updateRemaining(this.remainingNeedles.length + 1);
-        this.canShoot = true;
+        this.uiManager.updateRemaining(snapshot.remainingCount);
     }
 
     onScreenClick() {
-        if (!this.canShoot || this.gameState !== 'playing' || !this.currentNeedle) {
-            return;
-        }
+        if (!this.currentNeedle) return;
+        const shot = this.session.beginShot();
+        if (!shot.accepted) return;
 
-        this.canShoot = false;
         const impactEdge = this.wheel.getImpactEdgePosition();
         const exposedLength = CONSTANTS.NEEDLE.LENGTH - CONSTANTS.NEEDLE.INSERT_DEPTH;
         const targetX = impactEdge.x + Math.cos(impactEdge.angle) * exposedLength;
         const targetY = impactEdge.y + Math.sin(impactEdge.angle) * exposedLength;
-
         this.currentNeedle.launch(targetX, targetY);
-        this.gameState = 'animating';
     }
 
     update(time, delta) {
-        if (this.gameState === 'failed') return;
+        if (!this.session || this.session.getSnapshot().status === 'failed') return;
 
         const frameDelta = Math.min(delta, 50);
-        const rhythm = this.rhythmManager.advance(frameDelta);
-        this.wheel.rotateBy(rhythm.rotationDelta);
-        this.uiManager.updateRhythm(rhythm);
+        const frame = this.session.advance(frameDelta);
+        this.wheel.rotateBy(frame.rotationDelta);
+        this.uiManager.updateRhythm(frame.rhythm);
         this.obstacles.forEach(obstacle => obstacle.updatePosition(this.wheel));
         this.insertedNeedles.forEach(needle => needle.updateOnWheel(this.wheel));
 
@@ -123,31 +124,28 @@ class GameScene extends Phaser.Scene {
     }
 
     onNeedleReachedWheel() {
-        const needleAngle = CONSTANTS.WHEEL.IMPACT_ANGLE - this.wheel.rotation;
-        this.currentNeedle.attachToWheel(this.wheel, needleAngle);
+        const outcome = this.session.resolveImpact();
+        this.currentNeedle.attachToWheel(this.wheel, outcome.wheelAngle);
 
-        const collision = this.collisionManager.checkAllCollisions(
-            this.currentNeedle,
-            this.insertedNeedles,
-            this.obstacles
-        );
-
-        if (collision.collided) {
-            this.onGameOver();
+        if (outcome.collided) {
+            this.onGameOver(outcome);
         } else {
-            this.onNeedleInserted();
+            this.onNeedleInserted(outcome);
         }
     }
 
-    onNeedleInserted() {
+    onNeedleInserted(outcome) {
         this.insertedNeedles.push(this.currentNeedle);
-        this.rhythmManager.recordSuccessfulInsert();
         this.currentNeedle.playInsertionCatchlight();
         this.createImpactFeedback();
-        this.gameState = 'playing';
 
-        this.time.delayedCall(200, () => {
-            this.prepareNextNeedle();
+        this.time.delayedCall(CONSTANTS.DIFFICULTY.INSERT_LOCK_MS, () => {
+            if (outcome.completed) {
+                this.onLevelComplete();
+                return;
+            }
+            const release = this.session.releaseShotLock();
+            if (release.released) this.prepareNextNeedle();
         });
     }
 
@@ -170,8 +168,7 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    onGameOver() {
-        this.gameState = 'failed';
+    onGameOver(outcome) {
         if (!SceneUI.prefersReducedMotion()) {
             this.cameras.main.shake(220, 0.006);
         }
@@ -183,14 +180,16 @@ class GameScene extends Phaser.Scene {
                 level: this.levelConfig.order,
                 success: false,
                 levelName: this.levelConfig.name,
-                insertedCount: this.insertedNeedles.length,
+                insertedCount: outcome.snapshot.insertedCount,
                 totalCount: this.levelConfig.needleCount
             });
         });
     }
 
     onLevelComplete() {
-        this.gameState = 'success';
+        if (this.completionHandled) return;
+        if (this.session.getSnapshot().status !== 'completed') return;
+        this.completionHandled = true;
         this.levelManager.completeLevel();
         this.createCelebration();
 
@@ -289,5 +288,6 @@ class GameScene extends Phaser.Scene {
         this.insertedNeedles = [];
         this.remainingNeedles = [];
         this.obstacles = [];
+        this.session = null;
     }
 }
