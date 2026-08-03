@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/playtest-report.v1.schema.json",
+  "title": "Needles Playtest Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "generatedAt",
+    "minSamples",
+    "sourceCount",
+    "attemptCount",
+    "summary",
+    "packs",
+    "comparisons"
+  ],
+  "properties": {
+    "schema": { "const": "needles.playtest-report/v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "minSamples": { "type": "integer", "minimum": 1 },
+    "sourceCount": { "type": "integer", "minimum": 0 },
+    "attemptCount": { "type": "integer", "minimum": 0 },
+    "summary": {
+      "type": "object",
+      "required": [
+        "packCount",
+        "levelCount",
+        "successes",
+        "failures",
+        "completionRate",
+        "medianSuccessDurationMs"
+      ]
+    },
+    "packs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "packId",
+          "packVersions",
+          "levelCount",
+          "attemptCount",
+          "usableLevelCount",
+          "levels",
+          "adjacentJumps"
+        ],
+        "properties": {
+          "packId": { "type": "string" },
+          "packVersions": { "type": "array", "items": { "type": "string" } },
+          "levelCount": { "type": "integer", "minimum": 0 },
+          "attemptCount": { "type": "integer", "minimum": 0 },
+          "usableLevelCount": { "type": "integer", "minimum": 0 },
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "packId",
+                "levelId",
+                "sampleStatus",
+                "attempts",
+                "successes",
+                "failures",
+                "completionRate",
+                "failureRate",
+                "predictedRank",
+                "observedRank",
+                "rankDelta"
+              ],
+              "properties": {
+                "sampleStatus": { "enum": ["usable", "low-sample"] },
+                "completionRate": { "type": "number", "minimum": 0, "maximum": 1 },
+                "failureRate": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            }
+          },
+          "adjacentJumps": { "type": "array" }
+        }
+      }
+    },
+    "comparisons": { "type": "array" }
+  }
+}
