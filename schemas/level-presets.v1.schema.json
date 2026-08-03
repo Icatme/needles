@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/level-presets.v1.schema.json",
+  "title": "Needles Level Presets v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "layouts"],
+  "properties": {
+    "schema": { "const": "needles.level-presets/v1" },
+    "layouts": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["obstacleAngles"],
+        "properties": {
+          "obstacleAngles": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 360
+            }
+          }
+        }
+      }
+    }
+  }
+}
