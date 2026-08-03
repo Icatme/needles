@@ -57,7 +57,7 @@ function resolvePack(packId) {
 test('built-in skins are independent registry entries, not level catalogs', () => {
     const skins = context.VISUAL_SKIN_REGISTRY.getAll();
     assert.equal(skins.length, 2);
-    assert.deepEqual(skins.map(skin => skin.id), [
+    assert.deepEqual(Array.from(skins, skin => skin.id), [
         'clockwork-observatory',
         'gilded-jewel-box'
     ]);
