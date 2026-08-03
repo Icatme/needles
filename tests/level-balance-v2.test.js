@@ -183,17 +183,21 @@ test('level manager persists pack selection and test mode does not unlock progre
     assert.equal(reloaded.activePackId, 'legacy');
 });
 
-test('the browser entrypoint registers the visible level laboratory', () => {
+test('the browser entrypoint discovers packs without concrete level scripts', () => {
     const index = fs.readFileSync(path.join(projectRoot, 'index.html'), 'utf8');
+    const boot = fs.readFileSync(path.join(projectRoot, 'js/scenes/BootScene.js'), 'utf8');
     const main = fs.readFileSync(path.join(projectRoot, 'js/main.js'), 'utf8');
     const selector = fs.readFileSync(
         path.join(projectRoot, 'js/scenes/LevelSelectScene.js'),
         'utf8'
     );
 
-    assert.match(index, /balancedLevels\.js/);
+    assert.doesNotMatch(index, /js\/data\/balancedLevels\.js/);
+    assert.doesNotMatch(index, /js\/data\/levels\.js/);
+    assert.match(index, /js\/packs\/PackLoader\.js/);
     assert.match(index, /DifficultyModelV2\.js/);
     assert.match(index, /LevelSelectScene\.js/);
+    assert.match(boot, /packs\/index\.json/);
     assert.match(main, /EnhancedMenuScene/);
     assert.match(main, /LevelSelectScene/);
     assert.match(selector, /needle_game_test_mode/);
