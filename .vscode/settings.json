@@ -1,0 +1,27 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["/packs/index.json"],
+      "url": "./schemas/pack-index.v1.schema.json"
+    },
+    {
+      "fileMatch": ["/packs/*/manifest.json"],
+      "url": "./schemas/level-pack.v1.schema.json"
+    },
+    {
+      "fileMatch": ["/packs/*/presets.json"],
+      "url": "./schemas/level-presets.v1.schema.json"
+    },
+    {
+      "fileMatch": ["/packs/*/levels.json"],
+      "url": "./schemas/level-list.v1.schema.json"
+    },
+    {
+      "fileMatch": ["**/needles-playtests-*.json"],
+      "url": "./schemas/playtest-export.v1.schema.json"
+    }
+  ],
+  "files.associations": {
+    "*.needlepack.json": "json"
+  }
+}
