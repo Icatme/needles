@@ -1,8 +1,9 @@
-'use strict';
+
 
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { resolveContainedPath } = require('./path-safety');
 const {
     createSchemaValidators,
     createRuntimeValidator,
@@ -18,10 +19,22 @@ function loadPack(rootDirectory, packId) {
     const entry = index.packs.find(candidate => candidate.id === packId);
     if (!entry) throw new Error(`Unknown pack ${packId}`);
 
-    const manifestPath = path.resolve(path.dirname(indexPath), entry.manifest);
+    const manifestPath = resolveContainedPath(
+        root,
+        path.relative(root, path.resolve(path.dirname(indexPath), entry.manifest)),
+        `manifest for ${packId}`
+    );
     const manifest = readJson(manifestPath);
-    const presetsPath = path.resolve(path.dirname(manifestPath), manifest.resources.presets);
-    const levelsPath = path.resolve(path.dirname(manifestPath), manifest.resources.levels);
+    const presetsPath = resolveContainedPath(
+        root,
+        path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.presets)),
+        `presets for ${packId}`
+    );
+    const levelsPath = resolveContainedPath(
+        root,
+        path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.levels)),
+        `levels for ${packId}`
+    );
     const presets = readJson(presetsPath);
     const levelList = readJson(levelsPath);
     const runtime = createGameRuntime(root);
@@ -299,17 +312,30 @@ function createStarterPack(rootDirectory, packId, options = {}) {
 
 function loadPackReference(rootDirectory, reference) {
     const root = path.resolve(rootDirectory);
-    const candidate = path.resolve(root, reference);
+    const candidate = resolveContainedPath(root, reference, 'pack reference');
     if (!fs.existsSync(candidate)) return loadPack(root, reference);
-    const directory = fs.statSync(candidate).isDirectory()
-        ? candidate
-        : path.dirname(candidate);
-    const manifestPath = fs.statSync(candidate).isDirectory()
-        ? path.join(directory, 'manifest.json')
-        : candidate;
+    const candidateStats = fs.statSync(candidate);
+    const directory = candidateStats.isDirectory() ? candidate : path.dirname(candidate);
+    const manifestPath = resolveContainedPath(
+        root,
+        path.relative(root, candidateStats.isDirectory()
+            ? path.join(directory, 'manifest.json')
+            : candidate),
+        'pack manifest'
+    );
     const manifest = readJson(manifestPath);
-    const presets = readJson(path.join(directory, manifest.resources.presets));
-    const levelList = readJson(path.join(directory, manifest.resources.levels));
+    const presetsPath = resolveContainedPath(
+        root,
+        path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.presets)),
+        'pack presets'
+    );
+    const levelsPath = resolveContainedPath(
+        root,
+        path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.levels)),
+        'pack levels'
+    );
+    const presets = readJson(presetsPath);
+    const levelList = readJson(levelsPath);
     const schemas = createSchemaValidators(root);
     if (!schemas.manifest(manifest) || !schemas.presets(presets) || !schemas.levels(levelList)) {
         throw new Error(`Pack reference ${reference} fails JSON Schema validation`);

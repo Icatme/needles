@@ -2,6 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const { URL } = require('node:url');
+const { resolveContainedPath } = require('./lib/path-safety');
 
 const root = path.resolve(process.cwd());
 const requestedPort = Number(process.argv[2] || process.env.PORT || 4173);
@@ -34,12 +35,11 @@ function resolveRequestPath(requestURL) {
   const parsed = new URL(requestURL, `http://${host}:${port}`);
   const decoded = decodeURIComponent(parsed.pathname);
   const relativePath = decoded === '/' ? '/index.html' : decoded;
-  const filePath = path.resolve(root, `.${relativePath}`);
-
-  if (filePath !== root && !filePath.startsWith(`${root}${path.sep}`)) {
+  try {
+    return resolveContainedPath(root, relativePath.slice(1), 'request path');
+  } catch (error) {
     return null;
   }
-  return filePath;
 }
 
 function serveFile(request, response, filePath) {
@@ -53,7 +53,15 @@ function serveFile(request, response, filePath) {
       ? path.join(filePath, 'index.html')
       : filePath;
 
-    fs.readFile(resolvedFile, (readError, content) => {
+    let safeFile;
+    try {
+      safeFile = resolveContainedPath(root, path.relative(root, resolvedFile), 'served file');
+    } catch (error) {
+      send(response, 403, 'Forbidden');
+      return;
+    }
+
+    fs.readFile(safeFile, (readError, content) => {
       if (readError) {
         send(response, readError.code === 'ENOENT' ? 404 : 500, 'Not found');
         return;

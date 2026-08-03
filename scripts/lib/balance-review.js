@@ -1,4 +1,4 @@
-'use strict';
+
 
 const {
     analyzePlaytests
@@ -19,7 +19,18 @@ function buildBalanceReview(rootDirectory, campaignPath, sources, options = {}) 
         skinId: options.skinId
     });
     const status = evaluateCampaign(loaded, sources);
-    const analysis = analyzePlaytests(sources, {
+    const campaignSources = sources.map(source => {
+        const bundle = source.bundle || source;
+        const filtered = {
+            ...bundle,
+            attempts: bundle.attempts.filter(attempt => (
+                String(attempt.packId) === loaded.campaign.packId
+                && String(attempt.packVersion || '') === loaded.campaign.packVersion
+            ))
+        };
+        return source.bundle ? { ...source, bundle: filtered } : filtered;
+    });
+    const analysis = analyzePlaytests(campaignSources, {
         minSamples: options.minSamples
             || loaded.campaign.pilotTargets.attemptsPerLevel,
         clock: options.clock

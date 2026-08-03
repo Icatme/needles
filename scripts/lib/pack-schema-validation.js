@@ -1,8 +1,9 @@
-'use strict';
+
 
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { resolveContainedPath } = require('./path-safety');
 const Ajv2020 = require('ajv/dist/2020');
 
 const SCHEMA_FILES = Object.freeze({
@@ -23,17 +24,23 @@ function validatePackRepository(rootDirectory) {
     runtime.validateIndex(index);
 
     const packs = index.packs.map(entry => {
-        const manifestPath = path.resolve(path.dirname(indexPath), entry.manifest);
+        const manifestPath = resolveContainedPath(
+            root,
+            path.relative(root, path.resolve(path.dirname(indexPath), entry.manifest)),
+            `manifest for ${entry.id}`
+        );
         const manifest = readJson(manifestPath);
         assertSchema(validators.manifest, manifest, relative(root, manifestPath));
 
-        const presetsPath = path.resolve(
-            path.dirname(manifestPath),
-            manifest.resources.presets
+        const presetsPath = resolveContainedPath(
+            root,
+            path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.presets)),
+            `presets for ${entry.id}`
         );
-        const levelsPath = path.resolve(
-            path.dirname(manifestPath),
-            manifest.resources.levels
+        const levelsPath = resolveContainedPath(
+            root,
+            path.relative(root, path.resolve(path.dirname(manifestPath), manifest.resources.levels)),
+            `levels for ${entry.id}`
         );
         const presets = readJson(presetsPath);
         const levels = readJson(levelsPath);

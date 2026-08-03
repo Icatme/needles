@@ -1,4 +1,4 @@
-'use strict';
+
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -53,6 +53,17 @@ function loadCampaign(rootDirectory, campaignPath) {
     let comparison = null;
     if (campaign.comparisonPackId) {
         comparison = loadPack(root, campaign.comparisonPackId);
+        const comparisonOrders = new Set(
+            comparison.resolved.levels.map(level => level.order)
+        );
+        campaign.anchors.forEach(anchor => {
+            if (!comparisonOrders.has(anchor.order)) {
+                throw new Error(
+                    `Campaign comparison pack ${campaign.comparisonPackId}`
+                    + ` is missing level order ${anchor.order}`
+                );
+            }
+        });
     }
 
     return {

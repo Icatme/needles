@@ -86,17 +86,31 @@
       },
       "oneOf": [
         {
+          "properties": { "velocity": {} },
           "required": ["velocity"],
           "not": {
             "anyOf": [
-              { "required": ["fromVelocity"] },
-              { "required": ["toVelocity"] }
+              {
+                "properties": { "fromVelocity": {} },
+                "required": ["fromVelocity"]
+              },
+              {
+                "properties": { "toVelocity": {} },
+                "required": ["toVelocity"]
+              }
             ]
           }
         },
         {
+          "properties": {
+            "fromVelocity": {},
+            "toVelocity": {}
+          },
           "required": ["fromVelocity", "toVelocity"],
-          "not": { "required": ["velocity"] }
+          "not": {
+            "properties": { "velocity": {} },
+            "required": ["velocity"]
+          }
         }
       ]
     },
