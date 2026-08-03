@@ -5,15 +5,24 @@
       "url": "./schemas/pack-index.v1.schema.json"
     },
     {
-      "fileMatch": ["/packs/*/manifest.json"],
+      "fileMatch": [
+        "/packs/*/manifest.json",
+        "/examples/*/manifest.json"
+      ],
       "url": "./schemas/level-pack.v1.schema.json"
     },
     {
-      "fileMatch": ["/packs/*/presets.json"],
+      "fileMatch": [
+        "/packs/*/presets.json",
+        "/examples/*/presets.json"
+      ],
       "url": "./schemas/level-presets.v1.schema.json"
     },
     {
-      "fileMatch": ["/packs/*/levels.json"],
+      "fileMatch": [
+        "/packs/*/levels.json",
+        "/examples/*/levels.json"
+      ],
       "url": "./schemas/level-list.v1.schema.json"
     },
     {
