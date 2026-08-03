@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/balance-review.v1.schema.json",
+  "title": "Needles Balance Review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "generatedAt",
+    "campaignId",
+    "packId",
+    "packVersion",
+    "pilotTargets",
+    "sourceCount",
+    "matchingAttemptCount",
+    "readyAnchorCount",
+    "anchorCount",
+    "dataGate",
+    "methodology",
+    "collectionQueue",
+    "reviewQueue",
+    "anchors"
+  ],
+  "properties": {
+    "schema": { "const": "needles.balance-review/v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "campaignId": { "type": "string" },
+    "packId": { "type": "string" },
+    "packVersion": { "type": "string" },
+    "pilotTargets": {
+      "type": "object",
+      "required": ["attemptsPerLevel", "sourcesPerLevel"]
+    },
+    "sourceCount": { "type": "integer", "minimum": 0 },
+    "matchingAttemptCount": { "type": "integer", "minimum": 0 },
+    "readyAnchorCount": { "type": "integer", "minimum": 0 },
+    "anchorCount": { "type": "integer", "minimum": 1 },
+    "dataGate": { "enum": ["collect-more-data", "pilot-complete"] },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collectionSort", "reviewSort", "parameterChangesGenerated"],
+      "properties": {
+        "collectionSort": { "type": "array", "items": { "type": "string" } },
+        "reviewSort": { "type": "array", "items": { "type": "string" } },
+        "parameterChangesGenerated": { "const": false }
+      }
+    },
+    "collectionQueue": { "type": "array" },
+    "reviewQueue": { "type": "array" },
+    "anchors": { "type": "array" }
+  }
+}
