@@ -1,13 +1,6 @@
 name: Export level packs
 
 on:
-  pull_request:
-    paths:
-      - 'js/data/levels.js'
-      - 'js/data/balancedLevels.js'
-      - 'packs/**'
-      - 'scripts/export-level-packs.js'
-      - '.github/workflows/export-level-packs.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,11 +9,14 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
       - name: Verify committed JSON packs match migration sources
         run: node scripts/export-level-packs.js --check
       - name: Parse generated JSON
