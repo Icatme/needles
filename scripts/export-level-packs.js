@@ -3,6 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
+const checkOnly = process.argv.includes('--check');
 
 function evaluate(relativePath, context, exports) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -12,8 +13,21 @@ function evaluate(relativePath, context, exports) {
 
 function writeJson(relativePath, value) {
     const target = path.join(root, relativePath);
+    const content = `${JSON.stringify(value, null, 2)}\n`;
+
+    if (checkOnly) {
+        if (!fs.existsSync(target)) {
+            throw new Error(`Generated pack file is missing: ${relativePath}`);
+        }
+        const existing = fs.readFileSync(target, 'utf8');
+        if (existing !== content) {
+            throw new Error(`Generated pack file is stale: ${relativePath}`);
+        }
+        return;
+    }
+
     fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, `${JSON.stringify(value, null, 2)}\n`);
+    fs.writeFileSync(target, content);
 }
 
 function stableLevelId(packId, numericId) {
@@ -113,4 +127,7 @@ writeJson('packs/index.json', {
     }))
 });
 
-console.log(`Exported ${packs.length} packs and ${packs.reduce((sum, pack) => sum + pack.levels.length, 0)} levels.`);
+console.log(
+    `${checkOnly ? 'Verified' : 'Exported'} ${packs.length} packs and `
+        + `${packs.reduce((sum, pack) => sum + pack.levels.length, 0)} levels.`
+);
