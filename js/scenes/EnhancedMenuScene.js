@@ -2,7 +2,9 @@ class EnhancedMenuScene extends MenuScene {
     create() {
         super.create();
         this.input.keyboard.once('keydown-L', () => {
-            this.scene.start('LevelSelectScene');
+            APP_CONTEXT.router.startLevelBrowser(this, {
+                packId: this.levelManager.activePackId
+            });
         });
     }
 
@@ -30,7 +32,7 @@ class EnhancedMenuScene extends MenuScene {
         const value = this.add.text(
             82,
             410,
-            `第 ${this.levelManager.maxUnlockedLevel} 关 · ${currentConfig.name}`,
+            `第 ${currentConfig.order} 关 · ${currentConfig.name}`,
             {
                 fontFamily: ui.DISPLAY_FONT,
                 fontSize: '24px',
@@ -53,18 +55,24 @@ class EnhancedMenuScene extends MenuScene {
 
     createButtons() {
         const ui = SceneUI.getPalette();
-        const hasProgress = this.levelManager.maxUnlockedLevel > 1;
+        const resume = APP_CONTEXT.getResumeRoute(this.levelManager.activePackId);
+        const config = APP_CONTEXT.catalog.getLevelConfig(
+            resume.packId,
+            resume.levelId
+        );
+        const hasProgress = config.order > 1;
         const primaryLabel = hasProgress
-            ? `继续第 ${this.levelManager.maxUnlockedLevel} 关`
+            ? `继续第 ${config.order} 关`
             : '开始第 1 关';
-        const primaryLevel = hasProgress ? this.levelManager.maxUnlockedLevel : 1;
 
         SceneUI.createButton(this, 300, 568, primaryLabel, () => {
-            this.startGame(primaryLevel);
+            APP_CONTEXT.router.startLevel(this, resume);
         }, { width: 300, variant: 'primary' });
 
         SceneUI.createButton(this, 300, 632, '选关测试 · A/B 对照', () => {
-            this.scene.start('LevelSelectScene');
+            APP_CONTEXT.router.startLevelBrowser(this, {
+                packId: this.levelManager.activePackId
+            });
         }, { width: 300, variant: 'secondary' });
 
         SceneUI.createButton(this, 300, 700, '重置全部进度', () => {
@@ -80,14 +88,12 @@ class EnhancedMenuScene extends MenuScene {
         shortcut.setOrigin(0.5);
     }
 
-    startGame(level) {
-        try {
-            if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.removeItem('needle_game_test_mode');
-            }
-        } catch (error) {
-            console.warn('无法退出测试模式:', error);
-        }
-        super.startGame(level);
+    startGame(levelRef) {
+        const config = this.levelManager.getLevelConfig(levelRef);
+        APP_CONTEXT.router.startLevel(this, {
+            packId: config.packId,
+            levelId: config.packLevelId,
+            mode: 'progression'
+        });
     }
 }

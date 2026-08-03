@@ -3,15 +3,21 @@ class GameScene extends Phaser.Scene {
         super({ key: 'GameScene' });
     }
 
-    init(data) {
-        this.startLevel = data.level || 1;
-        this.levelManager = new LevelManager();
+    init(data = {}) {
+        this.route = APP_CONTEXT.router.normalizeLevelRoute(data, {
+            packId: APP_CONTEXT.getActivePackId(),
+            mode: 'progression'
+        });
+        this.levelManager = new LevelManager(this.route.packId, {
+            mode: this.route.mode
+        });
         this.themeManager = new ThemeManager();
         this.collisionManager = new CollisionManager();
     }
 
     create() {
-        this.levelConfig = this.levelManager.startLevel(this.startLevel);
+        this.levelConfig = this.levelManager.startLevel(this.route.levelId);
+        this.route = this.levelManager.getCurrentRoute();
         this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig.id);
 
         this.gameState = 'playing';
@@ -26,8 +32,6 @@ class GameScene extends Phaser.Scene {
         );
 
         this.createBackground();
-
-        // 创建转盘
         this.wheel = new Wheel(
             this,
             CONSTANTS.WHEEL.CENTER_X,
@@ -37,10 +41,7 @@ class GameScene extends Phaser.Scene {
         );
         const initialRhythm = this.rhythmManager.getSnapshotAt(0, 0);
 
-        // 创建障碍物
         this.createObstacles();
-
-        // 创建UI
         this.uiManager = new UIManager(this, this.levelConfig.needleCount);
         this.uiManager.updateLevel(
             this.levelConfig.id,
@@ -48,11 +49,8 @@ class GameScene extends Phaser.Scene {
             this.levelConfig.rule
         );
         this.uiManager.updateRhythm(initialRhythm);
-
-        // 初始化针
         this.initializeNeedles();
 
-        // 输入
         this.input.on('pointerdown', () => this.onScreenClick());
         this.input.keyboard.on('keydown-SPACE', () => this.onScreenClick());
     }
@@ -72,11 +70,9 @@ class GameScene extends Phaser.Scene {
 
     initializeNeedles() {
         const count = this.levelConfig.needleCount;
-
         for (let i = count; i >= 1; i--) {
             this.remainingNeedles.push(new Needle(this, i, this.levelVisual));
         }
-
         this.prepareNextNeedle();
     }
 
@@ -87,13 +83,11 @@ class GameScene extends Phaser.Scene {
         }
 
         this.currentNeedle = this.remainingNeedles.shift();
-        const readyX = CONSTANTS.WIDTH / 2;
-        const readyY = CONSTANTS.NEEDLE.READY_Y;
-        this.currentNeedle.setReadyPosition(readyX, readyY);
-
-        // 更新UI
+        this.currentNeedle.setReadyPosition(
+            CONSTANTS.WIDTH / 2,
+            CONSTANTS.NEEDLE.READY_Y
+        );
         this.uiManager.updateRemaining(this.remainingNeedles.length + 1);
-
         this.canShoot = true;
     }
 
@@ -103,11 +97,8 @@ class GameScene extends Phaser.Scene {
         }
 
         this.canShoot = false;
-
-        // 待发射针在转盘下方，命中点固定为六点钟方向。
         const impactEdge = this.wheel.getImpactEdgePosition();
         const exposedLength = CONSTANTS.NEEDLE.LENGTH - CONSTANTS.NEEDLE.INSERT_DEPTH;
-
         const targetX = impactEdge.x + Math.cos(impactEdge.angle) * exposedLength;
         const targetY = impactEdge.y + Math.sin(impactEdge.angle) * exposedLength;
 
@@ -118,36 +109,23 @@ class GameScene extends Phaser.Scene {
     update(time, delta) {
         if (this.gameState === 'failed') return;
 
-        // 切回后台标签页时限制单帧推进，避免转盘和节拍瞬移。
         const frameDelta = Math.min(delta, 50);
         const rhythm = this.rhythmManager.advance(frameDelta);
         this.wheel.rotateBy(rhythm.rotationDelta);
         this.uiManager.updateRhythm(rhythm);
-
-        // 更新障碍物
         this.obstacles.forEach(obstacle => obstacle.updatePosition(this.wheel));
-
-        // 更新已插入的针
         this.insertedNeedles.forEach(needle => needle.updateOnWheel(this.wheel));
 
-        // 更新飞行中的针
         if (this.currentNeedle && this.currentNeedle.flying) {
             const reached = this.currentNeedle.update(frameDelta);
-
-            if (reached) {
-                this.onNeedleReachedWheel();
-            }
+            if (reached) this.onNeedleReachedWheel();
         }
     }
 
     onNeedleReachedWheel() {
-        // 计算针在转盘上的角度
         const needleAngle = CONSTANTS.WHEEL.IMPACT_ANGLE - this.wheel.rotation;
-
-        // 附加到转盘
         this.currentNeedle.attachToWheel(this.wheel, needleAngle);
 
-        // 碰撞检测
         const collision = this.collisionManager.checkAllCollisions(
             this.currentNeedle,
             this.insertedNeedles,
@@ -166,10 +144,8 @@ class GameScene extends Phaser.Scene {
         this.rhythmManager.recordSuccessfulInsert();
         this.currentNeedle.playInsertionCatchlight();
         this.createImpactFeedback();
-
         this.gameState = 'playing';
 
-        // 准备下一个
         this.time.delayedCall(200, () => {
             this.prepareNextNeedle();
         });
@@ -202,8 +178,9 @@ class GameScene extends Phaser.Scene {
         this.createExplosion(this.currentNeedle.getBallPosition());
 
         this.uiManager.showFail(() => {
-            this.scene.start('GameOverScene', {
-                level: this.levelConfig.id,
+            APP_CONTEXT.router.startResult(this, {
+                route: this.route,
+                level: this.levelConfig.order,
                 success: false,
                 levelName: this.levelConfig.name,
                 insertedCount: this.insertedNeedles.length,
@@ -217,33 +194,42 @@ class GameScene extends Phaser.Scene {
         this.levelManager.completeLevel();
         this.createCelebration();
 
-        const nextLevel = this.levelManager.getNextLevel();
+        const nextRoute = this.levelManager.getNextLevelRoute();
+        const nextConfig = nextRoute
+            ? APP_CONTEXT.catalog.getLevelConfig(
+                nextRoute.packId,
+                nextRoute.levelId
+            )
+            : null;
 
         this.uiManager.showSuccess(() => {
-            this.scene.start('GameOverScene', {
-                level: this.levelConfig.id,
+            APP_CONTEXT.router.startResult(this, {
+                route: this.route,
+                level: this.levelConfig.order,
                 levelName: this.levelConfig.name,
                 success: true,
-                completedAll: nextLevel === null,
-                nextLevel,
-                nextLevelName: nextLevel === null
-                    ? ''
-                    : this.levelManager.getLevelConfig(nextLevel).name
+                completedAll: nextRoute === null,
+                nextRoute,
+                nextLevelName: nextConfig?.name || '',
+                packLevelCount: this.levelManager.getLevelCount()
             });
         });
     }
 
     createExplosion(position) {
         if (SceneUI.prefersReducedMotion()) return;
-
         const colors = CONSTANTS.PARTICLES.COLORS;
 
         for (let i = 0; i < 20; i++) {
             const angle = (i / 20) * Math.PI * 2;
             const speed = 100 + Math.random() * 200;
             const color = colors[Math.floor(Math.random() * colors.length)];
-
-            const particle = this.add.circle(position.x, position.y, 3 + Math.random() * 3, color);
+            const particle = this.add.circle(
+                position.x,
+                position.y,
+                3 + Math.random() * 3,
+                color
+            );
 
             this.tweens.add({
                 targets: particle,
@@ -259,7 +245,6 @@ class GameScene extends Phaser.Scene {
 
     createCelebration() {
         if (SceneUI.prefersReducedMotion()) return;
-
         const colors = CONSTANTS.PARTICLES.COLORS;
         const centerX = CONSTANTS.WIDTH / 2;
         const centerY = CONSTANTS.HEIGHT / 2;
@@ -268,8 +253,12 @@ class GameScene extends Phaser.Scene {
             const angle = Math.random() * Math.PI * 2;
             const distance = 100 + Math.random() * 300;
             const color = colors[Math.floor(Math.random() * colors.length)];
-
-            const particle = this.add.circle(centerX, centerY, 2 + Math.random() * 4, color);
+            const particle = this.add.circle(
+                centerX,
+                centerY,
+                2 + Math.random() * 4,
+                color
+            );
 
             this.tweens.add({
                 targets: particle,

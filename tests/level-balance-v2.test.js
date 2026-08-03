@@ -28,15 +28,21 @@ function createStorage() {
     };
 }
 
+function readJson(relativePath) {
+    return JSON.parse(fs.readFileSync(path.join(projectRoot, relativePath), 'utf8'));
+}
+
 const local = createStorage();
-const session = createStorage();
 const context = vm.createContext({
     console,
     Math,
     Number,
     JSON,
-    localStorage: local.api,
-    sessionStorage: session.api
+    Object,
+    Array,
+    Map,
+    Set,
+    localStorage: local.api
 });
 
 loadIntoContext(context, 'js/utils/constants.js', ['CONSTANTS']);
@@ -50,6 +56,26 @@ loadIntoContext(context, 'js/data/balancedLevels.js', [
 loadIntoContext(context, 'js/managers/RhythmManager.js', ['RhythmManager']);
 loadIntoContext(context, 'js/managers/DifficultyManager.js', ['DifficultyManager']);
 loadIntoContext(context, 'js/managers/DifficultyModelV2.js', ['DifficultyModelV2']);
+loadIntoContext(context, 'js/packs/LevelResolver.js', ['LevelResolver']);
+loadIntoContext(context, 'js/packs/PackRegistry.js', [
+    'PackRegistry',
+    'LEVEL_PACK_REGISTRY'
+]);
+
+['balanced-v2', 'legacy'].forEach(packId => {
+    const manifest = readJson(`packs/${packId}/manifest.json`);
+    const presets = readJson(`packs/${packId}/presets.json`);
+    const levels = readJson(`packs/${packId}/levels.json`);
+    context.LEVEL_PACK_REGISTRY.register(
+        new context.LevelResolver().resolvePack(manifest, presets, levels)
+    );
+});
+context.LEVEL_PACK_REGISTRY.setDefault('balanced-v2');
+
+loadIntoContext(context, 'js/app/ProgressStore.js', ['ProgressStore']);
+loadIntoContext(context, 'js/app/LevelCatalogService.js', ['LevelCatalogService']);
+loadIntoContext(context, 'js/app/AppRouter.js', ['AppRouter']);
+loadIntoContext(context, 'js/app/AppContext.js', ['AppContext', 'APP_CONTEXT']);
 loadIntoContext(context, 'js/managers/LevelManager.js', ['LevelManager']);
 
 const balanced = Array.from(context.BALANCED_LEVEL_DEFINITIONS);
@@ -157,33 +183,29 @@ test('balanced level ten teaches one compound step instead of stacking the old f
     assert.equal(newModifierCount, 0);
 });
 
-test('level manager persists pack selection and test mode does not unlock progress', () => {
+test('level manager delegates pack selection and route mode to AppContext', () => {
     local.values.clear();
-    session.values.clear();
+    context.APP_CONTEXT.resetProgress();
+    context.APP_CONTEXT.setActivePackId('balanced-v2');
 
-    const defaultManager = new context.LevelManager();
-    assert.equal(defaultManager.activePackId, 'balanced-v2');
-
-    session.api.setItem('needle_game_test_mode', '1');
-    const testManager = new context.LevelManager();
-    testManager.startLevel(1);
-    testManager.completeLevel();
-    assert.equal(testManager.maxUnlockedLevel, 1);
-
-    session.api.removeItem('needle_game_test_mode');
-    const normalManager = new context.LevelManager();
-    normalManager.startLevel(1);
+    const normalManager = new context.LevelManager('balanced-v2', {
+        mode: 'progression'
+    });
+    normalManager.startLevel('balanced-v2-01');
     normalManager.completeLevel();
     assert.equal(normalManager.maxUnlockedLevel, 2);
 
-    normalManager.setActivePack('legacy');
-    assert.equal(normalManager.getLevelConfig(10).name, '基础合奏');
+    const testManager = new context.LevelManager('balanced-v2', { mode: 'test' });
+    testManager.startLevel('balanced-v2-02');
+    testManager.completeLevel();
+    assert.equal(testManager.maxUnlockedLevel, 2);
 
-    const reloaded = new context.LevelManager();
-    assert.equal(reloaded.activePackId, 'legacy');
+    normalManager.setActivePack('legacy');
+    assert.equal(normalManager.getLevelConfig('legacy-10').name, '基础合奏');
+    assert.equal(context.APP_CONTEXT.getActivePackId(), 'legacy');
 });
 
-test('the browser entrypoint discovers packs without concrete level scripts', () => {
+test('the browser entrypoint discovers packs and explicit application routes', () => {
     const index = fs.readFileSync(path.join(projectRoot, 'index.html'), 'utf8');
     const boot = fs.readFileSync(path.join(projectRoot, 'js/scenes/BootScene.js'), 'utf8');
     const main = fs.readFileSync(path.join(projectRoot, 'js/main.js'), 'utf8');
@@ -195,10 +217,12 @@ test('the browser entrypoint discovers packs without concrete level scripts', ()
     assert.doesNotMatch(index, /js\/data\/balancedLevels\.js/);
     assert.doesNotMatch(index, /js\/data\/levels\.js/);
     assert.match(index, /js\/packs\/PackLoader\.js/);
+    assert.match(index, /js\/app\/AppContext\.js/);
     assert.match(index, /DifficultyModelV2\.js/);
     assert.match(index, /LevelSelectScene\.js/);
     assert.match(boot, /packs\/index\.json/);
     assert.match(main, /EnhancedMenuScene/);
     assert.match(main, /LevelSelectScene/);
-    assert.match(selector, /needle_game_test_mode/);
+    assert.doesNotMatch(selector, /needle_game_test_mode/);
+    assert.match(selector, /mode:\s*'test'/);
 });

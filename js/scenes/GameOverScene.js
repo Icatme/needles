@@ -3,15 +3,23 @@ class GameOverScene extends Phaser.Scene {
         super({ key: 'GameOverScene' });
     }
 
-    init(data) {
-        this.level = data.level || 1;
+    init(data = {}) {
+        this.route = APP_CONTEXT.router.normalizeLevelRoute(data.route || data);
+        this.level = data.level || APP_CONTEXT.catalog.getLevel(
+            this.route.packId,
+            this.route.levelId
+        ).order;
         this.levelName = data.levelName || '';
         this.success = Boolean(data.success);
         this.completedAll = Boolean(data.completedAll);
-        this.nextLevel = data.nextLevel ?? null;
+        this.nextRoute = data.nextRoute
+            ? APP_CONTEXT.router.normalizeLevelRoute(data.nextRoute)
+            : null;
         this.nextLevelName = data.nextLevelName || '';
         this.insertedCount = data.insertedCount || 0;
         this.totalCount = data.totalCount || 0;
+        this.packLevelCount = data.packLevelCount
+            || APP_CONTEXT.catalog.getPack(this.route.packId).levels.length;
     }
 
     create() {
@@ -20,7 +28,7 @@ class GameOverScene extends Phaser.Scene {
         this.createButtons();
 
         this.input.keyboard.once('keydown-ENTER', () => this.runPrimaryAction());
-        this.input.keyboard.once('keydown-ESC', () => this.scene.start('MenuScene'));
+        this.input.keyboard.once('keydown-ESC', () => APP_CONTEXT.router.startMenu(this));
     }
 
     createResultDisplay() {
@@ -30,7 +38,7 @@ class GameOverScene extends Phaser.Scene {
             : (this.success ? 'LEVEL CLEAR' : 'COLLISION');
         const stateColor = this.success ? ui.TEXT_SUCCESS : ui.TEXT_ERROR;
         const titleCopy = this.completedAll
-            ? '终曲完成。\n五十关通关。'
+            ? '终曲完成。\n整套关卡通关。'
             : (this.success ? '漂亮。\n这一圈完成了。' : '撞针了。\n再找一次空隙。');
 
         this.stateText = this.add.text(56, 102, stateLabel, {
@@ -49,7 +57,6 @@ class GameOverScene extends Phaser.Scene {
         });
 
         this.createResultGlyph();
-
         SceneUI.createPanel(this, 300, 384, 488, 106, {
             fillColor: ui.SURFACE,
             strokeColor: ui.RULE,
@@ -76,14 +83,15 @@ class GameOverScene extends Phaser.Scene {
         metric.setOrigin(0, 0.5);
         metric.setDepth(11);
 
+        const modeLabel = this.route.mode === 'test' ? '测试模式' : '正常进度';
         const noteCopy = this.completedAll
-            ? '全部 50 关已完成'
+            ? `全部 ${this.packLevelCount} 关已完成 · ${modeLabel}`
             : (this.success
-                ? `下一关 · ${this.nextLevelName}`
-                : `${this.levelName} · 再试一次`);
+                ? `下一关 · ${this.nextLevelName} · ${modeLabel}`
+                : `${this.levelName} · 再试一次 · ${modeLabel}`);
         const note = this.add.text(518, 384, noteCopy, {
             fontFamily: ui.BODY_FONT,
-            fontSize: '14px',
+            fontSize: '13px',
             color: this.success ? ui.TEXT_SUCCESS : ui.TEXT_MUTED
         });
         note.setOrigin(1, 0.5);
@@ -126,18 +134,20 @@ class GameOverScene extends Phaser.Scene {
     createButtons() {
         const ui = SceneUI.getPalette();
         const primaryLabel = this.completedAll
-            ? '返回主菜单'
+            ? (this.route.mode === 'test' ? '返回关卡实验室' : '返回主菜单')
             : (this.success ? '进入下一关' : '重新挑战');
         SceneUI.createButton(this, 300, 520, primaryLabel, () => this.runPrimaryAction(), {
             width: 300,
             variant: 'primary'
         });
-        const secondaryLabel = this.completedAll ? '重玩第 50 关' : '返回主菜单';
+
+        const secondaryLabel = this.completedAll ? '重玩当前关' : '返回主菜单';
         SceneUI.createButton(this, 300, 588, secondaryLabel, () => {
-            this.scene.start(
-                this.completedAll ? 'GameScene' : 'MenuScene',
-                this.completedAll ? { level: 50 } : undefined
-            );
+            if (this.completedAll) {
+                APP_CONTEXT.router.startLevel(this, this.route);
+            } else {
+                APP_CONTEXT.router.startMenu(this);
+            }
         }, {
             width: 300,
             variant: 'secondary'
@@ -154,11 +164,19 @@ class GameOverScene extends Phaser.Scene {
 
     runPrimaryAction() {
         if (this.completedAll) {
-            this.scene.start('MenuScene');
-        } else if (this.success) {
-            this.scene.start('GameScene', { level: this.nextLevel });
+            if (this.route.mode === 'test') {
+                APP_CONTEXT.router.startLevelBrowser(this, {
+                    packId: this.route.packId,
+                    chapterId: APP_CONTEXT.catalog
+                        .getChapterForLevel(this.route.packId, this.route.levelId)?.id
+                });
+            } else {
+                APP_CONTEXT.router.startMenu(this);
+            }
+        } else if (this.success && this.nextRoute) {
+            APP_CONTEXT.router.startLevel(this, this.nextRoute);
         } else {
-            this.scene.start('GameScene', { level: this.level });
+            APP_CONTEXT.router.startLevel(this, this.route);
         }
     }
 }

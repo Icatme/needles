@@ -6,24 +6,33 @@ const vm = require('node:vm');
 
 const projectRoot = path.resolve(__dirname, '..');
 
-function loadIntoContext(context, relativePath, exportName) {
+function loadIntoContext(context, relativePath, exportNames) {
+    const names = Array.isArray(exportNames) ? exportNames : [exportNames];
     const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-    vm.runInContext(`${source}\nthis.${exportName} = ${exportName};`, context, {
-        filename: relativePath
-    });
+    const bridge = names.map(name => `this.${name} = ${name};`).join('\n');
+    vm.runInContext(`${source}\n${bridge}`, context, { filename: relativePath });
+}
+
+function readJson(relativePath) {
+    return JSON.parse(fs.readFileSync(path.join(projectRoot, relativePath), 'utf8'));
 }
 
 const storage = new Map();
+const storageApi = {
+    getItem(key) { return storage.get(key) || null; },
+    setItem(key, value) { storage.set(key, value); },
+    removeItem(key) { storage.delete(key); }
+};
 const context = vm.createContext({
     console,
     Math,
     Number,
     JSON,
-    localStorage: {
-        getItem(key) { return storage.get(key) || null; },
-        setItem(key, value) { storage.set(key, value); },
-        removeItem(key) { storage.delete(key); }
-    }
+    Object,
+    Array,
+    Map,
+    Set,
+    localStorage: storageApi
 });
 
 loadIntoContext(context, 'js/utils/constants.js', 'CONSTANTS');
@@ -31,11 +40,41 @@ loadIntoContext(context, 'js/data/wheelVisuals.js', 'WHEEL_VISUALS');
 loadIntoContext(context, 'js/data/levels.js', 'LEVEL_DEFINITIONS');
 loadIntoContext(context, 'js/managers/RhythmManager.js', 'RhythmManager');
 loadIntoContext(context, 'js/managers/DifficultyManager.js', 'DifficultyManager');
+loadIntoContext(context, 'js/packs/LevelResolver.js', 'LevelResolver');
+loadIntoContext(context, 'js/packs/PackRegistry.js', [
+    'PackRegistry',
+    'LEVEL_PACK_REGISTRY'
+]);
+
+const legacyManifest = readJson('packs/legacy/manifest.json');
+const legacyPresets = readJson('packs/legacy/presets.json');
+const legacyLevels = readJson('packs/legacy/levels.json');
+context.LEVEL_PACK_REGISTRY.register(
+    new context.LevelResolver().resolvePack(
+        legacyManifest,
+        legacyPresets,
+        legacyLevels
+    )
+);
+context.LEVEL_PACK_REGISTRY.setDefault('legacy');
+
+loadIntoContext(context, 'js/app/ProgressStore.js', 'ProgressStore');
+loadIntoContext(context, 'js/app/LevelCatalogService.js', 'LevelCatalogService');
+loadIntoContext(context, 'js/app/AppRouter.js', 'AppRouter');
+loadIntoContext(context, 'js/app/AppContext.js', ['AppContext', 'APP_CONTEXT']);
 loadIntoContext(context, 'js/managers/LevelManager.js', 'LevelManager');
 
 const levels = Array.from(context.LEVEL_DEFINITIONS);
 const difficultyManager = new context.DifficultyManager();
 const audits = levels.map(level => difficultyManager.validate(level));
+
+function createAppContext() {
+    const progress = new context.ProgressStore({ storage: storageApi });
+    return new context.AppContext({
+        registry: context.LEVEL_PACK_REGISTRY,
+        progress
+    });
+}
 
 function closeTo(actual, expected, epsilon = 1e-9) {
     assert.ok(Math.abs(actual - expected) <= epsilon, `${actual} should be close to ${expected}`);
@@ -228,7 +267,11 @@ test('shot modifiers change only after a successful insert is recorded', () => {
 
 test('level manager returns fresh audited configs and stops after level fifty', () => {
     storage.clear();
-    const manager = new context.LevelManager();
+    const app = createAppContext();
+    const manager = new context.LevelManager('legacy', {
+        context: app,
+        mode: 'test'
+    });
     const first = manager.getLevelConfig(4);
     first.layout.obstacleAngles.push(90);
     first.rhythm.segments[0].velocity = 99;
@@ -246,8 +289,13 @@ test('level manager returns fresh audited configs and stops after level fifty', 
     assert.equal(manager.getLevelConfig(999).id, 50);
 });
 
-test('legacy progress beyond the finite catalog is clamped to level fifty', () => {
+test('legacy progress beyond the finite catalog is migrated and clamped to level fifty', () => {
+    storage.clear();
     storage.set(context.CONSTANTS.STORAGE_KEY, JSON.stringify({ maxLevel: 999 }));
-    const manager = new context.LevelManager();
+    const app = createAppContext();
+    const manager = new context.LevelManager('legacy', { context: app });
     assert.equal(manager.maxUnlockedLevel, 50);
+    const progress = app.progress.getPackProgress(app.catalog.getPack('legacy'));
+    assert.equal(progress.maxUnlockedOrder, 50);
+    assert.equal(progress.completedLevelIds.length, 49);
 });
