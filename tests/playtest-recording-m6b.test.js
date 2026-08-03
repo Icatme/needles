@@ -27,6 +27,10 @@ function createStorage() {
     };
 }
 
+function plain(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
 const context = vm.createContext({
     console,
     Math,
@@ -106,7 +110,7 @@ test('a successful test attempt stores timing, difficulty and a verifiable repla
         Array.from(attempt.shots.intervalsMs),
         [1170]
     );
-    assert.deepEqual(attempt.result, {
+    assert.deepEqual(plain(attempt.result), {
         status: 'completed',
         success: true,
         durationMs: 2290,
