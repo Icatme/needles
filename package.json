@@ -9,7 +9,8 @@
     "test:e2e": "playwright test --project=chromium",
     "test:e2e:headed": "playwright test --project=chromium --headed",
     "report:playtests": "node scripts/analyze-playtests.js",
-    "validate:packs": "node scripts/validate-packs.js"
+    "validate:packs": "node scripts/validate-packs.js",
+    "pack": "node scripts/pack.js"
   },
   "devDependencies": {
     "@playwright/test": "1.62.0",
