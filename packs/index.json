@@ -1,0 +1,14 @@
+{
+  "schema": "needles.pack-index/v1",
+  "defaultPackId": "balanced-v2",
+  "packs": [
+    {
+      "id": "balanced-v2",
+      "manifest": "balanced-v2/manifest.json"
+    },
+    {
+      "id": "legacy",
+      "manifest": "legacy/manifest.json"
+    }
+  ]
+}

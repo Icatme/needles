@@ -1,0 +1,28 @@
+name: Export level packs
+
+on:
+  pull_request:
+    paths:
+      - 'js/data/levels.js'
+      - 'js/data/balancedLevels.js'
+      - 'packs/**'
+      - 'scripts/export-level-packs.js'
+      - '.github/workflows/export-level-packs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify committed JSON packs match migration sources
+        run: node scripts/export-level-packs.js --check
+      - name: Parse generated JSON
+        run: |
+          node -e "for (const file of ['packs/index.json','packs/legacy/manifest.json','packs/legacy/presets.json','packs/legacy/levels.json','packs/balanced-v2/manifest.json','packs/balanced-v2/presets.json','packs/balanced-v2/levels.json']) JSON.parse(require('node:fs').readFileSync(file, 'utf8'))"

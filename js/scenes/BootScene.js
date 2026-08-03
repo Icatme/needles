@@ -46,7 +46,7 @@ class BootScene extends Phaser.Scene {
             fontStyle: 'bold'
         });
 
-        const status = this.add.text(132, 354, '正在校准转盘…', {
+        const status = this.add.text(132, 354, '正在读取关卡包…', {
             fontFamily: ui.BODY_FONT,
             fontSize: '16px',
             color: ui.TEXT_MUTED
@@ -56,23 +56,51 @@ class BootScene extends Phaser.Scene {
         track.setOrigin(0, 0.5);
         const progress = this.add.rectangle(132, 398, 336, 4, ui.ACCENT);
         progress.setOrigin(0, 0.5);
-        progress.setScale(0, 1);
-
-        if (SceneUI.prefersReducedMotion()) {
-            progress.setScale(1, 1);
-        } else {
-            this.tweens.add({
-                targets: progress,
-                scaleX: 1,
-                duration: 360,
-                ease: 'Sine.easeInOut'
-            });
-        }
+        progress.setScale(0.04, 1);
 
         [mark, label, title, status, track, progress].forEach(element => element.setDepth(10));
+        this.loadLevelPacks(status, progress, ui);
+    }
 
-        this.time.delayedCall(SceneUI.prefersReducedMotion() ? 80 : 430, () => {
-            this.scene.start('MenuScene');
-        });
+    async loadLevelPacks(status, progress, ui) {
+        const loader = new PackLoader({ registry: LEVEL_PACK_REGISTRY });
+
+        try {
+            const result = await loader.loadIndex('packs/index.json', state => {
+                if (state.phase !== 'packs') return;
+                const ratio = state.total > 0 ? state.completed / state.total : 0;
+                progress.setScale(Math.max(0.04, ratio), 1);
+                status.setText(`正在校验关卡包 ${state.completed} / ${state.total}…`);
+            });
+
+            progress.setScale(1, 1);
+            const levelCount = result.loadedPacks.reduce(
+                (sum, pack) => sum + pack.levels.length,
+                0
+            );
+            status.setText(
+                result.errors.length > 0
+                    ? `已载入 ${result.loadedPacks.length} 个包；${result.errors.length} 个包不可用`
+                    : `已载入 ${result.loadedPacks.length} 个关卡包 · ${levelCount} 关`
+            );
+
+            this.time.delayedCall(SceneUI.prefersReducedMotion() ? 80 : 260, () => {
+                this.scene.start('MenuScene');
+            });
+        } catch (error) {
+            console.error('关卡包启动失败:', error);
+            status.setColor(ui.TEXT_ERROR);
+            status.setText('关卡包加载失败，请检查文件或刷新重试。');
+            progress.setFillStyle(ui.ERROR);
+            progress.setScale(1, 1);
+
+            SceneUI.createButton(this, 300, 466, '重新加载', () => {
+                this.scene.restart();
+            }, {
+                width: 220,
+                height: 50,
+                variant: 'danger'
+            });
+        }
     }
 }
