@@ -49,13 +49,21 @@ class LevelCatalogService {
 
     getLevel(packId, levelRef) {
         const pack = this.getPack(packId);
-        const level = pack.levels.find(candidate => (
+        const exact = pack.levels.find(candidate => (
             candidate.packLevelId === levelRef
             || candidate.id === levelRef
             || candidate.order === Number(levelRef)
         ));
-        if (!level) throw new Error(`Unknown level ${levelRef} in pack ${pack.id}`);
-        return level;
+        if (exact) return exact;
+
+        const numeric = Number(levelRef);
+        if (Number.isFinite(numeric)) {
+            const sorted = [...pack.levels].sort((a, b) => a.order - b.order);
+            if (numeric <= sorted[0].order) return sorted[0];
+            if (numeric >= sorted.at(-1).order) return sorted.at(-1);
+        }
+
+        throw new Error(`Unknown level ${levelRef} in pack ${pack.id}`);
     }
 
     getLevelConfig(packId, levelRef) {
