@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icatme.github.io/needles/schemas/playtest-export.v1.schema.json",
+  "title": "Needles Local Playtest Export v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "exportedAt", "attemptCount", "attempts"],
+  "properties": {
+    "schema": { "const": "needles.playtest-export/v1" },
+    "exportedAt": { "type": "string", "format": "date-time" },
+    "attemptCount": { "type": "integer", "minimum": 0 },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "recordedAt",
+          "mode",
+          "packId",
+          "packVersion",
+          "levelId",
+          "order",
+          "predictedDifficulty",
+          "difficultyDrivers",
+          "result",
+          "shots",
+          "replay"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "recordedAt": { "type": "string", "format": "date-time" },
+          "mode": { "const": "test" },
+          "packId": { "type": "string", "minLength": 1 },
+          "packVersion": { "type": ["string", "null"] },
+          "levelId": { "type": "string", "minLength": 1 },
+          "order": { "type": ["integer", "null"] },
+          "predictedDifficulty": { "type": ["number", "null"] },
+          "difficultyDrivers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "maxItems": 3
+          },
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "success",
+              "durationMs",
+              "insertedCount",
+              "totalCount",
+              "failedNeedleNumber",
+              "collisionType",
+              "collisionTargetId"
+            ],
+            "properties": {
+              "status": { "enum": ["failed", "completed"] },
+              "success": { "type": "boolean" },
+              "durationMs": { "type": "number", "minimum": 0 },
+              "insertedCount": { "type": "integer", "minimum": 0 },
+              "totalCount": { "type": "integer", "minimum": 1 },
+              "failedNeedleNumber": { "type": ["integer", "null"] },
+              "collisionType": {
+                "type": ["string", "null"],
+                "enum": ["needle", "obstacle", null]
+              },
+              "collisionTargetId": {
+                "type": ["string", "integer", "null"]
+              }
+            }
+          },
+          "shots": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["count", "acceptedAtMs", "intervalsMs"],
+            "properties": {
+              "count": { "type": "integer", "minimum": 0 },
+              "acceptedAtMs": {
+                "type": "array",
+                "items": { "type": "number", "minimum": 0 }
+              },
+              "intervalsMs": {
+                "type": "array",
+                "items": { "type": "number", "minimum": 0 }
+              }
+            }
+          },
+          "replay": {
+            "$ref": "replay.v1.schema.json"
+          }
+        }
+      }
+    }
+  }
+}
