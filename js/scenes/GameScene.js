@@ -18,7 +18,7 @@ class GameScene extends Phaser.Scene {
     create() {
         this.levelConfig = this.levelManager.startLevel(this.route.levelId);
         this.route = this.levelManager.getCurrentRoute();
-        this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig.id);
+        this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig);
 
         this.gameState = 'playing';
         this.insertedNeedles = [];
