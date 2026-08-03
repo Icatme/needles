@@ -77,7 +77,7 @@ class PackValidator {
 
         Object.entries(presets.layouts || {}).forEach(([id, layout]) => {
             const prefix = `presets.layouts.${id}`;
-            this.expect(this.isId(id), `${prefix} has an invalid id`, errors);
+            this.expect(this.isReferenceId(id), `${prefix} has an invalid id`, errors);
             this.requireObject(layout, prefix, errors);
             this.expect(Array.isArray(layout?.obstacleAngles), `${prefix}.obstacleAngles must be an array`, errors);
             (layout?.obstacleAngles || []).forEach((angle, index) => {
@@ -138,6 +138,10 @@ class PackValidator {
 
     isId(value) {
         return typeof value === 'string' && /^[a-z0-9][a-z0-9-]*$/.test(value);
+    }
+
+    isReferenceId(value) {
+        return typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value);
     }
 
     expect(condition, message, errors) {
