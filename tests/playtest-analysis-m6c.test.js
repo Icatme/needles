@@ -116,7 +116,7 @@ test('reports adjacent jumps, low samples and balanced/legacy comparisons', () =
     assert.equal(balanced.usableLevelCount, 0);
     assert.equal(jump.comparable, false);
     assert.equal(jump.predictedDifficultyDelta, 10);
-    assert.equal(jump.failureRateDelta, 0.666666);
+    assert.equal(jump.failureRateDelta, 0.666667);
     assert.equal(report.comparisons.length, 1);
     assert.equal(report.comparisons[0].order, 1);
     assert.equal(report.comparisons[0].balancedAttempts, 3);
