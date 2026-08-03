@@ -108,7 +108,7 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        if (!this.session || this.session.getSnapshot().status === 'failed') return;
+        if (!this.session || this.session.status === 'failed') return;
 
         const frameDelta = Math.min(delta, 50);
         const frame = this.session.advance(frameDelta);
@@ -188,7 +188,7 @@ class GameScene extends Phaser.Scene {
 
     onLevelComplete() {
         if (this.completionHandled) return;
-        if (this.session.getSnapshot().status !== 'completed') return;
+        if (this.session.status !== 'completed') return;
         this.completionHandled = true;
         this.levelManager.completeLevel();
         this.createCelebration();
