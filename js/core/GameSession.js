@@ -56,22 +56,22 @@ class GameSession {
                 this.rhythmManager.elapsedMs,
                 this.insertedNeedles.length
             );
-            return Object.freeze({
-                rotationDelta: 0,
-                rhythm: Object.freeze({ ...rhythm }),
-                snapshot: this.getSnapshot()
-            });
+            return this.createFrame(0, rhythm);
         }
 
         const rhythm = this.rhythmManager.advance(safeDelta);
         this.wheelRotation = (
             this.wheelRotation + rhythm.rotationDelta
         ) % (Math.PI * 2);
+        return this.createFrame(rhythm.rotationDelta, rhythm);
+    }
 
+    createFrame(rotationDelta, rhythm) {
         return Object.freeze({
-            rotationDelta: rhythm.rotationDelta,
-            rhythm: Object.freeze({ ...rhythm }),
-            snapshot: this.getSnapshot()
+            rotationDelta,
+            wheelRotation: this.wheelRotation,
+            status: this.status,
+            rhythm: Object.freeze({ ...rhythm })
         });
     }
 
