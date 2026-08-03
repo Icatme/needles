@@ -1,0 +1,68 @@
+{
+  "schema": "needles.level-list/v1",
+  "levels": [
+    {
+      "id": "starter-example-01",
+      "legacyNumericId": 1,
+      "chapterId": "chapter-1",
+      "order": 1,
+      "title": "稳定起步",
+      "instruction": "一针无障碍",
+      "objective": {
+        "insertCount": 1
+      },
+      "layoutRef": "clear",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.3
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "timing"
+      },
+      "tags": [
+        "starter",
+        "timing"
+      ]
+    },
+    {
+      "id": "starter-example-02",
+      "legacyNumericId": 2,
+      "chapterId": "chapter-1",
+      "order": 2,
+      "title": "第一次分区",
+      "instruction": "两枚障碍分出两个区域",
+      "objective": {
+        "insertCount": 4
+      },
+      "layoutRef": "two-zones",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.42
+          },
+          {
+            "durationMs": 2200,
+            "velocity": -0.28
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": true,
+        "focus": "zones"
+      },
+      "tags": [
+        "starter",
+        "zones",
+        "reversal"
+      ]
+    }
+  ]
+}
