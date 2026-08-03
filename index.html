@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>见缝插针 - Needle Game</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='24' r='16' fill='%23172126'/%3E%3Cpath d='M32 40v16' stroke='%23e55a3c' stroke-width='5'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="stylesheet"
+      href="css/style.css?v=20260803-chatgpt-background-v2"
+    />
+  </head>
+  <body>
+    <main
+      id="game-container"
+      role="application"
+      aria-label="见缝插针游戏"
+      tabindex="0"
+    ></main>
+
+    <!-- Phaser 3 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+
+    <!-- Utils -->
+    <script src="js/utils/constants.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/utils/GemRenderer.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/utils/SceneUI.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/utils/ThemeBackground.js?v=20260803-chatgpt-background-v2"></script>
+
+    <!-- Level data -->
+    <script src="js/data/wheelVisuals.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/data/jewelVisuals.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/data/levels.js?v=20260803-chatgpt-background-v2"></script>
+
+    <!-- Entities -->
+    <script src="js/entities/JewelWheelRenderer.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/entities/Wheel.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/entities/Needle.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/entities/Obstacle.js?v=20260803-chatgpt-background-v2"></script>
+
+    <!-- Managers -->
+    <script src="js/managers/RhythmManager.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/managers/DifficultyManager.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/managers/ThemeManager.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/managers/LevelManager.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/managers/CollisionManager.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/managers/UIManager.js?v=20260803-chatgpt-background-v2"></script>
+
+    <!-- Scenes -->
+    <script src="js/scenes/BootScene.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/scenes/MenuScene.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/scenes/GameScene.js?v=20260803-chatgpt-background-v2"></script>
+    <script src="js/scenes/GameOverScene.js?v=20260803-chatgpt-background-v2"></script>
+
+    <!-- Main -->
+    <script src="js/main.js?v=20260803-chatgpt-background-v2"></script>
+  </body>
+</html>

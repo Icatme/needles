@@ -1,0 +1,12 @@
+.wrangler/
+.playwright-cli/
+.playwright-mcp/
+.hallmark/
+output/
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
