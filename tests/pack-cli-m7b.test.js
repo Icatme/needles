@@ -55,7 +55,8 @@ test('pack report exposes chapters, score range and escaped standalone HTML', ()
 });
 
 test('diff identifies stable-id gameplay changes in a copied pack', () => {
-    const directory = temporaryDirectory('needles-pack-diff-');
+    const temporaryRoot = temporaryDirectory('needles-pack-diff-');
+    const directory = path.join(temporaryRoot, 'candidate-pack');
     fs.cpSync(
         path.join(root, 'packs/balanced-v2'),
         directory,
