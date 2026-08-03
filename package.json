@@ -11,7 +11,8 @@
     "report:playtests": "node scripts/analyze-playtests.js",
     "validate:packs": "node scripts/validate-packs.js",
     "pack": "node scripts/pack.js",
-    "preview:pack": "node scripts/preview-pack.js"
+    "preview:pack": "node scripts/preview-pack.js",
+    "campaign": "node scripts/campaign.js"
   },
   "devDependencies": {
     "@playwright/test": "1.62.0",
