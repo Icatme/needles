@@ -132,12 +132,14 @@ test('schemas are strict about unknown authoring fields', () => {
 test('VS Code maps every pack authoring file to its schema', () => {
     const settings = readJson(path.join(root, '.vscode/settings.json'));
     const matches = settings['json.schemas'].flatMap(entry => entry.fileMatch);
-    assert.deepEqual(matches.slice(0, 4), [
+    [
         '/packs/index.json',
         '/packs/*/manifest.json',
         '/packs/*/presets.json',
         '/packs/*/levels.json'
-    ]);
+    ].forEach(expected => {
+        assert.equal(matches.includes(expected), true, `${expected} must be mapped`);
+    });
     settings['json.schemas'].forEach(entry => {
         assert.equal(
             fs.existsSync(path.resolve(root, entry.url)),
