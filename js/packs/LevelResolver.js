@@ -17,7 +17,6 @@ class LevelResolver {
             caption: manifest.caption || '',
             engineCompatibility: manifest.engineCompatibility,
             difficultyModel: manifest.difficultyModel || 'legacy-linear',
-            // Existing scenes consume chapter titles; M2 will consume descriptors directly.
             chapters: Object.freeze(chapterDescriptors.map(chapter => chapter.title)),
             chapterDescriptors: Object.freeze(chapterDescriptors),
             levels: Object.freeze(levels),
@@ -33,7 +32,15 @@ class LevelResolver {
         const numericId = Number.isInteger(level.legacyNumericId)
             ? level.legacyNumericId
             : level.order;
-        const presentation = level.presentation || {};
+        const authoredPresentation = level.presentation || {};
+        const tier = authoredPresentation.tier
+            ?? chapterOrder.get(level.chapterId);
+        const milestone = Boolean(authoredPresentation.milestone);
+        const presentation = Object.freeze({
+            ...authoredPresentation,
+            tier,
+            milestone
+        });
 
         return Object.freeze({
             id: numericId,
@@ -49,10 +56,13 @@ class LevelResolver {
                 obstacleAngles: Object.freeze([...layout.obstacleAngles])
             }),
             rhythm: Object.freeze(JSON.parse(JSON.stringify(level.rhythm))),
+            presentation,
             designIntent: Object.freeze({
-                tier: presentation.tier ?? chapterOrder.get(level.chapterId),
-                milestone: Boolean(presentation.milestone),
-                ...(presentation.focus ? { focus: presentation.focus } : {})
+                tier,
+                milestone,
+                ...(presentation.focus ? { focus: presentation.focus } : {}),
+                ...(presentation.family ? { family: presentation.family } : {}),
+                ...(presentation.variant ? { variant: presentation.variant } : {})
             }),
             tags: Object.freeze([...(level.tags || [])])
         });
