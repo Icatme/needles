@@ -31,7 +31,7 @@ const E2E_PRESETS = {
   schema: 'needles.level-presets/v1',
   layouts: {
     clear: { obstacleAngles: [] },
-    blocked: { obstacleAngles: [90] }
+    blocked: { obstacleAngles: [72] }
   }
 };
 
@@ -217,6 +217,10 @@ test('test mode completes and retries without modifying progression', async ({ p
   expect(await page.evaluate(() => game.scene.getScene('GameScene').route))
     .toMatchObject({ packId: 'e2e', levelId: 'e2e-02', mode: 'test' });
 
+  await page.waitForFunction(() => (
+    game.scene.getScene('GameScene').session.getSnapshot().wheelRotation
+      >= 8 * Math.PI / 180
+  ));
   await page.keyboard.press('Space');
   await waitForScene(page, 'GameOverScene');
   expect(await page.evaluate(() => {
@@ -265,6 +269,10 @@ test('progression unlocks the next stable id and survives reload', async ({ page
   expect(await page.evaluate(() => game.scene.getScene('GameScene').route))
     .toMatchObject({ packId: 'e2e', levelId: 'e2e-02', mode: 'progression' });
 
+  await page.waitForFunction(() => (
+    game.scene.getScene('GameScene').session.getSnapshot().wheelRotation
+      >= 8 * Math.PI / 180
+  ));
   await page.keyboard.press('Space');
   await waitForScene(page, 'GameOverScene');
   expect(await page.evaluate(() => game.scene.getScene('GameOverScene').success))

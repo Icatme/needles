@@ -42,12 +42,12 @@ class ReplayRecorder {
 
     recordCommand(type, execute) {
         const result = execute();
-        const command = ReplayProtocol.canonicalize({
+        const command = {
             sequence: this.commands.length + 1,
             atMs: this.elapsedMs,
             type,
             expected: ReplayRecorder.summarizeOutcome(type, result)
-        });
+        };
         this.commands.push(command);
         if (result?.event) {
             this.events.push(ReplayRecorder.summarizeEvent(result.event));
@@ -56,18 +56,23 @@ class ReplayRecorder {
     }
 
     export() {
-        const replay = ReplayProtocol.canonicalize({
+        const replay = {
             schema: ReplayProtocol.schema(),
             engineVersion: ReplayProtocol.engineVersion(),
             level: this.levelDescriptor,
             geometry: this.geometry,
             durationMs: this.elapsedMs,
-            commands: this.commands,
+            commands: this.commands.map(command => ({
+                sequence: command.sequence,
+                atMs: command.atMs,
+                type: command.type,
+                expected: ReplayProtocol.canonicalize(command.expected)
+            })),
             final: ReplayRecorder.createFinalSummary(
                 this.session,
                 this.events
             )
-        });
+        };
         replay.digest = ReplayProtocol.digest(replay);
         return ReplayProtocol.deepFreeze(replay);
     }

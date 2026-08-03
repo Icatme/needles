@@ -19,8 +19,8 @@ function main(argv) {
     if (inputFiles.length === 0) {
         throw new Error('No JSON input files were found');
     }
-    const sources = inputFiles.map(filePath => ({
-        source: path.basename(filePath),
+    const sources = inputFiles.map((filePath, index) => ({
+        source: `source-${index + 1}:${path.basename(filePath)}`,
         bundle: JSON.parse(fs.readFileSync(filePath, 'utf8'))
     }));
     const report = analyzePlaytests(sources, {

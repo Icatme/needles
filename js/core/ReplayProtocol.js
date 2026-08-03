@@ -38,16 +38,10 @@ class ReplayProtocol {
 
     static createGeometry(session) {
         return Object.freeze({
-            impactAngle: ReplayProtocol.normalizeNumber(session.impactAngle),
-            ringRadius: ReplayProtocol.normalizeNumber(
-                session.collisionRules.ringRadius
-            ),
-            needleRadius: ReplayProtocol.normalizeNumber(
-                session.collisionRules.needleRadius
-            ),
-            obstacleRadius: ReplayProtocol.normalizeNumber(
-                session.collisionRules.obstacleRadius
-            )
+            impactAngle: Number(session.impactAngle),
+            ringRadius: Number(session.collisionRules.ringRadius),
+            needleRadius: Number(session.collisionRules.needleRadius),
+            obstacleRadius: Number(session.collisionRules.obstacleRadius)
         });
     }
 

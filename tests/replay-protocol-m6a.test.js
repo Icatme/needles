@@ -99,6 +99,25 @@ test('a compact command timeline reproduces a completed session exactly', () => 
     );
 });
 
+test('export snapshots do not freeze recorder state needed by later commands', () => {
+    const recorder = new context.ReplayRecorder(makeLevel());
+
+    recorder.advance(1000);
+    assert.equal(recorder.beginShot().accepted, true);
+    const firstExport = recorder.export();
+
+    recorder.advance(120);
+    assert.equal(recorder.resolveImpact().collided, false);
+    const secondExport = recorder.export();
+
+    assert.equal(firstExport.commands.length, 1);
+    assert.equal(secondExport.commands.length, 2);
+    assert.deepEqual(
+        Array.from(secondExport.commands, command => command.sequence),
+        [1, 2]
+    );
+});
+
 test('collision type and target identity survive replay', () => {
     const level = makeLevel({
         needleCount: 1,

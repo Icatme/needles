@@ -94,6 +94,26 @@ test('separates missing-data collection from pilot-ready manual review', () => {
     assert.equal(review.reviewQueue[0].levelId, 'balanced-v2-01');
 });
 
+test('mixed exports keep valid attempt counts after campaign filtering', () => {
+    const mixedSources = sources();
+    mixedSources[0].bundle.attempts.push({
+        ...createAttempt({
+            id: 'legacy-1',
+            recordedAt: '2026-08-03T09:00:00Z',
+            levelId: 'legacy-01',
+            order: 1,
+            predictedDifficulty: 8,
+            success: true
+        }),
+        packId: 'legacy'
+    });
+    mixedSources[0].bundle.attemptCount++;
+
+    const review = buildBalanceReview(root, campaignPath, mixedSources);
+    assert.equal(review.matchingAttemptCount, 10);
+    assert.equal(review.readyAnchorCount, 2);
+});
+
 test('shows relative mismatch without generating parameter edits', () => {
     const review = buildBalanceReview(root, campaignPath, sources());
     const level1 = review.anchors.find(anchor => anchor.levelId === 'balanced-v2-01');

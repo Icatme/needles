@@ -156,6 +156,21 @@ test('reduced motion keeps both backgrounds static', () => {
     context.window.matchMedia = () => ({ matches: false });
 });
 
+test('scene shutdown leaves tween cleanup to Phaser and destroys the background tree', () => {
+    const scene = createScene();
+    const background = context.ThemeBackground.create(
+        scene,
+        'game',
+        'clockwork-observatory'
+    );
+
+    scene.emit('shutdown');
+
+    assert.equal(background.destroyed, true);
+    assert.equal(background.destroyedChildren, true);
+    assert.equal(scene.tweenConfigs.every(tween => tween.removed === false), true);
+});
+
 test('game-over backgrounds stop ambient animation and add a result treatment', () => {
     const scene = createScene();
     const background = context.ThemeBackground.create(

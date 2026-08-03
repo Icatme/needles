@@ -63,7 +63,7 @@ function loadPack(rootDirectory, packId) {
 function auditPack(rootDirectory, packId) {
 	const loaded = loadPack(rootDirectory, packId);
 	const manager = createDifficultyManager(loaded);
-	const levels = loaded.resolved.levels.map((level) => {
+	const levels = Array.from(loaded.resolved.levels, (level) => {
 		const audit = manager.validate(JSON.parse(JSON.stringify(level)));
 		return {
 			levelId: level.packLevelId || String(level.id),
@@ -104,7 +104,7 @@ function scorePack(rootDirectory, packId) {
 		packId: audit.packId,
 		version: audit.version,
 		difficultyModel: audit.difficultyModel,
-		levels: audit.levels.map((level) => ({
+		levels: Array.from(audit.levels, (level) => ({
 			levelId: level.levelId,
 			order: level.order,
 			title: level.title,
@@ -340,35 +340,36 @@ function createStarterPack(rootDirectory, packId, options = {}) {
 
 function loadPackReference(rootDirectory, reference) {
 	const root = path.resolve(rootDirectory);
-	const candidate = resolveContainedPath(root, reference, "pack reference");
+	const candidate = path.resolve(root, reference);
 	if (!fs.existsSync(candidate)) return loadPack(root, reference);
-	const candidateStats = fs.statSync(candidate);
+	const realCandidate = fs.realpathSync.native(candidate);
+	const candidateStats = fs.statSync(realCandidate);
 	const directory = candidateStats.isDirectory()
-		? candidate
-		: path.dirname(candidate);
+		? realCandidate
+		: path.dirname(realCandidate);
 	const manifestPath = resolveContainedPath(
-		root,
+		directory,
 		path.relative(
-			root,
+			directory,
 			candidateStats.isDirectory()
 				? path.join(directory, "manifest.json")
-				: candidate,
+				: realCandidate,
 		),
 		"pack manifest",
 	);
 	const manifest = readJson(manifestPath);
 	const presetsPath = resolveContainedPath(
-		root,
+		directory,
 		path.relative(
-			root,
+			directory,
 			path.resolve(path.dirname(manifestPath), manifest.resources.presets),
 		),
 		"pack presets",
 	);
 	const levelsPath = resolveContainedPath(
-		root,
+		directory,
 		path.relative(
-			root,
+			directory,
 			path.resolve(path.dirname(manifestPath), manifest.resources.levels),
 		),
 		"pack levels",
@@ -440,7 +441,7 @@ function createDifficultyManager(loaded) {
 }
 
 function summarizeDrivers(drivers) {
-	return (drivers || []).slice(0, 3).map((driver) => ({
+	return Array.from(drivers || []).slice(0, 3).map((driver) => ({
 		key: driver.key || null,
 		label: driver.label || driver.key || "unknown",
 		value: finiteOrNull(driver.value ?? driver.score),

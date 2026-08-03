@@ -23,7 +23,7 @@ const PRESETS = {
   schema: 'needles.level-presets/v1',
   layouts: {
     clear: { obstacleAngles: [] },
-    blocked: { obstacleAngles: [90] }
+    blocked: { obstacleAngles: [72] }
   }
 };
 const LEVELS = {

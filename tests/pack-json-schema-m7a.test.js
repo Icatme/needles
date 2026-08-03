@@ -107,7 +107,8 @@ test('JSON Schema handles file shape while runtime validator handles references'
             bundle.presets,
             dangling
         ),
-        /layoutRef is unknown/
+        error => error.name === 'PackValidationError'
+            && error.details.some(detail => /layoutRef is unknown/.test(detail))
     );
 });
 

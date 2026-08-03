@@ -20,13 +20,15 @@ function buildBalanceReview(
 	const status = evaluateCampaign(loaded, sources);
 	const campaignSources = sources.map((source) => {
 		const bundle = source.bundle || source;
+		const attempts = bundle.attempts.filter(
+			(attempt) =>
+				String(attempt.packId) === loaded.campaign.packId &&
+				String(attempt.packVersion || "") === loaded.campaign.packVersion,
+		);
 		const filtered = {
 			...bundle,
-			attempts: bundle.attempts.filter(
-				(attempt) =>
-					String(attempt.packId) === loaded.campaign.packId &&
-					String(attempt.packVersion || "") === loaded.campaign.packVersion,
-			),
+			attemptCount: attempts.length,
+			attempts,
 		};
 		return source.bundle ? { ...source, bundle: filtered } : filtered;
 	});

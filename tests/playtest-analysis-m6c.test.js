@@ -10,6 +10,8 @@ const {
     validateBundle
 } = require('../scripts/lib/playtest-analysis');
 
+const root = path.resolve(__dirname, '..');
+
 function attempt(options) {
     return {
         id: options.id,
@@ -178,4 +180,30 @@ test('CLI writes deterministic JSON and a standalone HTML report', () => {
     const report = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     assert.equal(report.attemptCount, 9);
     assert.match(fs.readFileSync(htmlPath, 'utf8'), /<!doctype html>/);
+});
+
+test('CLI keeps same-named exports from different directories as separate sources', () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'needles-sources-'));
+    const firstDirectory = path.join(directory, 'first');
+    const secondDirectory = path.join(directory, 'second');
+    const firstPath = path.join(firstDirectory, 'playtests.json');
+    const secondPath = path.join(secondDirectory, 'playtests.json');
+    const jsonPath = path.join(directory, 'report.json');
+    fs.mkdirSync(firstDirectory);
+    fs.mkdirSync(secondDirectory);
+    fs.writeFileSync(firstPath, JSON.stringify(bundle([makeSources()[0].bundle.attempts[0]])));
+    fs.writeFileSync(secondPath, JSON.stringify(bundle([makeSources()[1].bundle.attempts[0]])));
+
+    const result = spawnSync(process.execPath, [
+        path.join(root, 'scripts/analyze-playtests.js'),
+        firstPath,
+        secondPath,
+        '--json',
+        jsonPath
+    ], { encoding: 'utf8' });
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+    const level = report.packs[0].levels[0];
+    assert.equal(level.sourceCount, 2);
 });

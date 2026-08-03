@@ -36,7 +36,6 @@ class ThemeBackground {
 		root.animationCount = tweens.length;
 
 		scene.events.once("shutdown", () => {
-			tweens.forEach((tween) => tween?.remove());
 			root.destroy(true);
 		});
 		return root;

@@ -19,7 +19,7 @@ function writeJson(relativePath, value) {
         if (!fs.existsSync(target)) {
             throw new Error(`Generated pack file is missing: ${relativePath}`);
         }
-        const existing = fs.readFileSync(target, 'utf8');
+        const existing = fs.readFileSync(target, 'utf8').replaceAll('\r\n', '\n');
         if (existing !== content) {
             throw new Error(`Generated pack file is stale: ${relativePath}`);
         }

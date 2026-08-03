@@ -22,6 +22,9 @@ function main(argv) {
     if (options.lab && options.levelId !== null) {
         throw new Error('--lab and --level cannot be used together');
     }
+    if (!options.lab && (options.chapterId || options.pageProvided)) {
+        throw new Error('--chapter and --page require --lab');
+    }
     if (!['test', 'progression'].includes(options.mode)) {
         throw new Error('--mode must be test or progression');
     }
@@ -87,6 +90,7 @@ function parseArguments(argv) {
         lab: false,
         chapterId: null,
         page: 1,
+        pageProvided: false,
         port: 4173,
         root: null,
         printOnly: false,
@@ -106,7 +110,10 @@ function parseArguments(argv) {
             else if (argument === '--skin') options.skinId = value;
             else if (argument === '--chapter') options.chapterId = value;
             else if (argument === '--root') options.root = value;
-            else if (argument === '--page') options.page = positiveInteger(value, '--page');
+            else if (argument === '--page') {
+                options.page = positiveInteger(value, '--page');
+                options.pageProvided = true;
+            }
             else if (argument === '--port') options.port = positiveInteger(value, '--port');
         } else {
             throw new Error(`Unknown option ${argument}`);

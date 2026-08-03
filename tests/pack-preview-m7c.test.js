@@ -20,8 +20,10 @@ function loadPreview(search) {
         URLSearchParams,
         CONSTANTS: { THEME_STORAGE_KEY: 'needle_game_theme' },
         VISUAL_SKIN_REGISTRY: {
-            has(id) {
-                return ['clockwork-observatory', 'gilded-jewel-box'].includes(id);
+            get(id) {
+                return ['clockwork-observatory', 'gilded-jewel-box'].includes(id)
+                    ? { id }
+                    : null;
             }
         },
         localStorage: {
@@ -167,6 +169,22 @@ test('preview CLI prints a canonical stable-id URL without starting a server', (
     assert.equal(url.searchParams.get('level'), 'balanced-v2-10');
     assert.equal(url.searchParams.get('mode'), 'test');
     assert.equal(url.searchParams.get('skin'), 'gilded-jewel-box');
+});
+
+test('preview CLI rejects lab-only navigation without lab mode', () => {
+    const result = spawnSync(process.execPath, [
+        path.join(root, 'scripts/preview-pack.js'),
+        '--pack',
+        'balanced-v2',
+        '--chapter',
+        'chapter-2',
+        '--print-only',
+        '--root',
+        root
+    ], { encoding: 'utf8' });
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /--chapter and --page require --lab/);
 });
 
 test('unregistered starter example passes formal and relational validation', () => {

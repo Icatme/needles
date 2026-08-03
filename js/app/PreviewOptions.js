@@ -53,7 +53,7 @@ class PreviewOptions {
             || typeof window === 'undefined'
             || typeof localStorage === 'undefined'
             || typeof VISUAL_SKIN_REGISTRY === 'undefined'
-            || !VISUAL_SKIN_REGISTRY.has(this.skinId)
+            || !VISUAL_SKIN_REGISTRY.get(this.skinId)
         ) {
             return false;
         }
@@ -79,7 +79,7 @@ class PreviewOptions {
 
         const packId = this.packId || appContext.getActivePackId();
         const pack = appContext.catalog.getPack(packId);
-        if (this.skinId && !VISUAL_SKIN_REGISTRY.has(this.skinId)) {
+        if (this.skinId && !VISUAL_SKIN_REGISTRY.get(this.skinId)) {
             throw new Error(`未知预览皮肤：${this.skinId}`);
         }
 
