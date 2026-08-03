@@ -1,0 +1,14 @@
+{
+  "schema": "needles.level-presets/v1",
+  "layouts": {
+    "clear": {
+      "obstacleAngles": []
+    },
+    "two-zones": {
+      "obstacleAngles": [
+        0,
+        180
+      ]
+    }
+  }
+}
