@@ -1,0 +1,20 @@
+{
+  "schema": "needles.level-pack/v1",
+  "id": "legacy",
+  "version": "1.0.0",
+  "title": "旧版 50 关",
+  "caption": "原始方案 · 用于 A/B 对照",
+  "engineCompatibility": "classic-v1",
+  "difficultyModel": "legacy-linear",
+  "chapters": [
+    { "id": "chapter-1", "order": 1, "title": "读盘基础" },
+    { "id": "chapter-2", "order": 2, "title": "分区和拍点" },
+    { "id": "chapter-3", "order": 3, "title": "复合循环" },
+    { "id": "chapter-4", "order": 4, "title": "密度控制" },
+    { "id": "chapter-5", "order": 5, "title": "专家综合" }
+  ],
+  "resources": {
+    "presets": "presets.json",
+    "levels": "levels.json"
+  }
+}
