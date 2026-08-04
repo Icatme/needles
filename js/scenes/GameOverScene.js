@@ -27,6 +27,7 @@ class GameOverScene extends Phaser.Scene {
     }
 
     create() {
+        this.layout = LayoutManager.getSceneLayout('result');
         SceneUI.createBackdrop(this, 'result');
         this.createResultDisplay();
         this.createButtons();
@@ -42,13 +43,16 @@ class GameOverScene extends Phaser.Scene {
 
     createResultDisplay() {
         const ui = SceneUI.getPalette();
+        const failureResult = this.isFailureResult();
+        const activeLayout = failureResult
+            ? this.layout.failure
+            : this.layout.success;
         const stateLabel = this.completedAll
             ? 'ALL LEVELS CLEAR'
             : (this.success ? 'LEVEL CLEAR' : 'COLLISION');
         const stateColor = this.success ? ui.TEXT_SUCCESS : ui.TEXT_ERROR;
-        const failureResult = this.isFailureResult();
 
-        this.stateText = this.add.text(56, failureResult ? 92 : 102, stateLabel, {
+        this.stateText = this.add.text(56, activeLayout.stateY, stateLabel, {
             fontFamily: ui.MONO_FONT,
             fontSize: '12px',
             color: stateColor,
@@ -57,9 +61,9 @@ class GameOverScene extends Phaser.Scene {
 
         if (failureResult) {
             this.resultTitle = null;
-            const previewElements = this.createFailurePreview();
-            this.resultGlyph = this.createResultGlyph({ x: 500, y: 260, radius: 46 });
-            this.createMetricPanel(456);
+            const previewElements = this.createFailurePreview(activeLayout.preview);
+            this.resultGlyph = this.createResultGlyph(activeLayout.glyph);
+            this.createMetricPanel(activeLayout.metricY);
             this.animateIntro([this.stateText, ...previewElements, this.resultGlyph]);
             return;
         }
@@ -67,7 +71,7 @@ class GameOverScene extends Phaser.Scene {
         const titleCopy = this.completedAll
             ? '终曲完成。\n整套关卡通关。'
             : '漂亮。\n这一圈完成了。';
-        this.resultTitle = this.add.text(52, 142, titleCopy, {
+        this.resultTitle = this.add.text(52, activeLayout.titleY, titleCopy, {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '48px',
             color: ui.TEXT_COLOR,
@@ -75,25 +79,29 @@ class GameOverScene extends Phaser.Scene {
             lineSpacing: -2
         });
 
-        this.resultGlyph = this.createResultGlyph();
-        this.createMetricPanel(384);
+        this.resultGlyph = this.createResultGlyph(activeLayout.glyph);
+        this.createMetricPanel(activeLayout.metricY);
         this.animateIntro([this.stateText, this.resultTitle]);
     }
 
-    createFailurePreview() {
+    createFailurePreview(previewLayout) {
         const ui = SceneUI.getPalette();
-        const centerX = 236;
-        const centerY = 260;
-        const imageWidth = 360;
-        const imageHeight = 252;
+        const {
+            centerX,
+            centerY,
+            imageWidth,
+            imageHeight,
+            frameWidth,
+            frameHeight
+        } = previewLayout;
         const elements = [];
 
         this.failurePreviewFrame = SceneUI.createPanel(
             this,
             centerX,
             centerY,
-            376,
-            268,
+            frameWidth,
+            frameHeight,
             {
                 fillColor: ui.BACKGROUND_ALT,
                 strokeColor: ui.ERROR,
@@ -157,7 +165,7 @@ class GameOverScene extends Phaser.Scene {
         const top = centerY - height / 2;
         const wheelX = centerX + 18;
         const wheelY = centerY + 2;
-        const wheelRadius = 66;
+        const wheelRadius = Math.min(66, height * 0.27);
 
         graphics.setDepth(11);
         graphics.fillStyle(ui.BACKGROUND, 1);
@@ -206,16 +214,24 @@ class GameOverScene extends Phaser.Scene {
 
     createMetricPanel(centerY) {
         const ui = SceneUI.getPalette();
-        SceneUI.createPanel(this, 300, centerY, 488, 106, {
-            fillColor: ui.SURFACE,
-            strokeColor: ui.RULE,
-            radius: 14,
-            depth: 10
-        });
+        const metricLayout = this.layout.metric;
+        SceneUI.createPanel(
+            this,
+            300,
+            centerY,
+            metricLayout.panelWidth,
+            metricLayout.panelHeight,
+            {
+                fillColor: ui.SURFACE,
+                strokeColor: ui.RULE,
+                radius: 14,
+                depth: 10
+            }
+        );
 
         const metricLabel = this.add.text(
             82,
-            centerY - 26,
+            centerY + metricLayout.labelOffsetY,
             this.success ? '已完成' : '本次进度',
             {
                 fontFamily: ui.BODY_FONT,
@@ -228,12 +244,17 @@ class GameOverScene extends Phaser.Scene {
         const metricValue = this.success
             ? `关卡 ${String(this.level).padStart(2, '0')} · ${this.levelName}`
             : `${this.insertedCount} / ${this.totalCount}`;
-        const metric = this.add.text(82, centerY + 7, metricValue, {
-            fontFamily: ui.DISPLAY_FONT,
-            fontSize: '34px',
-            color: ui.TEXT_COLOR,
-            fontStyle: 'bold'
-        });
+        const metric = this.add.text(
+            82,
+            centerY + metricLayout.valueOffsetY,
+            metricValue,
+            {
+                fontFamily: ui.DISPLAY_FONT,
+                fontSize: '34px',
+                color: ui.TEXT_COLOR,
+                fontStyle: 'bold'
+            }
+        );
         metric.setOrigin(0, 0.5);
         metric.setDepth(11);
 
@@ -302,36 +323,54 @@ class GameOverScene extends Phaser.Scene {
 
     createButtons() {
         const ui = SceneUI.getPalette();
-        const failureResult = this.isFailureResult();
-        const primaryY = failureResult ? 574 : 520;
-        const secondaryY = failureResult ? 642 : 588;
-        const shortcutY = failureResult ? 718 : 680;
+        const activeLayout = this.isFailureResult()
+            ? this.layout.failure
+            : this.layout.success;
         const primaryLabel = this.completedAll
             ? (this.route.mode === 'test' ? '返回关卡实验室' : '返回主菜单')
             : (this.success ? '进入下一关' : '重新挑战');
-        SceneUI.createButton(this, 300, primaryY, primaryLabel, () => this.runPrimaryAction(), {
-            width: 300,
-            variant: 'primary'
-        });
+        SceneUI.createButton(
+            this,
+            300,
+            activeLayout.primaryY,
+            primaryLabel,
+            () => this.runPrimaryAction(),
+            {
+                width: 300,
+                variant: 'primary'
+            }
+        );
 
         const secondaryLabel = this.completedAll ? '重玩当前关' : '返回主菜单';
-        SceneUI.createButton(this, 300, secondaryY, secondaryLabel, () => {
-            if (this.completedAll) {
-                APP_CONTEXT.router.startLevel(this, this.route);
-            } else {
-                APP_CONTEXT.router.startMenu(this);
+        SceneUI.createButton(
+            this,
+            300,
+            activeLayout.secondaryY,
+            secondaryLabel,
+            () => {
+                if (this.completedAll) {
+                    APP_CONTEXT.router.startLevel(this, this.route);
+                } else {
+                    APP_CONTEXT.router.startMenu(this);
+                }
+            },
+            {
+                width: 300,
+                variant: 'secondary'
             }
-        }, {
-            width: 300,
-            variant: 'secondary'
-        });
+        );
 
-        const shortcut = this.add.text(300, shortcutY, 'ENTER 继续  ·  ESC 菜单', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '11px',
-            color: ui.TEXT_MUTED,
-            letterSpacing: 1
-        });
+        const shortcut = this.add.text(
+            300,
+            activeLayout.footerY,
+            'ENTER 继续  ·  ESC 菜单',
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '11px',
+                color: ui.TEXT_MUTED,
+                letterSpacing: 1
+            }
+        );
         shortcut.setOrigin(0.5);
     }
 

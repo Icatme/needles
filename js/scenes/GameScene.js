@@ -15,6 +15,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.layout = LayoutManager.getSceneLayout('game');
         this.levelConfig = this.levelManager.startLevel(this.route.levelId);
         this.route = this.levelManager.getCurrentRoute();
         this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig);
@@ -32,9 +33,9 @@ class GameScene extends Phaser.Scene {
         this.createBackground();
         this.wheel = new Wheel(
             this,
-            CONSTANTS.WHEEL.CENTER_X,
-            CONSTANTS.WHEEL.CENTER_Y,
-            CONSTANTS.WHEEL.RADIUS,
+            this.layout.wheel.x,
+            this.layout.wheel.y,
+            this.layout.wheel.radius,
             this.levelVisual
         );
         const initialRhythm = this.session.advance(0).rhythm;
@@ -93,7 +94,7 @@ class GameScene extends Phaser.Scene {
         }
         this.currentNeedle.setReadyPosition(
             CONSTANTS.WIDTH / 2,
-            CONSTANTS.NEEDLE.READY_Y
+            this.layout.readyNeedleY
         );
         this.uiManager.updateRemaining(snapshot.remainingCount);
     }
@@ -197,12 +198,7 @@ class GameScene extends Phaser.Scene {
         const renderScale = typeof HiDPIRenderer === 'undefined'
             ? 1
             : HiDPIRenderer.getRenderScale();
-        const logicalArea = {
-            x: 0,
-            y: 100,
-            width: CONSTANTS.WIDTH,
-            height: 420
-        };
+        const logicalArea = this.layout.failureSnapshotArea;
         let settled = false;
 
         const complete = image => {

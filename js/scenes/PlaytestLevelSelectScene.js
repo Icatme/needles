@@ -8,28 +8,39 @@ class PlaytestLevelSelectScene extends LevelSelectScene {
     createHeader() {
         super.createHeader();
         const ui = SceneUI.getPalette();
+        const header = this.layout.playtestHeader;
         const attemptCount = PLAYTEST_STORE.count();
 
-        SceneUI.createButton(this, 416, 46, '导出记录', () => {
-            this.exportPlaytests();
-        }, {
-            width: 112,
-            height: 38,
-            variant: 'secondary',
-            fontSize: '12px'
-        });
-        SceneUI.createButton(this, 532, 46, '清空记录', () => {
-            this.clearPlaytests();
-        }, {
-            width: 104,
-            height: 38,
-            variant: 'quiet',
-            fontSize: '12px'
-        });
+        SceneUI.createButton(
+            this,
+            header.exportButton.x,
+            header.exportButton.y,
+            '导出记录',
+            () => this.exportPlaytests(),
+            {
+                width: 112,
+                height: 38,
+                variant: 'secondary',
+                fontSize: '12px'
+            }
+        );
+        SceneUI.createButton(
+            this,
+            header.clearButton.x,
+            header.clearButton.y,
+            '清空记录',
+            () => this.clearPlaytests(),
+            {
+                width: 104,
+                height: 38,
+                variant: 'quiet',
+                fontSize: '12px'
+            }
+        );
 
         const count = this.add.text(
-            546,
-            72,
+            header.count.x,
+            header.count.y,
             `本地试玩记录 ${attemptCount} 条 · E 导出 · C 清空`,
             {
                 fontFamily: ui.MONO_FONT,

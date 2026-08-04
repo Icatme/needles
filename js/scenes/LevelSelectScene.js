@@ -11,6 +11,8 @@ class LevelSelectScene extends Phaser.Scene {
     }
 
     create() {
+        this.layout = LayoutManager.getSceneLayout('levelSelect');
+        this.pageSize = this.layout.pageSize;
         this.themeManager = new ThemeManager();
         this.packId = APP_CONTEXT.catalog.getPack(
             this.requestedPackId || APP_CONTEXT.getActivePackId()
@@ -50,29 +52,40 @@ class LevelSelectScene extends Phaser.Scene {
 
     createHeader() {
         const ui = SceneUI.getPalette();
-        SceneUI.createButton(this, 74, 50, '← 菜单', () => {
-            APP_CONTEXT.router.startMenu(this);
-        }, {
-            width: 112,
-            height: 40,
-            variant: 'quiet',
-            fontSize: '14px'
-        });
+        const header = this.layout.header;
+        SceneUI.createButton(
+            this,
+            header.menuButton.x,
+            header.menuButton.y,
+            '← 菜单',
+            () => APP_CONTEXT.router.startMenu(this),
+            {
+                width: 112,
+                height: 40,
+                variant: 'quiet',
+                fontSize: '14px'
+            }
+        );
 
-        this.add.text(54, 82, '关卡实验室', {
+        this.add.text(header.title.x, header.title.y, '关卡实验室', {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '40px',
             color: ui.TEXT_COLOR,
             fontStyle: 'bold'
         });
 
-        const note = this.add.text(546, 98, '任意关卡可直达\n测试不会写入进度', {
-            fontFamily: ui.BODY_FONT,
-            fontSize: '12px',
-            color: ui.TEXT_MUTED,
-            align: 'right',
-            lineSpacing: 5
-        });
+        const note = this.add.text(
+            header.note.x,
+            header.note.y,
+            '任意关卡可直达\n测试不会写入进度',
+            {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '12px',
+                color: ui.TEXT_MUTED,
+                align: 'right',
+                lineSpacing: 5
+            }
+        );
         note.setOrigin(1, 0);
     }
 
@@ -84,23 +97,29 @@ class LevelSelectScene extends Phaser.Scene {
         const startX = 300 - totalWidth / 2 + width / 2;
 
         packs.forEach((pack, index) => {
-            SceneUI.createButton(this, startX + index * (width + gap), 164, pack.name, () => {
-                this.switchPack(pack.id);
-            }, {
-                width,
-                height: 48,
-                variant: pack.id === this.packId ? 'primary' : 'secondary',
-                fontSize: '15px'
-            });
+            SceneUI.createButton(
+                this,
+                startX + index * (width + gap),
+                this.layout.packPickerY,
+                pack.name,
+                () => this.switchPack(pack.id),
+                {
+                    width,
+                    height: 48,
+                    variant: pack.id === this.packId ? 'primary' : 'secondary',
+                    fontSize: '15px'
+                }
+            );
         });
     }
 
     createChapterNavigator() {
         const ui = SceneUI.getPalette();
+        const chapterLayout = this.layout.chapter;
         const chapter = this.getCurrentChapter();
         const chapterIndex = this.chapters.findIndex(item => item.id === chapter.id);
 
-        SceneUI.createButton(this, 84, 226, '← 上一章', () => {
+        SceneUI.createButton(this, 84, chapterLayout.buttonY, '← 上一章', () => {
             this.switchChapterByOffset(-1);
         }, {
             width: 116,
@@ -108,7 +127,7 @@ class LevelSelectScene extends Phaser.Scene {
             variant: 'quiet',
             fontSize: '12px'
         });
-        SceneUI.createButton(this, 516, 226, '下一章 →', () => {
+        SceneUI.createButton(this, 516, chapterLayout.buttonY, '下一章 →', () => {
             this.switchChapterByOffset(1);
         }, {
             width: 116,
@@ -117,7 +136,7 @@ class LevelSelectScene extends Phaser.Scene {
             fontSize: '12px'
         });
 
-        const title = this.add.text(300, 218, chapter.title, {
+        const title = this.add.text(300, chapterLayout.titleY, chapter.title, {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '21px',
             color: ui.TEXT_COLOR,
@@ -126,7 +145,7 @@ class LevelSelectScene extends Phaser.Scene {
         title.setOrigin(0.5);
         const counter = this.add.text(
             300,
-            244,
+            chapterLayout.counterY,
             `章节 ${chapterIndex + 1} / ${this.chapters.length}`,
             {
                 fontFamily: ui.MONO_FONT,
@@ -144,29 +163,35 @@ class LevelSelectScene extends Phaser.Scene {
             (this.page - 1) * this.pageSize,
             this.page * this.pageSize
         );
+        const grid = this.layout.grid;
 
         pageLevels.forEach((level, index) => {
-            const column = index % 5;
-            const row = Math.floor(index / 5);
-            const x = 80 + column * 110;
-            const y = 342 + row * 128;
+            const column = index % grid.columns;
+            const row = Math.floor(index / grid.columns);
+            const x = grid.startX + column * grid.columnGap;
+            const y = grid.startY + row * grid.rowGap;
             this.createLevelCard(level, x, y, index === 0);
         });
 
         const pageCount = this.getPageCount();
         if (pageCount > 1) {
             const ui = SceneUI.getPalette();
-            SceneUI.createButton(this, 192, 510, '← 上一页', () => {
+            SceneUI.createButton(this, 192, this.layout.paginationY, '← 上一页', () => {
                 this.switchPage(this.page - 1);
             }, { width: 130, height: 38, variant: 'quiet', fontSize: '12px' });
-            SceneUI.createButton(this, 408, 510, '下一页 →', () => {
+            SceneUI.createButton(this, 408, this.layout.paginationY, '下一页 →', () => {
                 this.switchPage(this.page + 1);
             }, { width: 130, height: 38, variant: 'quiet', fontSize: '12px' });
-            const pageText = this.add.text(300, 510, `${this.page} / ${pageCount}`, {
-                fontFamily: ui.MONO_FONT,
-                fontSize: '11px',
-                color: ui.TEXT_MUTED
-            });
+            const pageText = this.add.text(
+                300,
+                this.layout.paginationY,
+                `${this.page} / ${pageCount}`,
+                {
+                    fontFamily: ui.MONO_FONT,
+                    fontSize: '11px',
+                    color: ui.TEXT_MUTED
+                }
+            );
             pageText.setOrigin(0.5);
         }
     }
@@ -245,25 +270,26 @@ class LevelSelectScene extends Phaser.Scene {
 
     createDetailPanel() {
         const ui = SceneUI.getPalette();
-        SceneUI.createPanel(this, 300, 626, 492, 126, {
+        const detail = this.layout.detail;
+        SceneUI.createPanel(this, 300, detail.panelY, 492, detail.panelHeight, {
             fillColor: ui.SURFACE,
             strokeColor: ui.RULE,
             radius: 14,
             depth: 10
         });
 
-        this.detailTitle = this.add.text(78, 584, '', {
+        this.detailTitle = this.add.text(78, detail.titleY, '', {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '22px',
             color: ui.TEXT_COLOR,
             fontStyle: 'bold'
         });
-        this.detailRule = this.add.text(78, 616, '', {
+        this.detailRule = this.add.text(78, detail.ruleY, '', {
             fontFamily: ui.BODY_FONT,
             fontSize: '14px',
             color: ui.TEXT_MUTED
         });
-        this.detailMetrics = this.add.text(78, 652, '', {
+        this.detailMetrics = this.add.text(78, detail.metricsY, '', {
             fontFamily: ui.MONO_FONT,
             fontSize: '11px',
             color: ui.TEXT_ACCENT,
@@ -274,7 +300,7 @@ class LevelSelectScene extends Phaser.Scene {
 
         const footer = this.add.text(
             300,
-            746,
+            this.layout.footerY,
             '点击关卡立即测试 · ← → 章节 · ↑ ↓ 方案 · PgUp/PgDn 翻页',
             {
                 fontFamily: ui.MONO_FONT,

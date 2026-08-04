@@ -11,7 +11,7 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='24' r='16' fill='%23172126'/%3E%3Cpath d='M32 40v16' stroke='%23e55a3c' stroke-width='5'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="css/style.css?v=20260804-hidpi-m1" />
+    <link rel="stylesheet" href="css/style.css?v=20260804-layout-profiles-m1" />
   </head>
   <body>
     <main
@@ -23,8 +23,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
-    <!-- Base utils -->
+    <!-- Base utils and responsive layout bootstrap -->
     <script src="js/utils/constants.js?v=20260803-game-session-m4"></script>
+    <script src="js/app/LayoutProfiles.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/app/LayoutManager.js?v=20260804-layout-profiles-m1"></script>
     <script src="js/utils/HiDPIRenderer.js?v=20260804-hidpi-m1"></script>
     <script src="js/utils/GemRenderer.js?v=20260803-game-session-m4"></script>
 
@@ -44,7 +46,7 @@
     <script src="js/skins/BuiltinSkins.js?v=20260803-game-session-m4"></script>
 
     <!-- UI channels resolve through the active skin -->
-    <script src="js/utils/ThemeBackground.js?v=20260803-game-session-m4"></script>
+    <script src="js/utils/ThemeBackground.js?v=20260804-layout-profiles-m1"></script>
     <script src="js/utils/SceneUI.js?v=20260803-game-session-m4"></script>
 
     <!-- Visual entities: display only -->
@@ -77,17 +79,17 @@
     <!-- UI/runtime adapters -->
     <script src="js/managers/ThemeManager.js?v=20260803-game-session-m4"></script>
     <script src="js/managers/LevelManager.js?v=20260803-game-session-m4"></script>
-    <script src="js/managers/UIManager.js?v=20260803-game-session-m4"></script>
+    <script src="js/managers/UIManager.js?v=20260804-layout-profiles-m1"></script>
 
     <!-- Phaser adapters -->
-    <script src="js/scenes/BootScene.js?v=20260803-preview-m7c"></script>
-    <script src="js/scenes/MenuScene.js?v=20260803-game-session-m4"></script>
-    <script src="js/scenes/EnhancedMenuScene.js?v=20260803-game-session-m4"></script>
-    <script src="js/scenes/LevelSelectScene.js?v=20260803-game-session-m4"></script>
-    <script src="js/scenes/PlaytestLevelSelectScene.js?v=20260803-playtests-m6b"></script>
-    <script src="js/scenes/GameScene.js?v=20260804-failure-snapshot-m1"></script>
-    <script src="js/scenes/GameOverScene.js?v=20260804-failure-snapshot-m1"></script>
+    <script src="js/scenes/BootScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/MenuScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/EnhancedMenuScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/LevelSelectScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/PlaytestLevelSelectScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/GameScene.js?v=20260804-layout-profiles-m1"></script>
+    <script src="js/scenes/GameOverScene.js?v=20260804-layout-profiles-m1"></script>
 
-    <script src="js/main.js?v=20260804-hidpi-m1"></script>
+    <script src="js/main.js?v=20260804-layout-profiles-m1"></script>
   </body>
 </html>

@@ -1,5 +1,8 @@
-// 在 Phaser 创建场景和文字对象前安装高 DPI 渲染适配。
+// 在 Phaser 创建渲染器前选择显示模板并应用逻辑画布尺寸。
+LayoutManager.bootstrap();
 HiDPIRenderer.install();
+
+const scaleBounds = LayoutManager.getScaleBounds();
 
 // Phaser 游戏配置
 const config = {
@@ -12,14 +15,8 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         autoRound: true,
-        min: {
-            width: 320,
-            height: 480
-        },
-        max: {
-            width: 1200,
-            height: 1600
-        }
+        min: scaleBounds.min,
+        max: scaleBounds.max
     },
     physics: {
         default: 'arcade',
@@ -52,28 +49,41 @@ document.addEventListener('DOMContentLoaded', () => {
     game = new Phaser.Game(config);
 
     // 防止移动端页面滚动和缩放
-    document.addEventListener('touchmove', (e) => {
-        e.preventDefault();
+    document.addEventListener('touchmove', (event) => {
+        event.preventDefault();
     }, { passive: false });
 
-    document.addEventListener('gesturestart', (e) => {
-        e.preventDefault();
+    document.addEventListener('gesturestart', (event) => {
+        event.preventDefault();
     });
 
-    document.addEventListener('gesturechange', (e) => {
-        e.preventDefault();
+    document.addEventListener('gesturechange', (event) => {
+        event.preventDefault();
     });
 
-    document.addEventListener('gestureend', (e) => {
-        e.preventDefault();
+    document.addEventListener('gestureend', (event) => {
+        event.preventDefault();
     });
 });
 
-// 处理窗口大小变化
-window.addEventListener('resize', () => {
-    requestAnimationFrame(() => {
-        if (game && game.scale) {
-            game.scale.refresh();
+let resizeTimer = null;
+
+function handleViewportChange() {
+    if (resizeTimer) window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+        const change = LayoutManager.inspectViewportChange();
+
+        // 逻辑画布尺寸跨模板变化时，完整重建 Phaser，避免运行时相机和纹理残留旧尺寸。
+        if (change.changed) {
+            window.location.reload();
+            return;
         }
-    });
-});
+
+        requestAnimationFrame(() => {
+            if (game?.scale) game.scale.refresh();
+        });
+    }, 140);
+}
+
+window.addEventListener('resize', handleViewportChange);
+window.addEventListener('orientationchange', handleViewportChange);
