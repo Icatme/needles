@@ -20,10 +20,19 @@ class GameOverScene extends Phaser.Scene {
         this.totalCount = data.totalCount || 0;
         this.packLevelCount = data.packLevelCount
             || APP_CONTEXT.catalog.getPack(this.route.packId).levels.length;
+
         this.failureSnapshot = data.failureSnapshot || null;
-        this.failureSnapshotTextureKey = null;
+        this.successSnapshot = data.successSnapshot || null;
+        this.resultSnapshot = this.success
+            ? this.successSnapshot
+            : this.failureSnapshot;
+        this.resultSnapshotTextureKey = null;
+        this.resultPreviewImage = null;
+        this.resultPreviewFrame = null;
+
+        // 保留按结果类型命名的引用，便于测试和后续分享功能使用。
         this.failurePreviewImage = null;
-        this.failurePreviewFrame = null;
+        this.successPreviewImage = null;
     }
 
     create() {
@@ -34,7 +43,7 @@ class GameOverScene extends Phaser.Scene {
 
         this.input.keyboard.once('keydown-ENTER', () => this.runPrimaryAction());
         this.input.keyboard.once('keydown-ESC', () => APP_CONTEXT.router.startMenu(this));
-        this.events.once('shutdown', () => this.releaseFailureSnapshot());
+        this.events.once('shutdown', () => this.releaseResultSnapshot());
     }
 
     isFailureResult() {
@@ -43,10 +52,7 @@ class GameOverScene extends Phaser.Scene {
 
     createResultDisplay() {
         const ui = SceneUI.getPalette();
-        const failureResult = this.isFailureResult();
-        const activeLayout = failureResult
-            ? this.layout.failure
-            : this.layout.success;
+        const activeLayout = this.layout.failure;
         const stateLabel = this.completedAll
             ? 'ALL LEVELS CLEAR'
             : (this.success ? 'LEVEL CLEAR' : 'COLLISION');
@@ -59,32 +65,15 @@ class GameOverScene extends Phaser.Scene {
             letterSpacing: 1.8
         });
 
-        if (failureResult) {
-            this.resultTitle = null;
-            const previewElements = this.createFailurePreview(activeLayout.preview);
-            this.resultGlyph = this.createResultGlyph(activeLayout.glyph);
-            this.createMetricPanel(activeLayout.metricY);
-            this.animateIntro([this.stateText, ...previewElements, this.resultGlyph]);
-            return;
-        }
-
-        const titleCopy = this.completedAll
-            ? '终曲完成。\n整套关卡通关。'
-            : '漂亮。\n这一圈完成了。';
-        this.resultTitle = this.add.text(52, activeLayout.titleY, titleCopy, {
-            fontFamily: ui.DISPLAY_FONT,
-            fontSize: '48px',
-            color: ui.TEXT_COLOR,
-            fontStyle: 'bold',
-            lineSpacing: -2
-        });
-
+        // 成功和失败都用最终游戏帧作为主视觉，不再重复放大段落标题。
+        this.resultTitle = null;
+        const previewElements = this.createResultPreview(activeLayout.preview);
         this.resultGlyph = this.createResultGlyph(activeLayout.glyph);
         this.createMetricPanel(activeLayout.metricY);
-        this.animateIntro([this.stateText, this.resultTitle]);
+        this.animateIntro([this.stateText, ...previewElements, this.resultGlyph]);
     }
 
-    createFailurePreview(previewLayout) {
+    createResultPreview(previewLayout) {
         const ui = SceneUI.getPalette();
         const {
             centerX,
@@ -94,9 +83,10 @@ class GameOverScene extends Phaser.Scene {
             frameWidth,
             frameHeight
         } = previewLayout;
+        const accentColor = this.success ? ui.SUCCESS : ui.ERROR;
         const elements = [];
 
-        this.failurePreviewFrame = SceneUI.createPanel(
+        this.resultPreviewFrame = SceneUI.createPanel(
             this,
             centerX,
             centerY,
@@ -104,43 +94,50 @@ class GameOverScene extends Phaser.Scene {
             frameHeight,
             {
                 fillColor: ui.BACKGROUND_ALT,
-                strokeColor: ui.ERROR,
+                strokeColor: accentColor,
                 strokeWidth: 2,
                 strokeAlpha: 0.72,
                 radius: 16,
                 depth: 10
             }
         );
-        elements.push(this.failurePreviewFrame);
+        elements.push(this.resultPreviewFrame);
 
         const snapshotWidth = Number(
-            this.failureSnapshot?.naturalWidth || this.failureSnapshot?.width || 0
+            this.resultSnapshot?.naturalWidth || this.resultSnapshot?.width || 0
         );
         const snapshotHeight = Number(
-            this.failureSnapshot?.naturalHeight || this.failureSnapshot?.height || 0
+            this.resultSnapshot?.naturalHeight || this.resultSnapshot?.height || 0
         );
 
         if (snapshotWidth > 0 && snapshotHeight > 0) {
-            const sequence = GameOverScene.failureSnapshotSequence++;
-            const textureKey = `failure-snapshot-${sequence}`;
-            const texture = this.textures.addImage(textureKey, this.failureSnapshot);
+            const sequence = GameOverScene.resultSnapshotSequence++;
+            const resultType = this.success ? 'success' : 'failure';
+            const textureKey = `result-snapshot-${resultType}-${sequence}`;
+            const texture = this.textures.addImage(textureKey, this.resultSnapshot);
 
             if (texture) {
-                this.failureSnapshotTextureKey = textureKey;
-                this.failurePreviewImage = this.add.image(centerX, centerY, textureKey);
-                this.failurePreviewImage.setDisplaySize(imageWidth, imageHeight);
-                this.failurePreviewImage.setDepth(11);
-                elements.push(this.failurePreviewImage);
+                this.resultSnapshotTextureKey = textureKey;
+                this.resultPreviewImage = this.add.image(centerX, centerY, textureKey);
+                this.resultPreviewImage.setDisplaySize(imageWidth, imageHeight);
+                this.resultPreviewImage.setDepth(11);
+                elements.push(this.resultPreviewImage);
             }
         }
 
-        if (!this.failurePreviewImage) {
-            elements.push(this.createFailurePreviewFallback(
+        if (!this.resultPreviewImage) {
+            elements.push(this.createResultPreviewFallback(
                 centerX,
                 centerY,
                 imageWidth,
                 imageHeight
             ));
+        }
+
+        if (this.success) {
+            this.successPreviewImage = this.resultPreviewImage;
+        } else {
+            this.failurePreviewImage = this.resultPreviewImage;
         }
 
         const border = this.add.graphics();
@@ -158,7 +155,7 @@ class GameOverScene extends Phaser.Scene {
         return elements;
     }
 
-    createFailurePreviewFallback(centerX, centerY, width, height) {
+    createResultPreviewFallback(centerX, centerY, width, height) {
         const ui = SceneUI.getPalette();
         const graphics = this.add.graphics();
         const left = centerX - width / 2;
@@ -166,20 +163,23 @@ class GameOverScene extends Phaser.Scene {
         const wheelX = centerX + 18;
         const wheelY = centerY + 2;
         const wheelRadius = Math.min(66, height * 0.27);
+        const accentColor = this.success ? ui.SUCCESS : ui.ERROR;
 
         graphics.setDepth(11);
         graphics.fillStyle(ui.BACKGROUND, 1);
         graphics.fillRoundedRect(left, top, width, height, 12);
-        graphics.lineStyle(22, ui.TARGET_RING, 0.08);
+        graphics.lineStyle(22, accentColor, 0.07);
         graphics.strokeCircle(wheelX, wheelY, wheelRadius + 20);
         graphics.lineStyle(3, ui.INK, 0.88);
         graphics.strokeCircle(wheelX, wheelY, wheelRadius);
         graphics.lineStyle(1, ui.RULE, 0.72);
         graphics.strokeCircle(wheelX, wheelY, wheelRadius - 18);
-        graphics.fillStyle(ui.ACCENT, 0.9);
+        graphics.fillStyle(this.success ? ui.SUCCESS : ui.ACCENT, 0.9);
         graphics.fillCircle(wheelX, wheelY, 9);
 
-        const angles = [-2.45, -1.82, -1.18, -0.48, 0.28, 0.92, 1.46, 2.06];
+        const angles = this.success
+            ? [-2.78, -2.22, -1.66, -1.10, -0.54, 0.02, 0.58, 1.14, 1.70, 2.26]
+            : [-2.45, -1.82, -1.18, -0.48, 0.28, 0.92, 1.46, 2.06];
         angles.forEach(angle => {
             const innerX = wheelX + Math.cos(angle) * wheelRadius;
             const innerY = wheelY + Math.sin(angle) * wheelRadius;
@@ -192,6 +192,20 @@ class GameOverScene extends Phaser.Scene {
             graphics.lineStyle(2, ui.INK, 0.85);
             graphics.strokeCircle(outerX, outerY, 7);
         });
+
+        if (this.success) {
+            graphics.lineStyle(3, ui.SUCCESS, 0.9);
+            for (let index = 0; index < 8; index++) {
+                const angle = index * Math.PI / 4;
+                graphics.lineBetween(
+                    wheelX + Math.cos(angle) * (wheelRadius + 50),
+                    wheelY + Math.sin(angle) * (wheelRadius + 50),
+                    wheelX + Math.cos(angle) * (wheelRadius + 64),
+                    wheelY + Math.sin(angle) * (wheelRadius + 64)
+                );
+            }
+            return graphics;
+        }
 
         const collisionAngle = -2.45;
         const collisionX = wheelX + Math.cos(collisionAngle) * wheelRadius;
@@ -323,9 +337,7 @@ class GameOverScene extends Phaser.Scene {
 
     createButtons() {
         const ui = SceneUI.getPalette();
-        const activeLayout = this.isFailureResult()
-            ? this.layout.failure
-            : this.layout.success;
+        const activeLayout = this.layout.failure;
         const primaryLabel = this.completedAll
             ? (this.route.mode === 'test' ? '返回关卡实验室' : '返回主菜单')
             : (this.success ? '进入下一关' : '重新挑战');
@@ -374,19 +386,23 @@ class GameOverScene extends Phaser.Scene {
         shortcut.setOrigin(0.5);
     }
 
-    releaseFailureSnapshot() {
-        if (this.failurePreviewImage?.active) {
-            this.failurePreviewImage.destroy();
+    releaseResultSnapshot() {
+        if (this.resultPreviewImage?.active) {
+            this.resultPreviewImage.destroy();
         }
         if (
-            this.failureSnapshotTextureKey
-            && this.textures.exists(this.failureSnapshotTextureKey)
+            this.resultSnapshotTextureKey
+            && this.textures.exists(this.resultSnapshotTextureKey)
         ) {
-            this.textures.remove(this.failureSnapshotTextureKey);
+            this.textures.remove(this.resultSnapshotTextureKey);
         }
+        this.resultPreviewImage = null;
         this.failurePreviewImage = null;
-        this.failureSnapshotTextureKey = null;
+        this.successPreviewImage = null;
+        this.resultSnapshotTextureKey = null;
+        this.resultSnapshot = null;
         this.failureSnapshot = null;
+        this.successSnapshot = null;
     }
 
     runPrimaryAction() {
@@ -408,4 +424,4 @@ class GameOverScene extends Phaser.Scene {
     }
 }
 
-GameOverScene.failureSnapshotSequence = 1;
+GameOverScene.resultSnapshotSequence = 1;
