@@ -32,7 +32,8 @@ const CONSTANTS = {
         ACTIVE_TEXT_COLOR: '#172126',
         TEXT_SIZE: '14px',
         TEXT_FONT: '"Bahnschrift SemiCondensed", "Microsoft YaHei UI", sans-serif',
-        FLY_SPEED: 2300           // 像素/秒
+        FLY_DURATION_MS: 86,      // 点击到命中的固定逻辑时长，保留经典布局原有手感
+        FLY_SPEED: 2300           // 启动时按当前显示模板重算，确保各模板飞行时长一致
     },
 
     // 障碍物配置
