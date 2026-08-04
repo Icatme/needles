@@ -27,6 +27,7 @@ class GameScene extends Phaser.Scene {
         this.remainingNeedles = [];
         this.currentNeedle = null;
         this.completionHandled = false;
+        this.failureSnapshotTimer = null;
 
         this.createBackground();
         this.wheel = new Wheel(
@@ -176,16 +177,68 @@ class GameScene extends Phaser.Scene {
         }
         this.createExplosion(this.currentNeedle.getBallPosition());
 
-        this.uiManager.showFail(() => {
-            APP_CONTEXT.router.startResult(this, {
-                route: this.route,
-                level: this.levelConfig.order,
-                success: false,
-                levelName: this.levelConfig.name,
-                insertedCount: outcome.snapshot.insertedCount,
-                totalCount: this.levelConfig.needleCount
+        this.captureFailureSnapshot(failureSnapshot => {
+            this.uiManager.showFail(() => {
+                APP_CONTEXT.router.startResult(this, {
+                    route: this.route,
+                    level: this.levelConfig.order,
+                    success: false,
+                    levelName: this.levelConfig.name,
+                    insertedCount: outcome.snapshot.insertedCount,
+                    totalCount: this.levelConfig.needleCount,
+                    failureSnapshot
+                });
             });
         });
+    }
+
+    captureFailureSnapshot(callback) {
+        const renderer = this.game?.renderer;
+        const renderScale = typeof HiDPIRenderer === 'undefined'
+            ? 1
+            : HiDPIRenderer.getRenderScale();
+        const logicalArea = {
+            x: 0,
+            y: 100,
+            width: CONSTANTS.WIDTH,
+            height: 420
+        };
+        let settled = false;
+
+        const complete = image => {
+            if (settled) return;
+            settled = true;
+
+            if (this.failureSnapshotTimer) {
+                this.failureSnapshotTimer.remove(false);
+                this.failureSnapshotTimer = null;
+            }
+
+            const width = Number(image?.naturalWidth || image?.width || 0);
+            const height = Number(image?.naturalHeight || image?.height || 0);
+            callback(width > 0 && height > 0 ? image : null);
+        };
+
+        this.failureSnapshotTimer = this.time.delayedCall(1000, () => complete(null));
+
+        if (!renderer || typeof renderer.snapshotArea !== 'function') {
+            complete(null);
+            return;
+        }
+
+        try {
+            renderer.snapshotArea(
+                Math.round(logicalArea.x * renderScale),
+                Math.round(logicalArea.y * renderScale),
+                Math.round(logicalArea.width * renderScale),
+                Math.round(logicalArea.height * renderScale),
+                complete,
+                'image/png'
+            );
+        } catch (error) {
+            console.warn('无法截取失败画面，将使用静态预览。', error);
+            complete(null);
+        }
     }
 
     onLevelComplete() {
@@ -275,6 +328,10 @@ class GameScene extends Phaser.Scene {
     }
 
     shutdown() {
+        if (this.failureSnapshotTimer) {
+            this.failureSnapshotTimer.remove(false);
+            this.failureSnapshotTimer = null;
+        }
         if (this.wheel) this.wheel.destroy();
         if (this.uiManager) this.uiManager.destroy();
 
