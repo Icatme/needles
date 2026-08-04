@@ -2,6 +2,8 @@ class LayoutManager {
     static getViewportInfo() {
         const hostWindow = typeof window !== 'undefined' ? window : null;
         const hostDocument = typeof document !== 'undefined' ? document : null;
+        const hostNavigator = typeof navigator !== 'undefined' ? navigator : null;
+        const hostScreen = typeof screen !== 'undefined' ? screen : null;
         const visualViewport = hostWindow?.visualViewport || null;
         const width = Number(
             visualViewport?.width
@@ -15,11 +17,30 @@ class LayoutManager {
                 || hostDocument?.documentElement?.clientHeight
                 || 800
         );
+        const coarsePointer = Boolean(
+            hostWindow?.matchMedia?.('(pointer: coarse)')?.matches
+        );
+        const touchCapable = Number(hostNavigator?.maxTouchPoints || 0) > 0
+            || coarsePointer;
+        const screenWidth = Number(hostScreen?.width || 0);
+        const screenHeight = Number(hostScreen?.height || 0);
+        const useStablePhoneRatio = touchCapable
+            && height >= width
+            && screenWidth > 0
+            && screenHeight > 0;
+        const matchWidth = useStablePhoneRatio
+            ? Math.min(screenWidth, screenHeight)
+            : width;
+        const matchHeight = useStablePhoneRatio
+            ? Math.max(screenWidth, screenHeight)
+            : height;
 
         return {
             width,
             height,
-            ratio: height / Math.max(width, 1)
+            matchWidth,
+            matchHeight,
+            ratio: matchHeight / Math.max(matchWidth, 1)
         };
     }
 
