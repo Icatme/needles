@@ -10,28 +10,34 @@ class EnhancedMenuScene extends MenuScene {
 
     createProgressReadout() {
         const ui = SceneUI.getPalette();
+        const progressLayout = this.layout.progress;
         const pack = this.levelManager.getActivePack();
         const currentConfig = this.levelManager.getLevelConfig(
             this.levelManager.maxUnlockedLevel
         );
 
-        SceneUI.createPanel(this, 300, 398, 488, 82, {
+        SceneUI.createPanel(this, 300, progressLayout.panelY, 488, 82, {
             fillColor: ui.SURFACE,
             strokeColor: ui.RULE,
             radius: 14,
             depth: 10
         });
 
-        const label = this.add.text(82, 369, `当前方案 · ${pack.name}`, {
-            fontFamily: ui.BODY_FONT,
-            fontSize: '14px',
-            color: ui.TEXT_MUTED
-        });
+        const label = this.add.text(
+            82,
+            progressLayout.labelY,
+            `当前方案 · ${pack.name}`,
+            {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '14px',
+                color: ui.TEXT_MUTED
+            }
+        );
         label.setDepth(11);
 
         const value = this.add.text(
             82,
-            410,
+            progressLayout.valueY,
             `第 ${currentConfig.order} 关 · ${currentConfig.name}`,
             {
                 fontFamily: ui.DISPLAY_FONT,
@@ -43,18 +49,24 @@ class EnhancedMenuScene extends MenuScene {
         value.setOrigin(0, 0.5);
         value.setDepth(11);
 
-        const status = this.add.text(518, 398, currentConfig.rule, {
-            fontFamily: ui.BODY_FONT,
-            fontSize: '12px',
-            color: ui.TEXT_ACCENT,
-            letterSpacing: 1
-        });
+        const status = this.add.text(
+            518,
+            progressLayout.statusY,
+            currentConfig.rule,
+            {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '12px',
+                color: ui.TEXT_ACCENT,
+                letterSpacing: 1
+            }
+        );
         status.setOrigin(1, 0.5);
         status.setDepth(11);
     }
 
     createButtons() {
         const ui = SceneUI.getPalette();
+        const buttonLayout = this.layout.buttons;
         const resume = APP_CONTEXT.getResumeRoute(this.levelManager.activePackId);
         const config = APP_CONTEXT.catalog.getLevelConfig(
             resume.packId,
@@ -65,26 +77,38 @@ class EnhancedMenuScene extends MenuScene {
             ? `继续第 ${config.order} 关`
             : '开始第 1 关';
 
-        SceneUI.createButton(this, 300, 568, primaryLabel, () => {
+        SceneUI.createButton(this, 300, buttonLayout.primaryY, primaryLabel, () => {
             APP_CONTEXT.router.startLevel(this, resume);
         }, { width: 300, variant: 'primary' });
 
-        SceneUI.createButton(this, 300, 632, '选关测试 · A/B 对照', () => {
-            APP_CONTEXT.router.startLevelBrowser(this, {
-                packId: this.levelManager.activePackId
-            });
-        }, { width: 300, variant: 'secondary' });
+        SceneUI.createButton(
+            this,
+            300,
+            buttonLayout.secondaryY,
+            '选关测试 · A/B 对照',
+            () => {
+                APP_CONTEXT.router.startLevelBrowser(this, {
+                    packId: this.levelManager.activePackId
+                });
+            },
+            { width: 300, variant: 'secondary' }
+        );
 
-        SceneUI.createButton(this, 300, 700, '重置全部进度', () => {
+        SceneUI.createButton(this, 300, buttonLayout.resetY, '重置全部进度', () => {
             this.confirmReset();
         }, { width: 170, height: 48, variant: 'quiet', fontSize: '15px' });
 
-        const shortcut = this.add.text(300, 760, 'ENTER 开始  ·  L 选关  ·  SPACE 发射', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '11px',
-            color: ui.TEXT_MUTED,
-            letterSpacing: 1
-        });
+        const shortcut = this.add.text(
+            300,
+            buttonLayout.footerY,
+            'ENTER 开始  ·  L 选关  ·  SPACE 发射',
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '11px',
+                color: ui.TEXT_MUTED,
+                letterSpacing: 1
+            }
+        );
         shortcut.setOrigin(0.5);
     }
 
