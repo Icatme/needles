@@ -4,7 +4,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-function loadLayoutRuntime({ width = 600, height = 800, search = '' } = {}) {
+function loadLayoutRuntime({
+  width = 600,
+  height = 800,
+  search = '',
+  screenWidth = 0,
+  screenHeight = 0,
+  maxTouchPoints = 0
+} = {}) {
   const styleValues = new Map();
   const context = vm.createContext({
     console,
@@ -13,8 +20,11 @@ function loadLayoutRuntime({ width = 600, height = 800, search = '' } = {}) {
       innerWidth: width,
       innerHeight: height,
       visualViewport: null,
-      location: { search }
+      location: { search },
+      matchMedia: () => ({ matches: maxTouchPoints > 0 })
     },
+    navigator: { maxTouchPoints },
+    screen: { width: screenWidth, height: screenHeight },
     document: {
       documentElement: {
         clientWidth: width,
@@ -66,6 +76,20 @@ test('auto-selects classic, 9:16, and tall phone profiles by viewport ratio', ()
   assert.equal(manager.resolveProfileId({ width: 600, height: 800, ratio: 4 / 3 }, null), 'classic');
   assert.equal(manager.resolveProfileId({ width: 360, height: 640, ratio: 16 / 9 }, null), 'phone-9-16');
   assert.equal(manager.resolveProfileId({ width: 390, height: 844, ratio: 844 / 390 }, null), 'phone-tall');
+});
+
+test('uses stable physical screen ratio on touch phones to ignore browser chrome changes', () => {
+  const { manager } = loadLayoutRuntime({
+    width: 390,
+    height: 740,
+    screenWidth: 390,
+    screenHeight: 844,
+    maxTouchPoints: 5
+  });
+
+  const viewport = manager.getViewportInfo();
+  assert.equal(viewport.ratio, 844 / 390);
+  assert.equal(manager.resolveProfileId(viewport, null), 'phone-tall');
 });
 
 test('query override selects a deterministic preview profile', () => {
