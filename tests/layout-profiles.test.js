@@ -41,7 +41,13 @@ function loadLayoutRuntime({
       WIDTH: 600,
       HEIGHT: 800,
       WHEEL: { CENTER_X: 300, CENTER_Y: 330, RADIUS: 88 },
-      NEEDLE: { READY_Y: 700 }
+      NEEDLE: {
+        LENGTH: 100,
+        INSERT_DEPTH: 16,
+        READY_Y: 700,
+        FLY_DURATION_MS: 86,
+        FLY_SPEED: 2300
+      }
     }
   });
 
@@ -70,12 +76,28 @@ function loadLayoutRuntime({
   };
 }
 
+function closeTo(actual, expected, epsilon = 1e-9) {
+  assert.ok(
+    Math.abs(actual - expected) <= epsilon,
+    `${actual} should be close to ${expected}`
+  );
+}
+
 test('auto-selects classic, 9:16, and tall phone profiles by viewport ratio', () => {
   const { manager } = loadLayoutRuntime();
 
-  assert.equal(manager.resolveProfileId({ width: 600, height: 800, ratio: 4 / 3 }, null), 'classic');
-  assert.equal(manager.resolveProfileId({ width: 360, height: 640, ratio: 16 / 9 }, null), 'phone-9-16');
-  assert.equal(manager.resolveProfileId({ width: 390, height: 844, ratio: 844 / 390 }, null), 'phone-tall');
+  assert.equal(
+    manager.resolveProfileId({ width: 600, height: 800, ratio: 4 / 3 }, null),
+    'classic'
+  );
+  assert.equal(
+    manager.resolveProfileId({ width: 360, height: 640, ratio: 16 / 9 }, null),
+    'phone-9-16'
+  );
+  assert.equal(
+    manager.resolveProfileId({ width: 390, height: 844, ratio: 844 / 390 }, null),
+    'phone-tall'
+  );
 });
 
 test('uses stable physical screen ratio on touch phones to ignore browser chrome changes', () => {
@@ -95,24 +117,46 @@ test('uses stable physical screen ratio on touch phones to ignore browser chrome
 test('query override selects a deterministic preview profile', () => {
   const { manager } = loadLayoutRuntime({ search: '?layout=phone-9-16' });
   assert.equal(manager.resolveProfileId(), 'phone-9-16');
-  assert.equal(manager.resolveProfileId({ width: 1200, height: 800, ratio: 2 / 3 }), 'phone-9-16');
+  assert.equal(
+    manager.resolveProfileId({ width: 1200, height: 800, ratio: 2 / 3 }),
+    'phone-9-16'
+  );
 });
 
-test('bootstrap applies logical dimensions, gameplay anchors, and CSS metadata', () => {
+test('bootstrap applies logical dimensions, gameplay anchors, flight speed, and CSS metadata', () => {
   const { context, manager, styleValues } = loadLayoutRuntime({
     width: 360,
     height: 640
   });
 
   const profile = manager.bootstrap();
+  const flight = manager.getNeedleFlightMetrics(profile);
   assert.equal(profile.id, 'phone-9-16');
   assert.equal(context.CONSTANTS.WIDTH, 600);
   assert.equal(context.CONSTANTS.HEIGHT, 1064);
   assert.equal(context.CONSTANTS.WHEEL.CENTER_Y, 430);
   assert.equal(context.CONSTANTS.NEEDLE.READY_Y, 900);
+  closeTo(context.CONSTANTS.NEEDLE.FLY_SPEED, flight.speed);
   assert.equal(context.document.documentElement.dataset.layoutProfile, 'phone-9-16');
   assert.equal(context.document.documentElement.dataset.layoutFamily, 'phone');
   assert.equal(styleValues.get('--layout-height'), '1064');
+});
+
+test('needle flight duration stays identical while visual distance changes by profile', () => {
+  const { profiles, manager } = loadLayoutRuntime();
+  const metrics = [
+    profiles.classic,
+    profiles['phone-9-16'],
+    profiles['phone-tall']
+  ].map(profile => manager.getNeedleFlightMetrics(profile));
+
+  assert.deepEqual(metrics.map(metric => metric.distance), [198, 298, 358]);
+  metrics.forEach(metric => {
+    assert.equal(metric.durationMs, 86);
+    closeTo(metric.distance / metric.speed * 1000, 86);
+  });
+  assert.ok(metrics[0].speed < metrics[1].speed);
+  assert.ok(metrics[1].speed < metrics[2].speed);
 });
 
 test('all profiles preserve a 600-wide coordinate system and integral eighth-scale heights', () => {

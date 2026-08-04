@@ -82,9 +82,40 @@ class LayoutManager {
         return LayoutManager.currentProfile;
     }
 
+    static getNeedleFlightMetrics(profile = LayoutManager.getProfile()) {
+        const design = profile.design;
+        const game = profile.game;
+        const needleLength = Number(CONSTANTS.NEEDLE.LENGTH) || 100;
+        const insertDepth = Number(CONSTANTS.NEEDLE.INSERT_DEPTH) || 16;
+        const durationMs = Math.max(
+            1,
+            Number(CONSTANTS.NEEDLE.FLY_DURATION_MS) || 86
+        );
+        const impactAngle = Number.isFinite(CONSTANTS.WHEEL.IMPACT_ANGLE)
+            ? CONSTANTS.WHEEL.IMPACT_ANGLE
+            : Math.PI / 2;
+        const targetRadius = game.wheel.radius + needleLength - insertDepth;
+        const startX = design.width / 2;
+        const startY = game.readyNeedleY;
+        const targetX = game.wheel.x + Math.cos(impactAngle) * targetRadius;
+        const targetY = game.wheel.y + Math.sin(impactAngle) * targetRadius;
+        const distance = Math.hypot(targetX - startX, targetY - startY);
+
+        return Object.freeze({
+            startX,
+            startY,
+            targetX,
+            targetY,
+            distance,
+            durationMs,
+            speed: distance / (durationMs / 1000)
+        });
+    }
+
     static applyRuntimeConstants(profile) {
         const design = profile.design;
         const game = profile.game;
+        const flight = LayoutManager.getNeedleFlightMetrics(profile);
 
         CONSTANTS.WIDTH = design.width;
         CONSTANTS.HEIGHT = design.height;
@@ -92,6 +123,7 @@ class LayoutManager {
         CONSTANTS.WHEEL.CENTER_Y = game.wheel.y;
         CONSTANTS.WHEEL.RADIUS = game.wheel.radius;
         CONSTANTS.NEEDLE.READY_Y = game.readyNeedleY;
+        CONSTANTS.NEEDLE.FLY_SPEED = flight.speed;
         CONSTANTS.LAYOUT_PROFILE_ID = profile.id;
     }
 
