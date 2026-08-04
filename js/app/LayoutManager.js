@@ -91,13 +91,14 @@ class LayoutManager {
             1,
             Number(CONSTANTS.NEEDLE.FLY_DURATION_MS) || 86
         );
+        const impactAngle = Number.isFinite(CONSTANTS.WHEEL.IMPACT_ANGLE)
+            ? CONSTANTS.WHEEL.IMPACT_ANGLE
+            : Math.PI / 2;
+        const targetRadius = game.wheel.radius + needleLength - insertDepth;
         const startX = design.width / 2;
         const startY = game.readyNeedleY;
-        const targetX = game.wheel.x;
-        const targetY = game.wheel.y
-            + game.wheel.radius
-            + needleLength
-            - insertDepth;
+        const targetX = game.wheel.x + Math.cos(impactAngle) * targetRadius;
+        const targetY = game.wheel.y + Math.sin(impactAngle) * targetRadius;
         const distance = Math.hypot(targetX - startX, targetY - startY);
 
         return Object.freeze({
