@@ -4,6 +4,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
+        this.layout = LayoutManager.getSceneLayout('menu');
         this.levelManager = new LevelManager();
         this.themeManager = new ThemeManager();
         this.themeOptions = [];
@@ -23,7 +24,7 @@ class MenuScene extends Phaser.Scene {
 
     createBrandMark() {
         this.brandGraphics = this.add.graphics();
-        this.brandGraphics.setPosition(470, 198);
+        this.brandGraphics.setPosition(this.layout.brand.x, this.layout.brand.y);
         this.drawBrandMark();
     }
 
@@ -74,7 +75,8 @@ class MenuScene extends Phaser.Scene {
 
     createThemePicker() {
         const ui = SceneUI.getPalette();
-        const label = this.add.text(82, 454, '外观主题  ·  ← → 切换', {
+        const themeLayout = this.layout.theme;
+        const label = this.add.text(82, themeLayout.labelY, '外观主题  ·  ← → 切换', {
             fontFamily: ui.BODY_FONT,
             fontSize: '13px',
             color: ui.TEXT_MUTED
@@ -82,15 +84,17 @@ class MenuScene extends Phaser.Scene {
         label.setDepth(20);
 
         this.themeManager.getThemes().forEach((theme, index) => {
-            this.themeOptions.push(this.createThemeOption(theme, index === 0 ? 190 : 410));
+            const x = themeLayout.optionXs[index]
+                ?? (190 + index * 220);
+            this.themeOptions.push(this.createThemeOption(theme, x, themeLayout.optionY));
         });
     }
 
-    createThemeOption(theme, x) {
+    createThemeOption(theme, x, y) {
         const ui = SceneUI.getPalette();
         const width = 204;
         const height = 52;
-        const container = this.add.container(x, 494);
+        const container = this.add.container(x, y);
         const background = this.add.graphics();
         const icon = this.add.graphics();
         const title = this.add.text(-54, -9, theme.name, {
@@ -188,31 +192,48 @@ class MenuScene extends Phaser.Scene {
 
     createTitle() {
         const ui = SceneUI.getPalette();
+        const titleLayout = this.layout.title;
 
-        this.kickerText = this.add.text(56, 92, 'OBSERVE · AIM · INSERT', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '12px',
-            color: ui.TEXT_ACCENT,
-            letterSpacing: 1.8
-        });
+        this.kickerText = this.add.text(
+            titleLayout.kicker.x,
+            titleLayout.kicker.y,
+            'OBSERVE · AIM · INSERT',
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '12px',
+                color: ui.TEXT_ACCENT,
+                letterSpacing: 1.8
+            }
+        );
 
-        this.titleText = this.add.text(52, 126, '见缝\n插针', {
-            fontFamily: ui.DISPLAY_FONT,
-            fontSize: '68px',
-            color: ui.TEXT_COLOR,
-            fontStyle: 'bold',
-            lineSpacing: -12
-        });
+        this.titleText = this.add.text(
+            titleLayout.heading.x,
+            titleLayout.heading.y,
+            '见缝\n插针',
+            {
+                fontFamily: ui.DISPLAY_FONT,
+                fontSize: '68px',
+                color: ui.TEXT_COLOR,
+                fontStyle: 'bold',
+                lineSpacing: -12
+            }
+        );
 
-        this.subtitleText = this.add.text(56, 292, '观察旋转，抓住空隙。\n一次一针。', {
-            fontFamily: ui.BODY_FONT,
-            fontSize: '18px',
-            color: ui.TEXT_MUTED,
-            lineSpacing: 8
-        });
+        this.subtitleText = this.add.text(
+            titleLayout.subtitle.x,
+            titleLayout.subtitle.y,
+            '观察旋转，抓住空隙。\n一次一针。',
+            {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '18px',
+                color: ui.TEXT_MUTED,
+                lineSpacing: 8
+            }
+        );
 
         if (!SceneUI.prefersReducedMotion()) {
-            [this.kickerText, this.titleText, this.subtitleText].forEach(element => element.setAlpha(0));
+            [this.kickerText, this.titleText, this.subtitleText]
+                .forEach(element => element.setAlpha(0));
             this.tweens.add({
                 targets: [this.kickerText, this.titleText, this.subtitleText],
                 alpha: 1,
@@ -224,17 +245,18 @@ class MenuScene extends Phaser.Scene {
 
     createProgressReadout() {
         const ui = SceneUI.getPalette();
+        const progressLayout = this.layout.progress;
         const currentConfig = this.levelManager.getLevelConfig(
             this.levelManager.maxUnlockedLevel
         );
-        SceneUI.createPanel(this, 300, 398, 488, 82, {
+        SceneUI.createPanel(this, 300, progressLayout.panelY, 488, 82, {
             fillColor: ui.SURFACE,
             strokeColor: ui.RULE,
             radius: 14,
             depth: 10
         });
 
-        const label = this.add.text(82, 369, '当前进度', {
+        const label = this.add.text(82, progressLayout.labelY, '当前进度', {
             fontFamily: ui.BODY_FONT,
             fontSize: '14px',
             color: ui.TEXT_MUTED
@@ -243,19 +265,19 @@ class MenuScene extends Phaser.Scene {
 
         const value = this.add.text(
             82,
-            410,
+            progressLayout.valueY,
             `第 ${this.levelManager.maxUnlockedLevel} 关 · ${currentConfig.name}`,
             {
-            fontFamily: ui.DISPLAY_FONT,
-            fontSize: '24px',
-            color: ui.TEXT_COLOR,
-            fontStyle: 'bold'
+                fontFamily: ui.DISPLAY_FONT,
+                fontSize: '24px',
+                color: ui.TEXT_COLOR,
+                fontStyle: 'bold'
             }
         );
         value.setOrigin(0, 0.5);
         value.setDepth(11);
 
-        const status = this.add.text(518, 398, currentConfig.rule, {
+        const status = this.add.text(518, progressLayout.statusY, currentConfig.rule, {
             fontFamily: ui.BODY_FONT,
             fontSize: '12px',
             color: ui.TEXT_ACCENT,
@@ -267,32 +289,43 @@ class MenuScene extends Phaser.Scene {
 
     createButtons() {
         const ui = SceneUI.getPalette();
+        const buttonLayout = this.layout.buttons;
         const hasProgress = this.levelManager.maxUnlockedLevel > 1;
         const primaryLabel = hasProgress
             ? `继续第 ${this.levelManager.maxUnlockedLevel} 关`
             : '开始第 1 关';
         const primaryLevel = hasProgress ? this.levelManager.maxUnlockedLevel : 1;
 
-        SceneUI.createButton(this, 300, 568, primaryLabel, () => {
+        SceneUI.createButton(this, 300, buttonLayout.primaryY, primaryLabel, () => {
             this.startGame(primaryLevel);
         }, { width: 300, variant: 'primary' });
 
         if (hasProgress) {
-            SceneUI.createButton(this, 300, 632, '从第 1 关开始', () => {
+            SceneUI.createButton(this, 300, buttonLayout.secondaryY, '从第 1 关开始', () => {
                 this.startGame(1);
             }, { width: 300, variant: 'secondary' });
         }
 
-        SceneUI.createButton(this, 300, hasProgress ? 700 : 648, '重置进度', () => {
-            this.confirmReset();
-        }, { width: 170, height: 48, variant: 'quiet', fontSize: '15px' });
+        SceneUI.createButton(
+            this,
+            300,
+            hasProgress ? buttonLayout.resetY : buttonLayout.compactResetY,
+            '重置进度',
+            () => this.confirmReset(),
+            { width: 170, height: 48, variant: 'quiet', fontSize: '15px' }
+        );
 
-        const shortcut = this.add.text(300, 760, 'ENTER 开始  ·  SPACE 发射', {
-            fontFamily: ui.MONO_FONT,
-            fontSize: '11px',
-            color: ui.TEXT_MUTED,
-            letterSpacing: 1
-        });
+        const shortcut = this.add.text(
+            300,
+            buttonLayout.footerY,
+            'ENTER 开始  ·  SPACE 发射',
+            {
+                fontFamily: ui.MONO_FONT,
+                fontSize: '11px',
+                color: ui.TEXT_MUTED,
+                letterSpacing: 1
+            }
+        );
         shortcut.setOrigin(0.5);
     }
 
@@ -304,6 +337,7 @@ class MenuScene extends Phaser.Scene {
         if (this.resetModal) return;
 
         const ui = SceneUI.getPalette();
+        const modalLayout = this.layout.modal;
         const overlay = this.add.rectangle(
             CONSTANTS.WIDTH / 2,
             CONSTANTS.HEIGHT / 2,
@@ -315,32 +349,37 @@ class MenuScene extends Phaser.Scene {
         overlay.setDepth(300);
         overlay.setInteractive();
 
-        const panel = SceneUI.createPanel(this, 300, 390, 470, 260, {
+        const panel = SceneUI.createPanel(this, 300, modalLayout.panelY, 470, 260, {
             fillColor: ui.SURFACE,
             strokeColor: ui.INK,
             strokeWidth: 2,
             radius: 18,
             depth: 301
         });
-        const label = this.add.text(96, 304, '清除本地记录', {
+        const label = this.add.text(96, modalLayout.labelY, '清除本地记录', {
             fontFamily: ui.MONO_FONT,
             fontSize: '12px',
             color: ui.TEXT_ERROR,
             letterSpacing: 1.2
         });
         label.setDepth(302);
-        const title = this.add.text(96, 338, '重置全部进度？', {
+        const title = this.add.text(96, modalLayout.titleY, '重置全部进度？', {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '30px',
             color: ui.TEXT_COLOR,
             fontStyle: 'bold'
         });
         title.setDepth(302);
-        const description = this.add.text(96, 386, '已解锁的关卡会被清除，且无法撤销。', {
-            fontFamily: ui.BODY_FONT,
-            fontSize: '16px',
-            color: ui.TEXT_MUTED
-        });
+        const description = this.add.text(
+            96,
+            modalLayout.descriptionY,
+            '已解锁的关卡会被清除，且无法撤销。',
+            {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '16px',
+                color: ui.TEXT_MUTED
+            }
+        );
         description.setDepth(302);
 
         const cleanup = () => {
@@ -348,22 +387,36 @@ class MenuScene extends Phaser.Scene {
             this.resetModal = null;
         };
 
-        const cancelButton = SceneUI.createButton(this, 190, 464, '保留进度', cleanup, {
-            width: 176,
-            height: 50,
-            variant: 'secondary',
-            depth: 302
-        });
-        const resetButton = SceneUI.createButton(this, 410, 464, '确认重置', () => {
-            this.levelManager.resetProgress();
-            cleanup();
-            this.scene.restart();
-        }, {
-            width: 176,
-            height: 50,
-            variant: 'danger',
-            depth: 302
-        });
+        const cancelButton = SceneUI.createButton(
+            this,
+            190,
+            modalLayout.actionY,
+            '保留进度',
+            cleanup,
+            {
+                width: 176,
+                height: 50,
+                variant: 'secondary',
+                depth: 302
+            }
+        );
+        const resetButton = SceneUI.createButton(
+            this,
+            410,
+            modalLayout.actionY,
+            '确认重置',
+            () => {
+                this.levelManager.resetProgress();
+                cleanup();
+                this.scene.restart();
+            },
+            {
+                width: 176,
+                height: 50,
+                variant: 'danger',
+                depth: 302
+            }
+        );
 
         this.resetModal = [overlay, panel, label, title, description, cancelButton, resetButton];
     }
