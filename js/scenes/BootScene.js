@@ -16,10 +16,12 @@ class BootScene extends Phaser.Scene {
 
     create() {
         const ui = SceneUI.getPalette();
+        const layout = LayoutManager.getSceneLayout('boot');
+        this.layout = layout;
         SceneUI.createBackdrop(this, 'boot');
 
         const mark = this.add.graphics();
-        mark.setPosition(84, 302);
+        mark.setPosition(layout.mark.x, layout.mark.y);
         mark.lineStyle(3, ui.INK, 1);
         mark.strokeCircle(0, 0, 28);
         mark.fillStyle(ui.ACCENT, 1);
@@ -32,33 +34,46 @@ class BootScene extends Phaser.Scene {
         mark.lineStyle(2, ui.INK, 1);
         mark.strokeCircle(0, 106, 10);
 
-        const label = this.add.text(132, 264, 'NEEDLES / 01', {
+        const label = this.add.text(layout.label.x, layout.label.y, 'NEEDLES / 01', {
             fontFamily: ui.MONO_FONT,
             fontSize: '12px',
             color: ui.TEXT_ACCENT,
             letterSpacing: 1.6
         });
 
-        const title = this.add.text(128, 292, '见缝插针', {
+        const title = this.add.text(layout.title.x, layout.title.y, '见缝插针', {
             fontFamily: ui.DISPLAY_FONT,
             fontSize: '48px',
             color: ui.TEXT_COLOR,
             fontStyle: 'bold'
         });
 
-        const status = this.add.text(132, 354, '正在读取关卡包…', {
+        const status = this.add.text(layout.status.x, layout.status.y, '正在读取关卡包…', {
             fontFamily: ui.BODY_FONT,
             fontSize: '16px',
             color: ui.TEXT_MUTED
         });
 
-        const track = this.add.rectangle(132, 398, 336, 4, ui.RULE);
+        const track = this.add.rectangle(
+            layout.track.x,
+            layout.track.y,
+            layout.track.width,
+            4,
+            ui.RULE
+        );
         track.setOrigin(0, 0.5);
-        const progress = this.add.rectangle(132, 398, 336, 4, ui.ACCENT);
+        const progress = this.add.rectangle(
+            layout.track.x,
+            layout.track.y,
+            layout.track.width,
+            4,
+            ui.ACCENT
+        );
         progress.setOrigin(0, 0.5);
         progress.setScale(0.04, 1);
 
-        [mark, label, title, status, track, progress].forEach(element => element.setDepth(10));
+        [mark, label, title, status, track, progress]
+            .forEach(element => element.setDepth(10));
         this.loadLevelPacks(status, progress, ui);
     }
 
@@ -101,7 +116,7 @@ class BootScene extends Phaser.Scene {
             progress.setFillStyle(ui.ERROR);
             progress.setScale(1, 1);
 
-            SceneUI.createButton(this, 300, 466, '重新加载', () => {
+            SceneUI.createButton(this, 300, this.layout.retryY, '重新加载', () => {
                 this.scene.restart();
             }, {
                 width: 220,
