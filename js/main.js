@@ -41,10 +41,7 @@ const config = {
     },
     render: {
         antialias: true,
-        antialiasGL: true,
-        pixelArt: false,
-        roundPixels: false,
-        powerPreference: 'high-performance'
+        pixelArt: false
     }
 };
 
