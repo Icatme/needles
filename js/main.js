@@ -1,13 +1,17 @@
+// 在 Phaser 创建场景和文字对象前安装高 DPI 渲染适配。
+HiDPIRenderer.install();
+
 // Phaser 游戏配置
 const config = {
     type: Phaser.AUTO,
-    width: CONSTANTS.WIDTH,
-    height: CONSTANTS.HEIGHT,
+    width: HiDPIRenderer.getBackingWidth(),
+    height: HiDPIRenderer.getBackingHeight(),
     parent: 'game-container',
     backgroundColor: CONSTANTS.UI.BACKGROUND,
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        autoRound: true,
         min: {
             width: 320,
             height: 480
@@ -37,7 +41,10 @@ const config = {
     },
     render: {
         antialias: true,
-        pixelArt: false
+        antialiasGL: true,
+        pixelArt: false,
+        roundPixels: false,
+        powerPreference: 'high-performance'
     }
 };
 
