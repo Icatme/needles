@@ -231,6 +231,34 @@ test('test mode completes and retries without modifying progression', async ({ p
     route: { packId: 'e2e', levelId: 'e2e-02', mode: 'test' }
   });
 
+  const failurePresentation = await page.evaluate(() => {
+    const result = game.scene.getScene('GameOverScene');
+    const snapshot = result.failureSnapshot;
+    const hasHeadline = result.children.list.some(child => (
+      child.type === 'Text'
+        && (child.text.includes('撞针了') || child.text.includes('再找一次空隙'))
+    ));
+
+    return {
+      snapshotWidth: Number(snapshot?.naturalWidth || snapshot?.width || 0),
+      snapshotHeight: Number(snapshot?.naturalHeight || snapshot?.height || 0),
+      previewActive: Boolean(result.failurePreviewImage?.active),
+      previewDisplayWidth: result.failurePreviewImage?.displayWidth || 0,
+      previewDisplayHeight: result.failurePreviewImage?.displayHeight || 0,
+      resultTitle: result.resultTitle,
+      hasHeadline
+    };
+  });
+  expect(failurePresentation.snapshotWidth).toBeGreaterThan(0);
+  expect(failurePresentation.snapshotHeight).toBeGreaterThan(0);
+  expect(failurePresentation).toMatchObject({
+    previewActive: true,
+    resultTitle: null,
+    hasHeadline: false
+  });
+  expect(failurePresentation.previewDisplayWidth).toBeCloseTo(360, 1);
+  expect(failurePresentation.previewDisplayHeight).toBeCloseTo(252, 1);
+
   await page.keyboard.press('Enter');
   await waitForScene(page, 'GameScene');
   expect(await page.evaluate(() => game.scene.getScene('GameScene').route))
