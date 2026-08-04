@@ -1,10 +1,15 @@
 /* Hallmark · genre: modern-minimal · macrostructure: Map / Diagram · theme: Coral · enrichment: functional Phaser vectors · nav: N9 · footer: Ft2
  * audience: casual players · use: time one precise shot · tone: precise arcade
- * pre-emit critique: P5 H5 E4 S5 R5 V4 · contrast: pass (40–41) · slop: 58/58
- * honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30)
- * mobile: pass (34, 49, 50–57)
+ * responsive stage: classic 3:4 + phone 9:16 + phone tall, selected at runtime
  */
 @import url("../tokens.css");
+
+:root {
+    --layout-width: 600;
+    --layout-height: 800;
+    --layout-aspect: 0.75;
+    --layout-max-width: 600px;
+}
 
 *,
 *::before,
@@ -17,8 +22,7 @@ body {
     width: 100%;
     min-height: 100%;
     margin: 0;
-    overflow-x: clip;
-    overflow-y: clip;
+    overflow: clip;
     background: var(--color-paper-2);
     color: var(--color-ink);
     font-family: var(--font-body);
@@ -39,11 +43,16 @@ body {
 }
 
 #game-container {
-    width: min(100%, 37.5rem, calc((100dvh - 1.5rem) * 0.75));
-    aspect-ratio: 3 / 4;
+    width: min(
+        100%,
+        var(--layout-max-width),
+        calc((100dvh - 1.5rem) * var(--layout-aspect))
+    );
+    aspect-ratio: var(--layout-width) / var(--layout-height);
     display: grid;
     place-items: center;
     min-width: 0;
+    max-height: calc(100dvh - 1.5rem);
     overflow: clip;
     border-radius: var(--radius-stage);
     background: var(--color-paper);
@@ -61,13 +70,25 @@ body {
     display: block;
 }
 
+html[data-layout-family="phone"] body {
+    padding: 0;
+}
+
+html[data-layout-family="phone"] #game-container {
+    width: min(100vw, calc(100dvh * var(--layout-aspect)));
+    max-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+}
+
 @media (max-width: 40rem), (max-height: 43rem) {
     body {
         padding: 0;
     }
 
     #game-container {
-        width: min(100%, calc(100dvh * 0.75));
+        width: min(100vw, calc(100dvh * var(--layout-aspect)));
+        max-height: 100dvh;
         border-radius: 0;
         box-shadow: none;
     }
