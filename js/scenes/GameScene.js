@@ -28,7 +28,7 @@ class GameScene extends Phaser.Scene {
         this.remainingNeedles = [];
         this.currentNeedle = null;
         this.completionHandled = false;
-        this.failureSnapshotTimer = null;
+        this.resultSnapshotTimer = null;
 
         this.createBackground();
         this.wheel = new Wheel(
@@ -194,20 +194,35 @@ class GameScene extends Phaser.Scene {
     }
 
     captureFailureSnapshot(callback) {
+        this.captureResultSnapshot(
+            this.layout.failureSnapshotArea,
+            '失败',
+            callback
+        );
+    }
+
+    captureSuccessSnapshot(callback) {
+        this.captureResultSnapshot(
+            this.layout.successSnapshotArea || this.layout.failureSnapshotArea,
+            '成功',
+            callback
+        );
+    }
+
+    captureResultSnapshot(logicalArea, label, callback) {
         const renderer = this.game?.renderer;
         const renderScale = typeof HiDPIRenderer === 'undefined'
             ? 1
             : HiDPIRenderer.getRenderScale();
-        const logicalArea = this.layout.failureSnapshotArea;
         let settled = false;
 
         const complete = image => {
             if (settled) return;
             settled = true;
 
-            if (this.failureSnapshotTimer) {
-                this.failureSnapshotTimer.remove(false);
-                this.failureSnapshotTimer = null;
+            if (this.resultSnapshotTimer) {
+                this.resultSnapshotTimer.remove(false);
+                this.resultSnapshotTimer = null;
             }
 
             const width = Number(image?.naturalWidth || image?.width || 0);
@@ -215,9 +230,9 @@ class GameScene extends Phaser.Scene {
             callback(width > 0 && height > 0 ? image : null);
         };
 
-        this.failureSnapshotTimer = this.time.delayedCall(1000, () => complete(null));
+        this.resultSnapshotTimer = this.time.delayedCall(1000, () => complete(null));
 
-        if (!renderer || typeof renderer.snapshotArea !== 'function') {
+        if (!renderer || typeof renderer.snapshotArea !== 'function' || !logicalArea) {
             complete(null);
             return;
         }
@@ -232,7 +247,7 @@ class GameScene extends Phaser.Scene {
                 'image/png'
             );
         } catch (error) {
-            console.warn('无法截取失败画面，将使用静态预览。', error);
+            console.warn(`无法截取${label}画面，将使用静态预览。`, error);
             complete(null);
         }
     }
@@ -242,7 +257,6 @@ class GameScene extends Phaser.Scene {
         if (this.session.status !== 'completed') return;
         this.completionHandled = true;
         this.levelManager.completeLevel();
-        this.createCelebration();
 
         const nextRoute = this.levelManager.getNextLevelRoute();
         const nextConfig = nextRoute
@@ -252,16 +266,21 @@ class GameScene extends Phaser.Scene {
             )
             : null;
 
-        this.uiManager.showSuccess(() => {
-            APP_CONTEXT.router.startResult(this, {
-                route: this.route,
-                level: this.levelConfig.order,
-                levelName: this.levelConfig.name,
-                success: true,
-                completedAll: nextRoute === null,
-                nextRoute,
-                nextLevelName: nextConfig?.name || '',
-                packLevelCount: this.levelManager.getLevelCount()
+        // 先截取干净的最终排布，再播放庆祝粒子和成功提示。
+        this.captureSuccessSnapshot(successSnapshot => {
+            this.createCelebration();
+            this.uiManager.showSuccess(() => {
+                APP_CONTEXT.router.startResult(this, {
+                    route: this.route,
+                    level: this.levelConfig.order,
+                    levelName: this.levelConfig.name,
+                    success: true,
+                    completedAll: nextRoute === null,
+                    nextRoute,
+                    nextLevelName: nextConfig?.name || '',
+                    packLevelCount: this.levelManager.getLevelCount(),
+                    successSnapshot
+                });
             });
         });
     }
@@ -324,9 +343,9 @@ class GameScene extends Phaser.Scene {
     }
 
     shutdown() {
-        if (this.failureSnapshotTimer) {
-            this.failureSnapshotTimer.remove(false);
-            this.failureSnapshotTimer = null;
+        if (this.resultSnapshotTimer) {
+            this.resultSnapshotTimer.remove(false);
+            this.resultSnapshotTimer = null;
         }
         if (this.wheel) this.wheel.destroy();
         if (this.uiManager) this.uiManager.destroy();
