@@ -104,6 +104,8 @@ const context = vm.createContext({
 });
 
 loadIntoContext(context, 'js/utils/constants.js', 'CONSTANTS');
+loadIntoContext(context, 'js/app/LayoutProfiles.js', 'LAYOUT_PROFILES');
+loadIntoContext(context, 'js/app/LayoutManager.js', 'LayoutManager');
 loadIntoContext(context, 'js/utils/ThemeBackground.js', 'ThemeBackground');
 loadIntoContext(context, 'js/utils/SceneUI.js', 'SceneUI');
 
