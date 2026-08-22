@@ -27,9 +27,9 @@ const config = {
     },
     scene: [
         BootScene,
-        EnhancedMenuScene,
+        ScoringMenuScene,
         PlaytestLevelSelectScene,
-        GameScene,
+        ScoringGameScene,
         GameOverScene
     ],
     input: {
