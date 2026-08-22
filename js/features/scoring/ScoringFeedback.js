@@ -48,9 +48,13 @@ class ScoringFeedback {
             award.precision?.kind === 'threaded' ? ui.SUCCESS : ui.ACCENT,
             0.9
         );
-        const sideCount = award.precision?.sides?.length || 0;
-        if (sideCount >= 1) marks.lineBetween(-30, 4, -18, 4);
-        if (sideCount >= 2) marks.lineBetween(18, 4, 30, 4);
+        const sides = new Set(award.precision?.sides || []);
+        if (sides.has('clockwise')) {
+            marks.lineBetween(-30, 4, -18, 4);
+        }
+        if (sides.has('counterClockwise')) {
+            marks.lineBetween(18, 4, 30, 4);
+        }
         container.add([marks, label, points]);
         this.track(container);
 
