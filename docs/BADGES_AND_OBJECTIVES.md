@@ -4,7 +4,9 @@ Badges and objectives add alternate goals without changing the score formula.
 
 ## Per-run objectives
 
-Every scored run receives three deterministic objectives:
+Every scored run receives three deterministic objectives. Turning off the scoring
+challenge disables objective presentation and badge evaluation together with the
+rest of the scoring layer.
 
 1. complete the level;
 2. reach a tempo-combo target derived from needle count;

@@ -407,7 +407,8 @@ class ScoringGameScene extends GameScene {
             ? new BestRunGhost(this, this.wheel, this.previousBestRun)
             : null;
 
-        this.objectiveTracker = typeof RunObjectiveTracker !== 'undefined'
+        this.objectiveTracker = this.scoringEnabled
+            && typeof RunObjectiveTracker !== 'undefined'
             ? new RunObjectiveTracker(this.levelConfig)
             : null;
         this.objectiveHud = this.objectiveTracker
@@ -534,7 +535,7 @@ class ScoringGameScene extends GameScene {
             scoreSnapshot,
             this.scoreCompletionAward?.timeBonus
         ) || null;
-        if (APP_CONTEXT.badges?.recordCompletedRun) {
+        if (this.scoringEnabled && APP_CONTEXT.badges?.recordCompletedRun) {
             this.badgeResult = APP_CONTEXT.badges.recordCompletedRun({
                 packId: this.route.packId,
                 levelId: this.route.levelId,

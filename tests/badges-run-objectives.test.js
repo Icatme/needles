@@ -135,6 +135,25 @@ test('failed runs cannot unlock badges', () => {
     );
 });
 
+test('disabled scoring cannot unlock badges', () => {
+    const { BadgeEvaluator } = loadSupport();
+    assert.deepEqual(
+        Array.from(BadgeEvaluator.evaluate({
+            score: {
+                enabled: false,
+                status: 'completed',
+                insertedCount: 8,
+                maxCombo: 8,
+                comboBreaks: 0,
+                precisionCounts: { close: 8, threaded: 8 }
+            },
+            timeBonus: { kind: 'blazing' },
+            objectives: { completedCount: 3, totalCount: 3 }
+        })),
+        []
+    );
+});
+
 test('badge store unlocks once and persists objective bests', () => {
     const { BadgeStore } = loadSupport();
     const storage = createStorage();

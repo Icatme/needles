@@ -213,7 +213,9 @@ class BadgeEvaluator {
         const score = input.score || {};
         const timeBonus = input.timeBonus || {};
         const objectives = input.objectives || {};
-        if (score.status !== 'completed') return Object.freeze([]);
+        if (score.status !== 'completed' || score.enabled === false) {
+            return Object.freeze([]);
+        }
 
         const close = Number(score.precisionCounts?.close) || 0;
         const threaded = Number(score.precisionCounts?.threaded) || 0;

@@ -300,6 +300,12 @@ test('disabled challenge mode hides presentation and marks score ineligible', ()
         ScoreSession: FakeScoreSession,
         ScoringHUD: class {},
         ScoringFeedback: class {},
+        RunObjectiveTracker: class {
+            constructor() { throw new Error('disabled scoring created objectives'); }
+        },
+        ObjectiveHUD: class {
+            constructor() { throw new Error('disabled scoring created objective HUD'); }
+        },
         GamePreferencesStore: class {},
         ScoreStore: class {
             static contractId() { return 'test-contract'; }
@@ -323,5 +329,7 @@ test('disabled challenge mode hides presentation and marks score ineligible', ()
     assert.equal(scene.scoringEnabled, false);
     assert.equal(scene.scoringHud, null);
     assert.equal(scene.scoringFeedback, null);
+    assert.equal(scene.objectiveTracker, null);
+    assert.equal(scene.objectiveHud, null);
     assert.equal(scene.getResultContext().scoreEligible, false);
 });
