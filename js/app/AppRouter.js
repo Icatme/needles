@@ -6,11 +6,14 @@ class AppRouter {
     createLevelRoute({ packId, levelId, mode = 'progression' }) {
         const pack = this.catalog.getPack(packId);
         const level = this.catalog.getLevel(pack.id, levelId);
+        const routeMode = ['test', 'daily'].includes(mode)
+            ? mode
+            : 'progression';
         return Object.freeze({
             type: 'level',
             packId: pack.id,
             levelId: level.packLevelId || level.id,
-            mode: mode === 'test' ? 'test' : 'progression'
+            mode: routeMode
         });
     }
 

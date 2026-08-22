@@ -115,7 +115,7 @@ test('daily challenge selection is stable for UTC date and pack version', () => 
     assert.match(first.id, /^daily:2026-08-22:pack:level-/);
 });
 
-test('daily challenge starts in test mode so progression is not unlocked', () => {
+test('daily challenge starts in its isolated route mode', () => {
     const { DailyChallengeService } = loadDailySupport();
     let started = null;
     const context = {
@@ -142,8 +142,9 @@ test('daily challenge starts in test mode so progression is not unlocked', () =>
         activeStorage: null
     });
     service.start({}, 'pack');
-    assert.equal(started.mode, 'test');
+    assert.equal(started.mode, 'daily');
     assert.equal(service.matchRoute(started).levelId, 'level-1');
+    assert.equal(service.matchRoute({ ...started, mode: 'test' }), null);
 });
 
 test('replay verifier recomputes an identical score from gameplay commands', () => {
@@ -206,6 +207,78 @@ test('replay verifier rejects a claimed score changed after the run', () => {
     assert.equal(verification.reason, 'score-mismatch');
 });
 
+test('replay verifier rejects a valid but incomplete replay', () => {
+    const {
+        ReplayRecorder,
+        ScoreSession,
+        ScoreReplayVerifier
+    } = loadDailySupport();
+    const config = level();
+    const replay = new ReplayRecorder(config).export();
+    const score = new ScoreSession(config, { enabled: true }).getSnapshot();
+
+    const verification = new ScoreReplayVerifier().verify({
+        replay,
+        levelConfig: config,
+        score
+    });
+    assert.equal(verification.verified, false);
+    assert.equal(verification.reason, 'incomplete-replay');
+});
+
+test('replay verifier validates the protocol before executing commands', () => {
+    const {
+        ReplayProtocol,
+        ReplayRecorder,
+        ScoreSession,
+        ScoreReplayVerifier
+    } = loadDailySupport();
+    const config = level();
+    const replay = JSON.parse(JSON.stringify(new ReplayRecorder(config).export()));
+    replay.schema = 'needles.replay/unsupported';
+    replay.digest = ReplayProtocol.digest(replay);
+
+    const verification = new ScoreReplayVerifier().verify({
+        replay,
+        levelConfig: config,
+        score: new ScoreSession(config, { enabled: true }).getSnapshot()
+    });
+    assert.equal(verification.verified, false);
+    assert.equal(verification.reason, 'invalid-replay');
+    assert.match(verification.detail, /unsupported replay schema/);
+});
+
+test('replay verifier rejects a rehashed final summary that differs from execution', () => {
+    const {
+        ReplayProtocol,
+        ReplayRecorder,
+        ScoreSession,
+        ScoreReplayVerifier
+    } = loadDailySupport();
+    const config = level();
+    const recorder = new ReplayRecorder(config);
+    recorder.beginShot();
+    recorder.advance(100);
+    const outcome = recorder.resolveImpact();
+    const replay = JSON.parse(JSON.stringify(recorder.export()));
+    replay.final.insertedCount = 0;
+    replay.digest = ReplayProtocol.digest(replay);
+
+    const score = new ScoreSession(config, { enabled: true });
+    score.start();
+    score.advance(100);
+    score.recordInsertion(outcome.placement);
+    score.complete();
+
+    const verification = new ScoreReplayVerifier().verify({
+        replay,
+        levelConfig: config,
+        score: score.getSnapshot()
+    });
+    assert.equal(verification.verified, false);
+    assert.equal(verification.reason, 'replay-final');
+});
+
 test('daily store accepts verified runs and applies deterministic tie-breaks', () => {
     const { DailyChallengeStore } = loadDailySupport();
     const store = new DailyChallengeStore({
@@ -225,7 +298,12 @@ test('daily store accepts verified runs and applies deterministic tie-breaks', (
         replayDigest: 'replay-a',
         verificationDigest: 'verify-a',
         profileId: 'profile-a',
-        score: { score: 1000, elapsedMs: 5000, maxCombo: 4 }
+        score: {
+            status: 'completed',
+            score: 1000,
+            elapsedMs: 5000,
+            maxCombo: 4
+        }
     };
     const first = store.recordVerified({ challenge, verification });
     assert.equal(first.accepted, true);
@@ -237,9 +315,28 @@ test('daily store accepts verified runs and applies deterministic tie-breaks', (
             ...verification,
             replayDigest: 'replay-b',
             verificationDigest: 'verify-b',
-            score: { score: 1000, elapsedMs: 6000, maxCombo: 5 }
+            score: {
+                status: 'completed',
+                score: 1000,
+                elapsedMs: 6000,
+                maxCombo: 5
+            }
         }
     });
     assert.equal(slower.isDailyBest, false);
     assert.equal(store.getBest(challenge.id).elapsedMs, 5000);
+});
+
+test('daily store refuses an incomplete score even if a caller marks it verified', () => {
+    const { DailyChallengeStore } = loadDailySupport();
+    const store = new DailyChallengeStore({ storage: storage() });
+    const result = store.recordVerified({
+        challenge: { id: 'daily:test' },
+        verification: {
+            verified: true,
+            score: { status: 'running', score: 100 }
+        }
+    });
+    assert.equal(result.accepted, false);
+    assert.equal(result.reason, 'incomplete-replay');
 });

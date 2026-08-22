@@ -19,9 +19,15 @@ class GameScene extends Phaser.Scene {
         this.levelConfig = this.levelManager.startLevel(this.route.levelId);
         this.route = this.levelManager.getCurrentRoute();
         this.levelVisual = this.themeManager.getLevelVisual(this.levelConfig);
-        this.session = this.route.mode === 'test'
-            ? new PlaytestSession(this.levelConfig)
-            : new GameSession(this.levelConfig);
+        if (this.route.mode === 'test') {
+            this.session = new PlaytestSession(this.levelConfig);
+        } else if (this.route.mode === 'daily') {
+            this.session = new PlaytestSession(this.levelConfig, {
+                persistAttempt: false
+            });
+        } else {
+            this.session = new GameSession(this.levelConfig);
+        }
 
         this.insertedNeedles = [];
         this.obstacles = [];
@@ -275,7 +281,7 @@ class GameScene extends Phaser.Scene {
                     level: this.levelConfig.order,
                     levelName: this.levelConfig.name,
                     success: true,
-                    completedAll: nextRoute === null,
+                    completedAll: this.route.mode !== 'daily' && nextRoute === null,
                     nextRoute,
                     nextLevelName: nextConfig?.name || '',
                     packLevelCount: this.levelManager.getLevelCount(),

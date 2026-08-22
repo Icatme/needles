@@ -338,9 +338,11 @@ class GameOverScene extends Phaser.Scene {
     createButtons() {
         const ui = SceneUI.getPalette();
         const activeLayout = this.layout.failure;
-        const primaryLabel = this.completedAll
+        const primaryLabel = this.route.mode === 'daily'
+            ? '再次挑战'
+            : (this.completedAll
             ? (this.route.mode === 'test' ? '返回关卡实验室' : '返回主菜单')
-            : (this.success ? '进入下一关' : '重新挑战');
+            : (this.success ? '进入下一关' : '重新挑战'));
         SceneUI.createButton(
             this,
             300,
@@ -406,7 +408,9 @@ class GameOverScene extends Phaser.Scene {
     }
 
     runPrimaryAction() {
-        if (this.completedAll) {
+        if (this.route.mode === 'daily') {
+            APP_CONTEXT.router.startLevel(this, this.route);
+        } else if (this.completedAll) {
             if (this.route.mode === 'test') {
                 APP_CONTEXT.router.startLevelBrowser(this, {
                     packId: this.route.packId,

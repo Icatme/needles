@@ -96,6 +96,15 @@ class DailyChallengeStore {
                 best: this.getBest(input.challenge?.id)
             });
         }
+        if (input.verification.score?.status !== 'completed') {
+            return Object.freeze({
+                accepted: false,
+                reason: 'incomplete-replay',
+                isDailyBest: false,
+                record: null,
+                best: this.getBest(input.challenge?.id)
+            });
+        }
         const challenge = input.challenge || {};
         const score = input.verification.score || {};
         const record = this.normalizeRecord({
@@ -215,17 +224,37 @@ class ScoreReplayVerifier {
         }
 
         try {
-            const replayDigest = ReplayProtocol.digest(replay);
-            if (replay.digest !== replayDigest) {
-                return this.failure('replay-digest');
+            try {
+                ReplayProtocol.validate(replay);
+            } catch (error) {
+                return this.failure('invalid-replay', {
+                    detail: error.message
+                });
             }
+            const replayDigest = replay.digest;
             const descriptor = ReplayProtocol.createLevelDescriptor(levelConfig);
             if (!ScoreReplayVerifier.equalCanonical(descriptor, replay.level)) {
                 return this.failure('level-descriptor');
             }
-            const replayedScore = this.replayScore(replay, levelConfig);
+            const replayed = this.replayScore(replay, levelConfig);
+            if (
+                replay.final.status !== 'completed'
+                || replayed.game.status !== 'completed'
+                || replayed.score.status !== 'completed'
+            ) {
+                return this.failure('incomplete-replay', {
+                    replayDigest,
+                    actual: replayed.score
+                });
+            }
+            if (!ScoreReplayVerifier.equalCanonical(replay.final, replayed.final)) {
+                return this.failure('replay-final', {
+                    replayDigest,
+                    actual: replayed.score
+                });
+            }
             const expected = ScoreReplayVerifier.scoreSummary(claimedScore);
-            const actual = ScoreReplayVerifier.scoreSummary(replayedScore);
+            const actual = ScoreReplayVerifier.scoreSummary(replayed.score);
             if (!ScoreReplayVerifier.equalCanonical(expected, actual)) {
                 return this.failure('score-mismatch', {
                     replayDigest,
@@ -266,6 +295,7 @@ class ScoreReplayVerifier {
             geometry
         });
         const score = new ScoreSession(levelConfig, { enabled: true });
+        const events = [];
         let cursorMs = 0;
 
         (replay.commands || []).forEach((command, index) => {
@@ -303,12 +333,19 @@ class ScoreReplayVerifier {
                 command.type,
                 result
             );
+            if (result?.event) {
+                events.push(ReplayRecorder.summarizeEvent(result.event));
+            }
             if (!ScoreReplayVerifier.equalCanonical(actualOutcome, command.expected)) {
                 throw new Error(`Replay outcome diverged at command ${command.sequence}`);
             }
         });
 
-        return score.getSnapshot();
+        return Object.freeze({
+            game: session.getSnapshot(),
+            score: score.getSnapshot(),
+            final: ReplayRecorder.createFinalSummary(session, events)
+        });
     }
 
     failure(reason, details = {}) {
@@ -405,7 +442,7 @@ class DailyChallengeService {
         this.context.router.startLevel(scene, {
             packId: challenge.packId,
             levelId: challenge.levelId,
-            mode: 'test'
+            mode: 'daily'
         });
         return challenge;
     }
@@ -413,7 +450,7 @@ class DailyChallengeService {
     matchRoute(route) {
         const active = this.active || this.loadActive();
         if (!active || !route) return null;
-        const matches = route.mode === 'test'
+        const matches = route.mode === 'daily'
             && route.packId === active.packId
             && route.levelId === active.levelId;
         return matches ? Object.freeze({ ...active }) : null;

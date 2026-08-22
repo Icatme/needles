@@ -128,13 +128,17 @@ test('legacy numeric progress migrates to stable completed level ids', () => {
     ]);
 });
 
-test('test routes never modify persistent progress', () => {
+test('non-progression routes never modify persistent progress', () => {
     const storage = createStorage();
     const { progress } = createServices(storage);
     const before = progress.getPackProgress(irregularPack);
     progress.completeLevel(irregularPack, 'irregular-a', 'test');
     const afterTest = progress.getPackProgress(irregularPack);
     assert.deepEqual(afterTest, before);
+
+    progress.completeLevel(irregularPack, 'irregular-a', 'daily');
+    const afterDaily = progress.getPackProgress(irregularPack);
+    assert.deepEqual(afterDaily, before);
 
     progress.completeLevel(irregularPack, 'irregular-a', 'progression');
     const afterProgression = progress.getPackProgress(irregularPack);
@@ -159,6 +163,13 @@ test('routes carry stable pack and level identity across retries and next levels
     const next = router.nextLevelRoute(testRoute);
     assert.equal(next.levelId, 'irregular-long-1');
     assert.equal(next.mode, 'test');
+
+    const dailyRoute = router.normalizeLevelRoute({
+        packId: 'irregular-pack',
+        levelId: 'irregular-b',
+        mode: 'daily'
+    });
+    assert.equal(dailyRoute.mode, 'daily');
 });
 
 test('legacy numeric route references remain bounded but string ids stay strict', () => {

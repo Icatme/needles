@@ -2,6 +2,7 @@ class PlaytestSession {
     constructor(levelConfig, options = {}) {
         this.level = JSON.parse(JSON.stringify(levelConfig));
         this.store = options.store || PLAYTEST_STORE;
+        this.persistAttempt = options.persistAttempt !== false;
         this.recorder = options.recorder || new ReplayRecorder(
             this.level,
             options
@@ -51,6 +52,10 @@ class PlaytestSession {
         if (this.finalAttempt) return this.finalAttempt;
 
         const replay = this.recorder.export();
+        if (!this.persistAttempt) {
+            this.finalAttempt = Object.freeze({ replay });
+            return this.finalAttempt;
+        }
         const snapshot = outcome.snapshot || this.session.getSnapshot();
         const collision = outcome.collision || null;
         const difficulty = this.level.difficulty || {};

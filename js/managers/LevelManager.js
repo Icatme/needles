@@ -10,7 +10,7 @@ class LevelManager {
         }
 
         this.context = options.context || APP_CONTEXT;
-        this.mode = options.mode === 'test' ? 'test' : 'progression';
+        this.mode = LevelManager.normalizeMode(options.mode);
         this.testMode = this.mode === 'test';
         this.activePackId = this.context.catalog.getPack(
             packId || this.context.getActivePackId()
@@ -28,8 +28,12 @@ class LevelManager {
     }
 
     setMode(mode) {
-        this.mode = mode === 'test' ? 'test' : 'progression';
+        this.mode = LevelManager.normalizeMode(mode);
         this.testMode = this.mode === 'test';
+    }
+
+    static normalizeMode(mode) {
+        return ['test', 'daily'].includes(mode) ? mode : 'progression';
     }
 
     setActivePack(packId, persist = true) {
@@ -107,6 +111,7 @@ class LevelManager {
     }
 
     getNextLevelRoute() {
+        if (this.mode === 'daily') return null;
         const route = this.getCurrentRoute();
         return route ? this.context.router.nextLevelRoute(route) : null;
     }

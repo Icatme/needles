@@ -156,6 +156,26 @@ test('a failed attempt records the failure needle and collision target', () => {
     );
 });
 
+test('a non-persistent replay session exports verification data without a playtest record', () => {
+    const level = makeLevel({ needleCount: 1 });
+    const store = createStore();
+    const session = new context.PlaytestSession(level, {
+        store,
+        persistAttempt: false
+    });
+
+    session.beginShot();
+    session.advance(100);
+    assert.equal(session.resolveImpact().completed, true);
+
+    assert.equal(store.count(), 0);
+    assert.equal(session.finalAttempt.replay.final.status, 'completed');
+    assert.equal(
+        new context.ReplayRunner().run(session.finalAttempt.replay, level).verified,
+        true
+    );
+});
+
 test('local playtest storage is bounded and exports no identity fields', () => {
     let tick = 0;
     const store = createStore({
@@ -190,14 +210,16 @@ test('local playtest storage is bounded and exports no identity fields', () => {
     assert.equal(store.count(), 0);
 });
 
-test('GameScene records only explicit test routes', () => {
+test('GameScene persists explicit playtests but keeps daily replays in memory', () => {
     const source = fs.readFileSync(
         path.join(root, 'js/scenes/GameScene.js'),
         'utf8'
     );
     assert.match(source, /this\.route\.mode === 'test'/);
     assert.match(source, /new PlaytestSession\(this\.levelConfig\)/);
-    assert.match(source, /:\s*new GameSession\(this\.levelConfig\)/);
+    assert.match(source, /this\.route\.mode === 'daily'/);
+    assert.match(source, /persistAttempt:\s*false/);
+    assert.match(source, /new GameSession\(this\.levelConfig\)/);
 });
 
 test('the level laboratory exposes local export and clear controls', () => {

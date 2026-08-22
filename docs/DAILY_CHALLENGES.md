@@ -11,19 +11,21 @@ The daily challenge is selected locally from:
 
 The same build therefore selects the same level for every player on the same UTC date. A pack-version change intentionally creates a different seed domain.
 
-Daily runs use the existing `test` route mode. This gives them a recorded replay while guaranteeing that a locked campaign level is not silently completed or unlocked.
+Daily runs use a dedicated `daily` route mode. The game records an in-memory replay for verification, but does not write a playtest attempt, campaign progress, personal score or best-run ghost. A completed daily challenge can only be retried or left for the menu; it cannot continue into another level under the daily route.
 
 ## Independent verification
 
 A daily result is stored only after `ScoreReplayVerifier` performs all of the following:
 
-1. recomputes and checks the replay digest;
+1. validates the replay schema, engine version, commands, duration, final summary and digest;
 2. compares the replay level descriptor with the resolved level;
 3. creates a fresh `GameSession` and replays every timestamped command;
 4. compares each replayed command outcome with the recorder's expected outcome;
 5. creates a fresh `ScoreSession` and recomputes timing, placement, combo, precision and completion bonuses;
-6. compares the canonical recomputed score summary with the claimed result;
-7. emits a verification digest over replay digest, scoring profile id and score summary.
+6. requires both the replay and recomputed gameplay to end in the completed state;
+7. compares the recomputed final gameplay summary with the replay's final summary;
+8. compares the canonical recomputed score summary with the claimed result;
+9. emits a verification digest over replay digest, scoring profile id and score summary.
 
 The verifier does not trust canvas state, HUD text, local score storage or the submitted total.
 

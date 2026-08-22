@@ -202,6 +202,13 @@ test('level manager delegates pack selection and route mode to AppContext', () =
     testManager.completeLevel();
     assert.equal(testManager.maxUnlockedLevel, 2);
 
+    const dailyManager = new context.LevelManager('balanced-v2', { mode: 'daily' });
+    dailyManager.startLevel('balanced-v2-02');
+    dailyManager.completeLevel();
+    assert.equal(dailyManager.maxUnlockedLevel, 2);
+    assert.equal(dailyManager.getCurrentRoute().mode, 'daily');
+    assert.equal(dailyManager.getNextLevelRoute(), null);
+
     normalManager.setActivePack('legacy');
     assert.equal(normalManager.getLevelConfig('legacy-10').name, '基础合奏');
     assert.equal(context.APP_CONTEXT.getActivePackId(), 'legacy');
