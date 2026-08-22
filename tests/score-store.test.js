@@ -42,8 +42,9 @@ function createStorage(initial = {}) {
 }
 
 function makeRun(overrides = {}) {
-    return {
+    const run = {
         packId: 'pack-a',
+        packVersion: '1.0.0',
         levelId: 'level-1',
         levelOrder: 1,
         levelName: 'Calibration',
@@ -65,6 +66,9 @@ function makeRun(overrides = {}) {
         },
         ...overrides
     };
+    run.contractId = overrides.contractId
+        || `${run.packId}@${run.packVersion}:${run.levelId}:score-v1`;
+    return run;
 }
 
 test('only completed eligible progression runs enter the score store', () => {
@@ -153,4 +157,32 @@ test('scores persist, reload and clear independently from preferences', () => {
     second.recordRun(makeRun());
     second.reset();
     assert.equal(second.countBest('pack-a'), 0);
+});
+
+test('best records are isolated by immutable scoring contract', () => {
+    const ScoreStore = loadStore();
+    const store = new ScoreStore({ storage: null });
+    const original = makeRun({
+        contractId: 'pack-a@1.0.0:level-1:score-v1',
+        score: { ...makeRun().score, score: 9000 }
+    });
+    const revised = makeRun({
+        packVersion: '2.0.0',
+        contractId: 'pack-a@2.0.0:level-1:score-v2',
+        score: { ...makeRun().score, score: 500 }
+    });
+
+    store.recordRun(original);
+    assert.equal(store.getBest(
+        'pack-a',
+        'level-1',
+        revised.contractId
+    ), null);
+    assert.equal(store.countBest('pack-a', {
+        contractIds: new Set([revised.contractId])
+    }), 0);
+
+    const result = store.recordRun(revised);
+    assert.equal(result.isPersonalBest, true);
+    assert.equal(store.getBest('pack-a', 'level-1').score, 500);
 });

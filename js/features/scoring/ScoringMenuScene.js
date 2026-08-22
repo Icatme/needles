@@ -69,9 +69,11 @@ class ScoringMenuScene extends EnhancedMenuScene {
             { width: 300, variant: 'secondary' }
         );
 
-        const scoreCount = APP_CONTEXT.scores?.countBest(
-            this.levelManager.activePackId
-        ) || 0;
+        const packId = this.levelManager.activePackId;
+        const contractIds = this.getScoreContractIds(packId);
+        const scoreCount = APP_CONTEXT.scores?.countBest(packId, {
+            contractIds
+        }) || 0;
         SceneUI.createButton(
             this,
             194,
@@ -123,8 +125,12 @@ class ScoringMenuScene extends EnhancedMenuScene {
         const ui = SceneUI.getPalette();
         const packId = this.levelManager.activePackId;
         const pack = this.levelManager.getActivePack();
-        const records = APP_CONTEXT.scores.listBest(packId, { limit: 6 });
-        const total = APP_CONTEXT.scores.countBest(packId);
+        const contractIds = this.getScoreContractIds(packId);
+        const records = APP_CONTEXT.scores.listBest(packId, {
+            limit: 6,
+            contractIds
+        });
+        const total = APP_CONTEXT.scores.countBest(packId, { contractIds });
         const centerY = CONSTANTS.HEIGHT / 2;
         const elements = [];
         const track = element => {
@@ -303,5 +309,13 @@ class ScoringMenuScene extends EnhancedMenuScene {
         if (!this.scoreboardModal) return;
         this.scoreboardModal.forEach(element => element.destroy());
         this.scoreboardModal = null;
+    }
+
+    getScoreContractIds(packId) {
+        return new Set(APP_CONTEXT.catalog.listLevels(packId).map(level => {
+            const levelId = level.packLevelId || level.id;
+            const config = APP_CONTEXT.catalog.getLevelConfig(packId, levelId);
+            return ScoreStore.contractId(config);
+        }));
     }
 }

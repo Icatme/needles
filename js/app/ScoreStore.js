@@ -72,11 +72,18 @@ class ScoreStore {
         if (typeof value.packId !== 'string' || typeof value.levelId !== 'string') {
             return null;
         }
+        if (typeof value.contractId !== 'string' || value.contractId.length === 0) {
+            return null;
+        }
         if (!Number.isFinite(value.score) || value.score < 0) return null;
 
         return {
             packId: value.packId,
+            packVersion: typeof value.packVersion === 'string'
+                ? value.packVersion
+                : 'legacy',
             levelId: value.levelId,
+            contractId: value.contractId,
             levelOrder: Number.isFinite(value.levelOrder)
                 ? Math.max(1, Math.floor(value.levelOrder))
                 : null,
@@ -104,7 +111,9 @@ class ScoreStore {
 
         const record = this.normalizeRecord({
             packId: run.packId,
+            packVersion: run.packVersion,
             levelId: run.levelId,
+            contractId: run.contractId,
             levelOrder: run.levelOrder,
             levelName: run.levelName,
             score: run.score.score,
@@ -115,7 +124,8 @@ class ScoreStore {
             completedAt: this.nowIso()
         });
         const pack = this.ensurePack(record.packId);
-        const previous = pack.bestByLevel[record.levelId] || null;
+        const stored = pack.bestByLevel[record.levelId] || null;
+        const previous = stored?.contractId === record.contractId ? stored : null;
         const isPersonalBest = !previous || ScoreStore.isBetter(record, previous);
 
         if (isPersonalBest) {
@@ -143,13 +153,17 @@ class ScoreStore {
         if (typeof run.packId !== 'string' || typeof run.levelId !== 'string') {
             return 'identity';
         }
+        if (typeof run.contractId !== 'string' || run.contractId.length === 0) {
+            return 'contract';
+        }
         if (!run.score || run.score.status !== 'completed') return 'score-status';
         if (!Number.isFinite(run.score.score) || run.score.score < 0) return 'score';
         return null;
     }
 
-    getBest(packId, levelId) {
+    getBest(packId, levelId, contractId = null) {
         const record = this.state.packs[packId]?.bestByLevel?.[levelId] || null;
+        if (contractId && record?.contractId !== contractId) return null;
         return record ? ScoreStore.clone(record) : null;
     }
 
@@ -158,7 +172,12 @@ class ScoreStore {
         const limit = Number.isFinite(options.limit)
             ? Math.max(0, Math.floor(options.limit))
             : Infinity;
+        const contractIds = options.contractIds
+            && typeof options.contractIds.has === 'function'
+            ? options.contractIds
+            : null;
         return Object.values(this.state.packs[packId]?.bestByLevel || {})
+            .filter(record => !contractIds || contractIds.has(record.contractId))
             .sort((left, right) => {
                 const dateDelta = Date.parse(right.completedAt)
                     - Date.parse(left.completedAt);
@@ -169,8 +188,10 @@ class ScoreStore {
             .map(record => ScoreStore.clone(record));
     }
 
-    countBest(packId) {
-        return Object.keys(this.state.packs[packId]?.bestByLevel || {}).length;
+    countBest(packId, options = {}) {
+        return this.listBest(packId, {
+            contractIds: options.contractIds
+        }).length;
     }
 
     clearPack(packId) {
@@ -226,6 +247,14 @@ class ScoreStore {
             return candidate.elapsedMs < current.elapsedMs;
         }
         return candidate.maxCombo > current.maxCombo;
+    }
+
+    static contractId(level = {}) {
+        const packId = level.packId || 'standalone';
+        const packVersion = level.packVersion || 'legacy';
+        const levelId = level.packLevelId || level.levelId || level.id || 'unknown';
+        const scoringProfile = level.scoring?.profileId || 'score-v1';
+        return `${packId}@${packVersion}:${levelId}:${scoringProfile}`;
     }
 
     static normalizeCounters(value) {

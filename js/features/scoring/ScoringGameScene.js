@@ -68,7 +68,9 @@ class ScoringGameScene extends GameScene {
         this.scoreCompletionAward = this.scoreSession.complete();
         this.scoreRecordResult = APP_CONTEXT.scores?.recordRun({
             packId: this.route.packId,
+            packVersion: this.levelConfig.packVersion,
             levelId: this.route.levelId,
+            contractId: ScoreStore.contractId(this.levelConfig),
             levelOrder: this.levelConfig.order,
             levelName: this.levelConfig.name,
             mode: this.route.mode,

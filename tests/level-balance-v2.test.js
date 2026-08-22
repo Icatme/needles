@@ -73,6 +73,8 @@ loadIntoContext(context, 'js/packs/PackRegistry.js', [
 context.LEVEL_PACK_REGISTRY.setDefault('balanced-v2');
 
 loadIntoContext(context, 'js/app/ProgressStore.js', ['ProgressStore']);
+loadIntoContext(context, 'js/app/GamePreferencesStore.js', ['GamePreferencesStore']);
+loadIntoContext(context, 'js/app/ScoreStore.js', ['ScoreStore']);
 loadIntoContext(context, 'js/app/LevelCatalogService.js', ['LevelCatalogService']);
 loadIntoContext(context, 'js/app/AppRouter.js', ['AppRouter']);
 loadIntoContext(context, 'js/app/AppContext.js', ['AppContext', 'APP_CONTEXT']);
