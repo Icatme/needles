@@ -221,7 +221,8 @@ test('the browser entrypoint discovers packs and explicit application routes', (
     assert.match(index, /DifficultyModelV2\.js/);
     assert.match(index, /LevelSelectScene\.js/);
     assert.match(boot, /packs\/index\.json/);
-    assert.match(main, /EnhancedMenuScene/);
+    assert.match(main, /ScoringMenuScene/);
+    assert.match(main, /ScoringGameScene/);
     assert.match(main, /LevelSelectScene/);
     assert.doesNotMatch(selector, /needle_game_test_mode/);
     assert.match(selector, /mode:\s*'test'/);
