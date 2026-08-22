@@ -42,6 +42,7 @@ class ScoringGameScene extends GameScene {
     onNeedleInserted(outcome) {
         if (this.scoreSession) {
             const award = this.scoreSession.recordInsertion(outcome.placement);
+            this.finalizeScoreIfCompleted(outcome);
             this.updateScoringHud();
             this.scoringFeedback?.showInsertion(
                 award,
@@ -49,6 +50,20 @@ class ScoringGameScene extends GameScene {
             );
         }
         super.onNeedleInserted(outcome);
+    }
+
+    finalizeScoreIfCompleted(outcome) {
+        if (
+            !outcome?.completed
+            || !this.scoreSession
+            || this.scoreCompletionAward
+        ) {
+            return this.scoreCompletionAward;
+        }
+
+        this.scoreCompletionAward = this.scoreSession.complete();
+        this.updateScoringHud();
+        return this.scoreCompletionAward;
     }
 
     onGameOver(outcome) {
@@ -61,11 +76,8 @@ class ScoringGameScene extends GameScene {
         if (
             !this.completionHandled
             && this.session?.status === 'completed'
-            && this.scoreSession
-            && !this.scoreCompletionAward
         ) {
-            this.scoreCompletionAward = this.scoreSession.complete();
-            this.updateScoringHud();
+            this.finalizeScoreIfCompleted({ completed: true });
         }
         super.onLevelComplete();
     }

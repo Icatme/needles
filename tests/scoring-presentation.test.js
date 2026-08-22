@@ -227,12 +227,20 @@ test('scoring scene starts timing on the first accepted shot and reports awards'
     scene.update(0, 33);
     assert.equal(scene.scoreSession.elapsedMs, 33);
 
-    scene.onNeedleInserted({ placement: { nearest: {} } });
+    scene.session.status = 'completed';
+    scene.onNeedleInserted({
+        completed: true,
+        placement: { nearest: {} }
+    });
     assert.equal(scene.scoreSession.score, 100);
+    assert.equal(scene.scoreSession.status, 'completed');
     assert.equal(scene.scoringFeedback.insertions.length, 1);
     assert.equal(scene.baseInserted, true);
 
-    scene.session.status = 'completed';
+    const elapsedAtFinalImpact = scene.scoreSession.elapsedMs;
+    scene.update(0, 50);
+    assert.equal(scene.scoreSession.elapsedMs, elapsedAtFinalImpact);
+
     scene.onLevelComplete();
     scene.createCelebration();
     const result = scene.getResultContext();
