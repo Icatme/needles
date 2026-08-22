@@ -10,6 +10,11 @@ class ScoringGameOverScene extends GameOverScene {
         this.scoreRecord = data.scoreRecord || null;
         this.isPersonalBest = Boolean(this.scoreRecord?.isPersonalBest);
         this.bestScore = this.scoreRecord?.best || null;
+        this.bestRunComparison = data.bestRunComparison || null;
+        this.objectives = data.objectives || null;
+        this.badgeResult = data.badgeResult || null;
+        this.dailyChallenge = data.dailyChallenge || null;
+        this.dailyResult = data.dailyResult || null;
     }
 
     createMetricPanel(centerY) {
@@ -19,7 +24,7 @@ class ScoringGameOverScene extends GameOverScene {
         }
 
         const ui = SceneUI.getPalette();
-        const panelHeight = 126;
+        const panelHeight = 140;
         SceneUI.createPanel(
             this,
             300,
@@ -37,7 +42,7 @@ class ScoringGameOverScene extends GameOverScene {
 
         const label = this.add.text(
             82,
-            centerY - 43,
+            centerY - 49,
             `本局得分 · 关卡 ${String(this.level).padStart(2, '0')}`,
             {
                 fontFamily: ui.BODY_FONT,
@@ -49,7 +54,7 @@ class ScoringGameOverScene extends GameOverScene {
 
         const value = this.add.text(
             82,
-            centerY - 6,
+            centerY - 13,
             String(Math.max(0, this.score.score || 0)).padStart(6, '0'),
             {
                 fontFamily: ui.DISPLAY_FONT,
@@ -63,12 +68,12 @@ class ScoringGameOverScene extends GameOverScene {
 
         const recordLabel = this.add.text(
             518,
-            centerY - 40,
+            centerY - 45,
             this.getRecordLabel(),
             {
                 fontFamily: ui.MONO_FONT,
                 fontSize: '11px',
-                color: this.isPersonalBest ? ui.TEXT_SUCCESS : ui.TEXT_MUTED,
+                color: this.getRecordColor(ui),
                 letterSpacing: 0.6
             }
         );
@@ -80,7 +85,7 @@ class ScoringGameOverScene extends GameOverScene {
                 + ` · 最高连击 ×${this.score.maxCombo || 0}`
             : `进度 ${this.insertedCount} / ${this.totalCount}`
                 + ` · 用时 ${ScoringHUD.formatElapsed(this.score.elapsedMs)}`;
-        const meta = this.add.text(518, centerY - 4, progressCopy, {
+        const meta = this.add.text(518, centerY - 10, progressCopy, {
             fontFamily: ui.BODY_FONT,
             fontSize: '13px',
             color: ui.TEXT_ACCENT
@@ -90,7 +95,7 @@ class ScoringGameOverScene extends GameOverScene {
 
         const breakdown = this.add.text(
             82,
-            centerY + 38,
+            centerY + 26,
             ScoringGameOverScene.formatBreakdown(this.score.breakdown),
             {
                 fontFamily: ui.MONO_FONT,
@@ -100,9 +105,33 @@ class ScoringGameOverScene extends GameOverScene {
             }
         );
         breakdown.setDepth(11);
+
+        const addenda = this.getResultAddenda();
+        if (addenda) {
+            const note = this.add.text(82, centerY + 52, addenda, {
+                fontFamily: ui.BODY_FONT,
+                fontSize: '11px',
+                color: this.dailyResult?.verified
+                    ? ui.TEXT_SUCCESS
+                    : ui.TEXT_MUTED
+            });
+            note.setDepth(11);
+        }
+    }
+
+    getRecordColor(ui) {
+        if (this.dailyChallenge) {
+            return this.dailyResult?.verified ? ui.TEXT_SUCCESS : ui.TEXT_ERROR;
+        }
+        return this.isPersonalBest ? ui.TEXT_SUCCESS : ui.TEXT_MUTED;
     }
 
     getRecordLabel() {
+        if (this.dailyChallenge) {
+            return this.dailyResult?.verified
+                ? 'DAILY VERIFIED · 已验证'
+                : 'DAILY RUN · 未入榜';
+        }
         if (this.route.mode === 'test') return '测试模式 · 不入榜';
         if (!this.success) return '未完成 · 不入榜';
         if (this.isPersonalBest) return 'NEW BEST · 新纪录';
@@ -110,6 +139,31 @@ class ScoringGameOverScene extends GameOverScene {
             return `本关最佳 ${String(this.bestScore.score).padStart(6, '0')}`;
         }
         return this.scoreEligible ? '正式成绩' : '未启用正式记录';
+    }
+
+    getResultAddenda() {
+        const parts = [];
+        const comparison = this.bestRunComparison;
+        if (
+            comparison?.hadReference
+            && Number.isFinite(comparison.deltaMs)
+        ) {
+            const delta = BestRunComparisonHUD.formatDelta(comparison.deltaMs);
+            parts.push(comparison.deltaMs <= 0
+                ? `较原最佳快 ${delta.replace('−', '')}`
+                : `较原最佳慢 ${delta.replace('+', '')}`);
+        } else if (this.isPersonalBest) {
+            parts.push('已保存逐针最佳轨迹');
+        }
+
+        if (this.objectives?.objectives) {
+            const completed = this.objectives.objectives.filter(item => item.completed).length;
+            parts.push(`局内目标 ${completed}/${this.objectives.objectives.length}`);
+        }
+        const newBadges = this.badgeResult?.newBadges || [];
+        if (newBadges.length > 0) parts.push(`新徽章 ${newBadges.length}`);
+        if (this.dailyResult?.verified) parts.push('回放与得分一致');
+        return parts.join(' · ');
     }
 
     static formatBreakdown(breakdown = {}) {
