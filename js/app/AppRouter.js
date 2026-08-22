@@ -63,8 +63,12 @@ class AppRouter {
     }
 
     startResult(scene, payload) {
+        const resultContext = typeof scene.getResultContext === 'function'
+            ? scene.getResultContext()
+            : {};
         scene.scene.start('GameOverScene', {
             ...payload,
+            ...resultContext,
             route: this.normalizeLevelRoute(payload.route)
         });
     }
