@@ -79,6 +79,77 @@ class AngularCollisionRules {
         return Object.freeze({ collided: false });
     }
 
+    measureClearance(wheelAngle, insertedNeedles = [], obstacles = []) {
+        const blockers = [
+            ...insertedNeedles.map((needle, index) => ({
+                value: needle,
+                type: 'needle',
+                index,
+                fallbackRadius: this.needleRadius
+            })),
+            ...obstacles.map((obstacle, index) => ({
+                value: obstacle,
+                type: 'obstacle',
+                index,
+                fallbackRadius: this.obstacleRadius
+            }))
+        ];
+        const nearest = {
+            clockwise: null,
+            counterClockwise: null
+        };
+
+        blockers.forEach(blocker => {
+            const targetAngle = this.angleOf(blocker.value);
+            const radius = this.radiusOf(
+                blocker.value,
+                blocker.fallbackRadius
+            );
+            const signedAngle = this.signedCircularDelta(
+                wheelAngle,
+                targetAngle
+            );
+            const side = signedAngle >= 0
+                ? 'clockwise'
+                : 'counterClockwise';
+            const distance = this.chordDistance(wheelAngle, targetAngle);
+            const candidate = Object.freeze({
+                type: blocker.type,
+                targetIndex: blocker.index,
+                targetId: blocker.value?.id ?? blocker.index,
+                targetAngle,
+                radius,
+                side,
+                angularDistance: Math.abs(signedAngle),
+                distance,
+                clearance: distance - (this.needleRadius + radius)
+            });
+            const current = nearest[side];
+
+            if (
+                !current
+                || candidate.clearance < current.clearance
+                || (
+                    candidate.clearance === current.clearance
+                    && candidate.angularDistance < current.angularDistance
+                )
+            ) {
+                nearest[side] = candidate;
+            }
+        });
+
+        const clearances = Object.values(nearest)
+            .filter(Boolean)
+            .map(candidate => candidate.clearance);
+        return Object.freeze({
+            blockerCount: blockers.length,
+            minimumClearance: clearances.length > 0
+                ? Math.min(...clearances)
+                : null,
+            nearest: Object.freeze({ ...nearest })
+        });
+    }
+
     collides(angleA, radiusA, angleB, radiusB) {
         return this.chordDistance(angleA, angleB) < radiusA + radiusB;
     }
@@ -94,6 +165,12 @@ class AngularCollisionRules {
             this.normalize(angleA) - this.normalize(angleB)
         );
         return Math.min(difference, full - difference);
+    }
+
+    signedCircularDelta(angleA, angleB) {
+        const full = Math.PI * 2;
+        const delta = this.normalize(angleB) - this.normalize(angleA);
+        return ((delta + Math.PI) % full + full) % full - Math.PI;
     }
 
     minimumAngle(radiusA = this.needleRadius, radiusB = this.needleRadius) {

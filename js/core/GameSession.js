@@ -109,6 +109,7 @@ class GameSession {
             this.impactAngle - this.wheelRotation
         );
         const needleNumber = this.getCurrentNeedleNumber();
+        const placement = this.measurePlacement(wheelAngle);
         const collision = this.collisionRules.checkShot(
             wheelAngle,
             this.insertedNeedles,
@@ -121,6 +122,7 @@ class GameSession {
                 needleNumber,
                 wheelAngle,
                 collision,
+                placement,
                 insertedCount: this.insertedNeedles.length
             });
             return Object.freeze({
@@ -129,6 +131,7 @@ class GameSession {
                 needleNumber,
                 wheelAngle,
                 collision,
+                placement,
                 event,
                 snapshot: this.getSnapshot()
             });
@@ -148,6 +151,7 @@ class GameSession {
             completed ? 'level-completed' : 'needle-inserted',
             {
                 needle: inserted,
+                placement,
                 insertedCount: this.insertedNeedles.length,
                 remainingCount: this.getRemainingCount()
             }
@@ -159,9 +163,28 @@ class GameSession {
             needleNumber,
             wheelAngle,
             inserted,
+            placement,
             event,
             snapshot: this.getSnapshot()
         });
+    }
+
+    measurePlacement(wheelAngle) {
+        if (typeof this.collisionRules.measureClearance !== 'function') {
+            return Object.freeze({
+                blockerCount: this.insertedNeedles.length + this.obstacles.length,
+                minimumClearance: null,
+                nearest: Object.freeze({
+                    clockwise: null,
+                    counterClockwise: null
+                })
+            });
+        }
+        return this.collisionRules.measureClearance(
+            wheelAngle,
+            this.insertedNeedles,
+            this.obstacles
+        );
     }
 
     releaseShotLock() {
