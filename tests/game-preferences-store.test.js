@@ -41,8 +41,14 @@ test('scoring challenge is enabled by default', () => {
 
     assert.equal(store.isScoringEnabled(), true);
     assert.deepEqual(JSON.parse(JSON.stringify(store.snapshot())), {
-        version: 1,
-        scoringEnabled: true
+        version: 2,
+        scoringEnabled: true,
+        scoreHudEnabled: true,
+        ghostEnabled: true,
+        rewardTextEnabled: true,
+        animationIntensity: 'full',
+        soundEnabled: false,
+        hapticsEnabled: false
     });
 });
 
@@ -73,7 +79,13 @@ test('unknown or malformed preference fields fall back safely', () => {
 
     assert.equal(store.isScoringEnabled(), true);
     assert.deepEqual(JSON.parse(JSON.stringify(store.snapshot())), {
-        version: 1,
-        scoringEnabled: true
+        version: 2,
+        scoringEnabled: true,
+        scoreHudEnabled: true,
+        ghostEnabled: true,
+        rewardTextEnabled: true,
+        animationIntensity: 'full',
+        soundEnabled: false,
+        hapticsEnabled: false
     });
 });

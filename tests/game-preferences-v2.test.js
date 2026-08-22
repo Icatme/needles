@@ -99,7 +99,7 @@ test('all granular toggles persist in one versioned preference record', () => {
     store.toggleHaptics();
 
     const restored = new GamePreferencesStore({ storage, storageKey: 'preferences' });
-    assert.deepEqual(restored.getFeedbackSettings(), {
+    assert.deepEqual(JSON.parse(JSON.stringify(restored.getFeedbackSettings())), {
         scoreHudEnabled: false,
         ghostEnabled: false,
         rewardTextEnabled: false,
