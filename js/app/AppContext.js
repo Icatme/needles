@@ -2,6 +2,9 @@ class AppContext {
     constructor(options = {}) {
         this.registry = options.registry || LEVEL_PACK_REGISTRY;
         this.progress = options.progress || new ProgressStore(options.progressOptions);
+        this.preferences = options.preferences
+            || new GamePreferencesStore(options.preferenceOptions);
+        this.scores = options.scores || new ScoreStore(options.scoreOptions);
         this.catalog = options.catalog || new LevelCatalogService({
             registry: this.registry
         });
@@ -45,6 +48,11 @@ class AppContext {
 
     resetProgress() {
         this.progress.reset();
+        this.scores.reset();
+    }
+
+    resetScores() {
+        this.scores.reset();
     }
 }
 

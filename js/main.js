@@ -30,7 +30,7 @@ const config = {
         ScoringMenuScene,
         PlaytestLevelSelectScene,
         ScoringGameScene,
-        GameOverScene
+        ScoringGameOverScene
     ],
     input: {
         touch: true,
