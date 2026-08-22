@@ -10,7 +10,7 @@ class ScoringFeedback {
         if (!award?.enabled || !position) return;
         const ui = SceneUI.getPalette(this.levelVisual?.theme);
         const precisionLabel = {
-            close: '贴边好针',
+            close: '贴边好�',
             threaded: '双侧穿隙'
         }[award.precision?.kind] || '';
         const comboLabel = {
@@ -21,10 +21,12 @@ class ScoringFeedback {
         }[award.comboMilestone] || '';
         const primary = precisionLabel
             || comboLabel
-            || (award.combo > 1 ? `连击 ×${award.combo}` : '稳定命中');
+            || (award.comboBroken
+                ? '重新起拍'
+                : (award.combo > 1 ? `节奏连击 ×${award.combo}` : '稳定命中'));
         const accentColor = award.precision?.kind === 'threaded'
             ? ui.TEXT_SUCCESS
-            : ui.TEXT_ACCENT;
+            : (award.comboBroken ? ui.TEXT_ERROR : ui.TEXT_ACCENT);
 
         const container = this.scene.add.container(position.x, position.y - 28);
         container.setDepth(170);
@@ -49,24 +51,17 @@ class ScoringFeedback {
             0.9
         );
         const sides = new Set(award.precision?.sides || []);
-        if (sides.has('clockwise')) {
-            marks.lineBetween(-30, 4, -18, 4);
-        }
-        if (sides.has('counterClockwise')) {
-            marks.lineBetween(18, 4, 30, 4);
-        }
+        if (sides.has('clockwise')) marks.lineBetween(-30, 4, -18, 4);
+        if (sides.has('counterClockwise')) marks.lineBetween(18, 4, 30, 4);
         container.add([marks, label, points]);
         this.track(container);
 
-        if (award.comboMilestone) {
-            this.showMilestoneRing(position, ui);
-        }
+        if (award.comboMilestone) this.showMilestoneRing(position, ui);
 
         if (SceneUI.prefersReducedMotion()) {
             this.destroyLater(container, 520);
             return;
         }
-
         this.scene.tweens.add({
             targets: container,
             y: container.y - 42,
@@ -78,22 +73,14 @@ class ScoringFeedback {
     }
 
     showMilestoneRing(position, ui) {
-        const ring = this.scene.add.circle(
-            position.x,
-            position.y,
-            16,
-            ui.ACCENT,
-            0.04
-        );
+        const ring = this.scene.add.circle(position.x, position.y, 16, ui.ACCENT, 0.04);
         ring.setStrokeStyle(3, ui.ACCENT, 0.78);
         ring.setDepth(165);
         this.track(ring);
-
         if (SceneUI.prefersReducedMotion()) {
             this.destroyLater(ring, 420);
             return;
         }
-
         this.scene.tweens.add({
             targets: ring,
             scale: 2.8,
@@ -136,7 +123,6 @@ class ScoringFeedback {
         text.setDepth(207);
         this.track(panel);
         this.track(text);
-
         if (!SceneUI.prefersReducedMotion()) {
             panel.setScale(0.94);
             text.setScale(0.94);
