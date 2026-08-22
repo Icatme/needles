@@ -51,7 +51,6 @@ class ScoringProfileResolver {
         );
         const profile = {
             schema: ScoringProfileResolver.schema(),
-            profileId: ScoringProfileResolver.profileId(levelConfig),
             source: Object.keys(authored).length > 0 ? 'authored+derived' : 'derived',
             baseInsertPoints: ScoringProfileResolver.nonNegative(
                 merged.baseInsertPoints,
@@ -116,6 +115,7 @@ class ScoringProfileResolver {
             timeBonusTiers,
             diagnostics: Object.freeze({ ...derived.diagnostics })
         };
+        profile.profileId = ScoringProfileResolver.profileId(levelConfig, profile);
         return ScoringProfileResolver.deepFreeze(profile);
     }
 
@@ -251,10 +251,46 @@ class ScoringProfileResolver {
         };
     }
 
-    static profileId(level) {
+    static profileId(level, rules = {}) {
         const packId = level.packId || 'standalone';
+        const packVersion = level.packVersion || 'legacy';
         const levelId = level.packLevelId || level.id || level.order || 'unknown';
-        return `${packId}:${levelId}:score-v2`;
+        const {
+            schema,
+            profileId,
+            source,
+            diagnostics,
+            ...scoringRules
+        } = rules;
+        const ruleHash = ScoringProfileResolver.hashValue(scoringRules);
+        return `${packId}@${packVersion}:${levelId}:score-v2:${ruleHash}`;
+    }
+
+    static hashValue(value) {
+        const source = JSON.stringify(ScoringProfileResolver.canonicalize(value));
+        let hash = 0x811c9dc5;
+        for (let index = 0; index < source.length; index++) {
+            hash ^= source.charCodeAt(index) & 0xff;
+            hash = Math.imul(hash, 0x01000193) >>> 0;
+        }
+        return hash.toString(16).padStart(8, '0');
+    }
+
+    static canonicalize(value) {
+        if (Array.isArray(value)) {
+            return value.map(item => ScoringProfileResolver.canonicalize(item));
+        }
+        if (value && typeof value === 'object') {
+            return Object.keys(value)
+                .sort()
+                .reduce((result, key) => {
+                    if (value[key] !== undefined) {
+                        result[key] = ScoringProfileResolver.canonicalize(value[key]);
+                    }
+                    return result;
+                }, {});
+        }
+        return value;
     }
 
     static estimateAverageSpeed(rhythm = {}) {

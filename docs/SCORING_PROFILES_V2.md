@@ -3,8 +3,11 @@
 评分配置由 `ScoringProfileResolver` 在关卡配置完成难度分析后生成。每一关都会得到独立的、可复现的评分档案，档案标识为：
 
 ```text
-<packId>:<levelId>:score-v2
+<packId>@<packVersion>:<levelId>:score-v2:<ruleHash>
 ```
+
+`ruleHash` 由最终归一化的评分规则生成。关卡包版本或评分规则变化时，
+档案标识也会变化，旧公式下的本机成绩和幽灵不会与新公式混用。
 
 ## 为什么改为节奏连击
 

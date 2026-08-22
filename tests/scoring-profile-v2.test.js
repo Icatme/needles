@@ -39,7 +39,10 @@ function makeLevel(overrides = {}) {
 test('resolver creates deterministic per-level timing and tempo rules', () => {
     const profile = context.ScoringProfileResolver.resolve(makeLevel());
     assert.equal(profile.schema, 'needles.scoring-profile/v2');
-    assert.equal(profile.profileId, 'pack:level-1:score-v2');
+    assert.match(
+        profile.profileId,
+        /^pack@legacy:level-1:score-v2:[0-9a-f]{8}$/
+    );
     assert.ok(profile.comboWindowMs >= 2200 && profile.comboWindowMs <= 5000);
     assert.ok(profile.parTimeMs >= 10000);
     assert.ok(profile.precisionClearancePx >= 9);
@@ -83,6 +86,22 @@ test('authored level scoring overrides derived values without losing identity', 
     assert.equal(profile.comboWindowMs, 2750);
     assert.equal(profile.parTimeMs, 22200);
     assert.equal(profile.precisionClearancePx, 7);
+});
+
+test('profile identity changes with pack version and resolved scoring rules', () => {
+    const original = context.ScoringProfileResolver.resolve(makeLevel({
+        packVersion: '1.0.0'
+    }));
+    const newPack = context.ScoringProfileResolver.resolve(makeLevel({
+        packVersion: '2.0.0'
+    }));
+    const newRules = context.ScoringProfileResolver.resolve(makeLevel({
+        packVersion: '1.0.0',
+        scoring: { comboWindowMs: 2800 }
+    }));
+
+    assert.notEqual(original.profileId, newPack.profileId);
+    assert.notEqual(original.profileId, newRules.profileId);
 });
 
 test('tempo combo expires after the resolved window', () => {
@@ -167,7 +186,10 @@ test('catalog attaches a resolved scoring profile to every level config', () => 
         })
     });
     const config = catalog.getLevelConfig('pack', 'level-1');
-    assert.equal(config.scoring.profileId, 'pack:level-1:score-v2');
+    assert.match(
+        config.scoring.profileId,
+        /^pack@1\.0\.0:level-1:score-v2:[0-9a-f]{8}$/
+    );
     assert.equal(config.scoring.comboWindowMs, 2875);
     assert.ok(config.scoring.parTimeMs > 0);
 });
