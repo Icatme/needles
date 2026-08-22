@@ -88,6 +88,9 @@ class LevelCatalogService {
         config.packVersion = pack.version || 'legacy';
         config.packLevelId = identity;
         config.difficulty = audit.analysis;
+        if (typeof ScoringProfileResolver !== 'undefined') {
+            config.scoring = ScoringProfileResolver.resolve(config);
+        }
         return config;
     }
 

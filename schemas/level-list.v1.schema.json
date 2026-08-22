@@ -52,6 +52,7 @@
         },
         "layoutRef": { "$ref": "#/$defs/referenceId" },
         "rhythm": { "$ref": "#/$defs/rhythm" },
+        "scoring": { "$ref": "#/$defs/scoring" },
         "presentation": { "$ref": "#/$defs/presentation" },
         "tags": {
           "type": "array",
@@ -128,6 +129,39 @@
       "dependentRequired": {
         "speedStep": ["maxAbsSpeed"],
         "phaseShiftEvery": ["phaseShiftMs"]
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "baseInsertPoints": { "type": "number", "minimum": 0 },
+        "precisionClearancePx": { "type": "number", "minimum": 0, "maximum": 30 },
+        "closeBonus": { "type": "number", "minimum": 0 },
+        "threadedBonus": { "type": "number", "minimum": 0 },
+        "comboStepPoints": { "type": "number", "minimum": 0 },
+        "comboBonusCap": { "type": "number", "minimum": 0 },
+        "comboWindowMs": { "type": "number", "minimum": 800, "maximum": 10000 },
+        "comboPrecisionGraceMs": { "type": "number", "minimum": 0, "maximum": 3000 },
+        "minimumParTimeMs": { "type": "number", "exclusiveMinimum": 0 },
+        "parTimePerNeedleMs": { "type": "number", "exclusiveMinimum": 0 },
+        "parTimePerObstacleMs": { "type": "number", "minimum": 0 },
+        "parTimeMs": { "type": "number", "exclusiveMinimum": 0 },
+        "timeBonusTiers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/timeBonusTier" }
+        }
+      }
+    },
+    "timeBonusTier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxRatio", "points", "kind"],
+      "properties": {
+        "maxRatio": { "type": "number", "exclusiveMinimum": 0 },
+        "points": { "type": "number", "minimum": 0 },
+        "kind": { "type": "string", "minLength": 1 }
       }
     },
     "presentation": {
