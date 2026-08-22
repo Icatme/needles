@@ -3,12 +3,16 @@ class ScoringGameScene extends GameScene {
         if (!APP_CONTEXT.preferences) {
             APP_CONTEXT.preferences = new GamePreferencesStore();
         }
+        if (!APP_CONTEXT.scores && typeof ScoreStore !== 'undefined') {
+            APP_CONTEXT.scores = new ScoreStore();
+        }
         super.create();
         this.scoringEnabled = APP_CONTEXT.preferences.isScoringEnabled();
         this.scoreSession = new ScoreSession(this.levelConfig, {
             enabled: this.scoringEnabled
         });
         this.scoreCompletionAward = null;
+        this.scoreRecordResult = null;
         this.scoringHud = this.scoringEnabled
             ? new ScoringHUD(this, { mode: this.route.mode })
             : null;
@@ -62,6 +66,18 @@ class ScoringGameScene extends GameScene {
         }
 
         this.scoreCompletionAward = this.scoreSession.complete();
+        this.scoreRecordResult = APP_CONTEXT.scores?.recordRun({
+            packId: this.route.packId,
+            levelId: this.route.levelId,
+            levelOrder: this.levelConfig.order,
+            levelName: this.levelConfig.name,
+            mode: this.route.mode,
+            success: true,
+            scoreEligible: Boolean(
+                this.scoringEnabled && this.route.mode === 'progression'
+            ),
+            score: this.scoreSession.getSnapshot()
+        }) || null;
         this.updateScoringHud();
         return this.scoreCompletionAward;
     }
@@ -92,13 +108,21 @@ class ScoringGameScene extends GameScene {
     }
 
     getResultContext() {
+        const acceptedRecord = this.scoreRecordResult?.accepted
+            ? {
+                isPersonalBest: this.scoreRecordResult.isPersonalBest,
+                record: this.scoreRecordResult.record,
+                best: this.scoreRecordResult.best
+            }
+            : null;
         return {
             scoringEnabled: Boolean(this.scoringEnabled),
             score: this.scoreSession?.getSnapshot() || null,
             timeBonus: this.scoreCompletionAward?.timeBonus || null,
             scoreEligible: Boolean(
                 this.scoringEnabled && this.route?.mode === 'progression'
-            )
+            ),
+            scoreRecord: acceptedRecord
         };
     }
 
@@ -108,6 +132,7 @@ class ScoringGameScene extends GameScene {
         this.scoringFeedback = null;
         this.scoringHud = null;
         this.scoreSession = null;
+        this.scoreRecordResult = null;
         super.shutdown();
     }
 }
