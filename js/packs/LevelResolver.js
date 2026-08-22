@@ -33,6 +33,7 @@ class LevelResolver {
             ? level.legacyNumericId
             : level.order;
         const authoredPresentation = level.presentation || {};
+        const authoredScoring = level.scoring || {};
         const tier = authoredPresentation.tier
             ?? chapterOrder.get(level.chapterId);
         const milestone = Boolean(authoredPresentation.milestone);
@@ -56,6 +57,7 @@ class LevelResolver {
                 obstacleAngles: Object.freeze([...layout.obstacleAngles])
             }),
             rhythm: Object.freeze(JSON.parse(JSON.stringify(level.rhythm))),
+            scoring: Object.freeze(JSON.parse(JSON.stringify(authoredScoring))),
             presentation,
             designIntent: Object.freeze({
                 tier,

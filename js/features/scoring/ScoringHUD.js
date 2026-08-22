@@ -1,12 +1,15 @@
 class ScoringHUD {
     constructor(scene, options = {}) {
         this.scene = scene;
-        this.mode = options.mode === 'test' ? 'test' : 'progression';
+        this.mode = ['test', 'daily'].includes(options.mode)
+            ? options.mode
+            : 'progression';
         this.layout = LayoutManager.getSceneLayout('game');
         this.elements = [];
         this.lastScore = null;
         this.lastElapsed = null;
         this.lastCombo = null;
+        this.lastComboTick = null;
         this.create();
     }
 
@@ -22,7 +25,7 @@ class ScoringHUD {
         this.scoreCaption = this.track(this.scene.add.text(
             286,
             hud.captionY,
-            this.mode === 'test' ? '测试得分' : '得分',
+            this.mode === 'test' ? '测试得分' : (this.mode === 'daily' ? '每日得分' : '得分'),
             {
                 fontFamily: ui.BODY_FONT,
                 fontSize: '12px',
@@ -84,7 +87,7 @@ class ScoringHUD {
         this.comboText = this.track(this.scene.add.text(
             300,
             hud.brandY,
-            this.mode === 'test' ? 'TEST SCORE' : 'SCORE RUN',
+            this.getIdleLabel(),
             {
                 fontFamily: ui.MONO_FONT,
                 fontSize: '10px',
@@ -94,6 +97,12 @@ class ScoringHUD {
         ));
         this.comboText.setOrigin(0.5, 0);
         this.comboText.setDepth(102);
+    }
+
+    getIdleLabel() {
+        if (this.mode === 'test') return 'TEST SCORE';
+        if (this.mode === 'daily') return 'DAILY SCORE';
+        return 'SCORE RUN';
     }
 
     update(snapshot) {
@@ -111,17 +120,33 @@ class ScoringHUD {
             this.lastElapsed = elapsedTenths;
         }
 
-        if (snapshot.combo !== this.lastCombo) {
-            const idleLabel = this.mode === 'test' ? 'TEST SCORE' : 'SCORE RUN';
-            this.comboText.setText(
-                snapshot.combo > 1 ? `COMBO ×${snapshot.combo}` : idleLabel
-            );
+        const remainingTenths = Math.max(
+            0,
+            Math.ceil((snapshot.comboRemainingMs || 0) / 100)
+        );
+        if (
+            snapshot.combo !== this.lastCombo
+            || remainingTenths !== this.lastComboTick
+        ) {
+            const ui = SceneUI.getPalette();
+            if (snapshot.combo > 1) {
+                this.comboText.setText(
+                    `COMBO ×${snapshot.combo} · ${(remainingTenths / 10).toFixed(1)}s`
+                );
+            } else if (snapshot.combo === 1 && remainingTenths > 0) {
+                this.comboText.setText(
+                    `节奏窗 · ${(remainingTenths / 10).toFixed(1)}s`
+                );
+            } else {
+                this.comboText.setText(this.getIdleLabel());
+            }
             this.comboText.setColor(
-                snapshot.combo > 1
-                    ? SceneUI.getPalette().TEXT_ACCENT
-                    : SceneUI.getPalette().TEXT_MUTED
+                snapshot.combo > 0 && remainingTenths <= 7
+                    ? ui.TEXT_ERROR
+                    : (snapshot.combo > 0 ? ui.TEXT_ACCENT : ui.TEXT_MUTED)
             );
             this.lastCombo = snapshot.combo;
+            this.lastComboTick = remainingTenths;
         }
     }
 

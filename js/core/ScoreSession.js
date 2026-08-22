@@ -16,6 +16,9 @@ class ScoreSession {
         this.score = 0;
         this.combo = 0;
         this.maxCombo = 0;
+        this.comboBreaks = 0;
+        this.comboDeadlineMs = null;
+        this.lastInsertionMs = null;
         this.insertedCount = 0;
         this.breakdown = {
             base: 0,
@@ -45,6 +48,8 @@ class ScoreSession {
             threadedBonus: 180,
             comboStepPoints: 15,
             comboBonusCap: 150,
+            comboWindowMs: 3200,
+            comboPrecisionGraceMs: 450,
             minimumParTimeMs: 10000,
             parTimePerNeedleMs: 1800,
             parTimePerObstacleMs: 350,
@@ -101,6 +106,14 @@ class ScoreSession {
                 merged.comboBonusCap,
                 defaults.comboBonusCap
             ),
+            comboWindowMs: ScoreSession.positive(
+                merged.comboWindowMs,
+                defaults.comboWindowMs
+            ),
+            comboPrecisionGraceMs: ScoreSession.nonNegative(
+                merged.comboPrecisionGraceMs,
+                defaults.comboPrecisionGraceMs
+            ),
             minimumParTimeMs: ScoreSession.positive(
                 merged.minimumParTimeMs,
                 defaults.minimumParTimeMs
@@ -142,8 +155,23 @@ class ScoreSession {
     advance(deltaMs) {
         if (this.status === 'running') {
             this.elapsedMs += Math.max(0, Number(deltaMs) || 0);
+            this.expireComboIfNeeded();
         }
         return this.getSnapshot();
+    }
+
+    expireComboIfNeeded() {
+        if (
+            this.combo > 0
+            && Number.isFinite(this.comboDeadlineMs)
+            && this.elapsedMs > this.comboDeadlineMs
+        ) {
+            this.combo = 0;
+            this.comboDeadlineMs = null;
+            this.comboBreaks++;
+            return true;
+        }
+        return false;
     }
 
     recordInsertion(placement = null) {
@@ -152,11 +180,27 @@ class ScoreSession {
             throw new Error(`Cannot score insertion while session is ${this.status}`);
         }
 
+        const intervalMs = this.lastInsertionMs === null
+            ? null
+            : this.elapsedMs - this.lastInsertionMs;
+        const comboExpired = this.expireComboIfNeeded();
+        const comboContinued = this.combo > 0;
+
         this.insertedCount++;
-        this.combo++;
+        this.combo = comboContinued ? this.combo + 1 : 1;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
 
         const precision = this.evaluatePrecision(placement);
+        const graceMs = precision.kind === 'threaded'
+            ? this.rules.comboPrecisionGraceMs
+            : (precision.kind === 'close'
+                ? Math.round(this.rules.comboPrecisionGraceMs / 2)
+                : 0);
+        this.lastInsertionMs = this.elapsedMs;
+        this.comboDeadlineMs = this.elapsedMs
+            + this.rules.comboWindowMs
+            + graceMs;
+
         const basePoints = this.enabled ? this.rules.baseInsertPoints : 0;
         const precisionPoints = this.enabled ? precision.bonus : 0;
         const comboPoints = this.enabled
@@ -185,6 +229,11 @@ class ScoreSession {
             totalScore: this.score,
             combo: this.combo,
             maxCombo: this.maxCombo,
+            intervalMs,
+            comboContinued,
+            comboBroken: comboExpired || (intervalMs !== null && !comboContinued),
+            comboWindowMs: this.rules.comboWindowMs,
+            comboDeadlineMs: this.comboDeadlineMs,
             precision,
             comboMilestone: ScoreSession.comboMilestone(this.combo),
             snapshot: this.getSnapshot()
@@ -195,6 +244,7 @@ class ScoreSession {
         if (this.status === 'completed') return this.getSnapshot();
         this.status = 'failed';
         this.combo = 0;
+        this.comboDeadlineMs = null;
         return this.getSnapshot();
     }
 
@@ -210,6 +260,7 @@ class ScoreSession {
         this.breakdown.time += points;
         this.score += points;
         this.status = 'completed';
+        this.comboDeadlineMs = null;
         this.completionAward = Object.freeze({
             type: 'completion-score',
             enabled: this.enabled,
@@ -270,12 +321,18 @@ class ScoreSession {
     }
 
     getSnapshot() {
+        const comboRemainingMs = Number.isFinite(this.comboDeadlineMs)
+            ? Math.max(0, this.comboDeadlineMs - this.elapsedMs)
+            : 0;
         return Object.freeze({
             enabled: this.enabled,
             status: this.status,
             score: this.score,
             combo: this.combo,
             maxCombo: this.maxCombo,
+            comboBreaks: this.comboBreaks,
+            comboWindowMs: this.rules.comboWindowMs,
+            comboRemainingMs,
             insertedCount: this.insertedCount,
             elapsedMs: this.elapsedMs,
             parTimeMs: this.parTimeMs,
