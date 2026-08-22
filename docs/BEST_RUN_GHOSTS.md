@@ -29,4 +29,4 @@ Ghost needles are drawn by an isolated graphics object. They are never inserted 
 
 ## Storage lifecycle
 
-The local key is `needle_game_best_runs`. Resetting all progress clears score records and best-run trajectories together. Older score records without trajectory evidence continue to work; the ghost appears after the next personal best is recorded.
+The local key is `needle_game_best_runs`. Each trajectory carries the same immutable scoring contract identifier as its score record. A pack or scoring-rule revision therefore cannot reuse a stale trajectory. Resetting all progress clears score records and best-run trajectories together. Older score records without trajectory evidence continue to work; the ghost appears after the next personal best is recorded.

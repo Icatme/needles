@@ -61,6 +61,9 @@ class BestRunStore {
         if (typeof value.packId !== 'string' || typeof value.levelId !== 'string') {
             return null;
         }
+        if (typeof value.contractId !== 'string' || value.contractId.length === 0) {
+            return null;
+        }
         if (!Number.isFinite(value.score) || value.score < 0) return null;
 
         const trajectory = (Array.isArray(value.trajectory) ? value.trajectory : [])
@@ -71,7 +74,11 @@ class BestRunStore {
 
         return {
             packId: value.packId,
+            packVersion: typeof value.packVersion === 'string'
+                ? value.packVersion
+                : 'legacy',
             levelId: value.levelId,
+            contractId: value.contractId,
             levelOrder: Number.isFinite(value.levelOrder)
                 ? Math.max(1, Math.floor(value.levelOrder))
                 : null,
@@ -92,10 +99,15 @@ class BestRunStore {
         if (!input.score || input.score.status !== 'completed') {
             return Object.freeze({ accepted: false, reason: 'score-status', record: null });
         }
+        if (typeof input.contractId !== 'string' || input.contractId.length === 0) {
+            return Object.freeze({ accepted: false, reason: 'contract', record: null });
+        }
 
         const record = this.normalizeRecord({
             packId: input.packId,
+            packVersion: input.packVersion,
             levelId: input.levelId,
+            contractId: input.contractId,
             levelOrder: input.levelOrder,
             levelName: input.levelName,
             score: input.score.score,
@@ -119,8 +131,9 @@ class BestRunStore {
         });
     }
 
-    getBest(packId, levelId) {
+    getBest(packId, levelId, contractId = null) {
         const record = this.state.packs[packId]?.levels?.[levelId] || null;
+        if (contractId && record?.contractId !== contractId) return null;
         return record ? BestRunStore.clone(record) : null;
     }
 
@@ -361,9 +374,11 @@ class ScoringGameScene extends GameScene {
         this.scoreRecordResult = null;
         this.bestRunSaveResult = null;
         this.bestRunTrajectory = [];
+        this.scoreContractId = ScoreStore.contractId(this.levelConfig);
         this.previousBestRun = APP_CONTEXT.bestRuns.getBest(
             this.route.packId,
-            this.route.levelId
+            this.route.levelId,
+            this.scoreContractId
         );
         this.bestRunDeltaMs = null;
         this.objectiveResult = null;
@@ -492,7 +507,7 @@ class ScoringGameScene extends GameScene {
             packId: this.route.packId,
             packVersion: this.levelConfig.packVersion,
             levelId: this.route.levelId,
-            contractId: ScoreStore.contractId(this.levelConfig),
+            contractId: this.scoreContractId,
             levelOrder: this.levelConfig.order,
             levelName: this.levelConfig.name,
             mode: this.route.mode,
@@ -504,7 +519,9 @@ class ScoringGameScene extends GameScene {
         }) || null;
         this.bestRunSaveResult = APP_CONTEXT.bestRuns.recordBest({
             packId: this.route.packId,
+            packVersion: this.levelConfig.packVersion,
             levelId: this.route.levelId,
+            contractId: this.scoreContractId,
             levelOrder: this.levelConfig.order,
             levelName: this.levelConfig.name,
             profileId: this.levelConfig.scoring?.profileId || null,

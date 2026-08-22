@@ -58,7 +58,9 @@ test('best-run store accepts only a personal-best completed score', () => {
     const store = new BestRunStore({ storage: null });
     const base = {
         packId: 'pack',
+        packVersion: '1.0.0',
         levelId: 'level-1',
+        contractId: 'pack@1.0.0:level-1:score-v2:original',
         levelOrder: 1,
         levelName: 'First',
         score: {
@@ -90,7 +92,9 @@ test('trajectory entries are normalized, sorted and bounded', () => {
     const store = new BestRunStore({ storage: null, maxTrajectoryEntries: 2 });
     store.recordBest({
         packId: 'pack',
+        packVersion: '1.0.0',
         levelId: 'level-1',
+        contractId: 'pack@1.0.0:level-1:score-v2:original',
         scoreRecord: { accepted: true, isPersonalBest: true },
         score: { status: 'completed', score: 10, elapsedMs: 20, maxCombo: 1 },
         trajectory: [
@@ -115,7 +119,9 @@ test('best-run records persist and reset independently', () => {
     });
     first.recordBest({
         packId: 'pack',
+        packVersion: '1.0.0',
         levelId: 'level-1',
+        contractId: 'pack@1.0.0:level-1:score-v2:original',
         scoreRecord: { accepted: true, isPersonalBest: true },
         score: { status: 'completed', score: 20, elapsedMs: 30, maxCombo: 1 },
         trajectory: [{ index: 0, atMs: 30, wheelAngle: 1 }]
@@ -123,6 +129,11 @@ test('best-run records persist and reset independently', () => {
 
     const second = new BestRunStore({ storage });
     assert.equal(second.getBest('pack', 'level-1').score, 20);
+    assert.equal(second.getBest(
+        'pack',
+        'level-1',
+        'pack@2.0.0:level-1:score-v2:revised'
+    ), null);
     second.reset();
     assert.equal(second.getBest('pack', 'level-1'), null);
 });

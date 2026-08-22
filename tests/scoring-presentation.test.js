@@ -207,7 +207,12 @@ test('scoring scene starts timing on the first accepted shot and reports awards'
         ScoringHUD: FakeHud,
         ScoringFeedback: FakeFeedback,
         GamePreferencesStore: class {},
+        ScoreStore: class {
+            static contractId() { return 'test-contract'; }
+            recordRun() { return null; }
+        },
         APP_CONTEXT: {
+            resetProgress() {},
             preferences: {
                 isScoringEnabled: () => true
             }
@@ -296,7 +301,12 @@ test('disabled challenge mode hides presentation and marks score ineligible', ()
         ScoringHUD: class {},
         ScoringFeedback: class {},
         GamePreferencesStore: class {},
+        ScoreStore: class {
+            static contractId() { return 'test-contract'; }
+            recordRun() { return null; }
+        },
         APP_CONTEXT: {
+            resetProgress() {},
             preferences: {
                 isScoringEnabled: () => false
             }
