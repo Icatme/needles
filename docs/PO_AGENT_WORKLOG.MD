@@ -109,3 +109,10 @@
 - Scope: rebuilt the eight-PR stack locally in an isolated worktree and kept each repaired PR as an explicit parent-to-head layer; no remote branch, PR, or merge state was changed.
 - Root causes fixed: scene-route regression coverage, immutable score and ghost contracts, rule-derived scoring profile identity, disabled-scoring objective/badge leakage, incomplete or forged replay acceptance, daily/playtest storage coupling, and stale/cross-realm preference assertions.
 - Verification: every layer passed its full Node suite (#23–#30: 143/150/157/164/169/176/186/194); final stack passed 194/194 Node tests, 14/14 Chromium E2E tests, 2-pack/100-level validation, generated-pack parity, syntax checks for 112 JavaScript files, real-browser daily storage isolation, and `git diff --check` for every layer.
+
+## 2026-08-23 — Combo, replay, progression and timing audit fixes
+
+- Scope: precision-combo semantics, integer scoring, canonical replay geometry, version-bound daily identity, stable-ID progression, keyboard repeat handling, active-frame timing, deterministic collision E2E, dependency locking and the manual full-test workflow.
+- Root causes fixed: ordinary insertions automatically advanced combo; exact deadlines remained active; fractional authoring diverged from persisted scores; replay verification trusted client geometry and skipped tail time; daily records accepted caller metadata and mixed pack versions; progression inferred `order + 1`; repeated Space events auto-fired; smoothed/capped frame time undercounted both gameplay and scores; the collision E2E could overshoot its target window.
+- Contracts: scoring profiles are v3, badge/objective state is v2, daily records are v2, and progress state is v3. Browser cache keys were advanced for every changed runtime script; old scoring/badge/daily results are not mixed into the new semantics.
+- Verification: `npm test` passed 212/212; Chromium E2E passed 14/14 and the formerly flaky flow passed 9/9 with `--repeat-each=3`; pack validation passed 2 packs / 100 levels; syntax checks passed for 112 JavaScript files; locked `npm ci` succeeded; `git diff --check` passed.

@@ -14,23 +14,23 @@ Scenes do not inspect `PackRegistry` directly.
 
 Owns all persistent progression state. Progress is stored by stable `packLevelId`, not by the current numeric position of a level.
 
-Version 2 state:
+Version 3 state:
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "activePackId": "balanced-v2",
   "packs": {
     "balanced-v2": {
       "packVersion": "1.0.0",
       "completedLevelIds": ["balanced-v2-01"],
-      "maxUnlockedOrder": 2
+      "resumeLevelId": "balanced-v2-02"
     }
   }
 }
 ```
 
-Existing numeric `maxLevel` and per-pack numeric values are migrated when a pack is first accessed. Reordering levels does not change completed identities.
+Existing numeric `maxLevel`, per-pack numeric values and version 2 records are migrated when a pack is first accessed. Legacy numeric values mean the Nth level in the currently sorted pack; they are not interpreted as `order` values. Completion and the resume boundary are both stored by stable level ID. `order` is used only to arrange the current pack, so sparse orders, reordering and insertion do not turn an old numeric boundary into the wrong level.
 
 ### `AppRouter`
 

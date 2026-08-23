@@ -1,6 +1,6 @@
 class ScoringProfileResolver {
     static schema() {
-        return 'needles.scoring-profile/v2';
+        return 'needles.scoring-profile/v3';
     }
 
     static defaults() {
@@ -52,7 +52,7 @@ class ScoringProfileResolver {
         const profile = {
             schema: ScoringProfileResolver.schema(),
             source: Object.keys(authored).length > 0 ? 'authored+derived' : 'derived',
-            baseInsertPoints: ScoringProfileResolver.nonNegative(
+            baseInsertPoints: ScoringProfileResolver.nonNegativeInteger(
                 merged.baseInsertPoints,
                 defaults.baseInsertPoints
             ),
@@ -64,19 +64,19 @@ class ScoringProfileResolver {
                 0,
                 30
             ),
-            closeBonus: ScoringProfileResolver.nonNegative(
+            closeBonus: ScoringProfileResolver.nonNegativeInteger(
                 merged.closeBonus,
                 defaults.closeBonus
             ),
-            threadedBonus: ScoringProfileResolver.nonNegative(
+            threadedBonus: ScoringProfileResolver.nonNegativeInteger(
                 merged.threadedBonus,
                 defaults.threadedBonus
             ),
-            comboStepPoints: ScoringProfileResolver.nonNegative(
+            comboStepPoints: ScoringProfileResolver.nonNegativeInteger(
                 merged.comboStepPoints,
                 defaults.comboStepPoints
             ),
-            comboBonusCap: ScoringProfileResolver.nonNegative(
+            comboBonusCap: ScoringProfileResolver.nonNegativeInteger(
                 merged.comboBonusCap,
                 defaults.comboBonusCap
             ),
@@ -263,7 +263,7 @@ class ScoringProfileResolver {
             ...scoringRules
         } = rules;
         const ruleHash = ScoringProfileResolver.hashValue(scoringRules);
-        return `${packId}@${packVersion}:${levelId}:score-v2:${ruleHash}`;
+        return `${packId}@${packVersion}:${levelId}:score-v3:${ruleHash}`;
     }
 
     static hashValue(value) {
@@ -356,6 +356,10 @@ class ScoringProfileResolver {
         return Number.isFinite(Number(value)) && Number(value) >= 0
             ? Number(value)
             : fallback;
+    }
+
+    static nonNegativeInteger(value, fallback) {
+        return Math.round(ScoringProfileResolver.nonNegative(value, fallback));
     }
 
     static deepFreeze(value) {

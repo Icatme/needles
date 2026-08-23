@@ -17,6 +17,8 @@ class ScoreSession {
         this.combo = 0;
         this.maxCombo = 0;
         this.comboBreaks = 0;
+        this.comboTimeouts = 0;
+        this.comboPrecisionBreaks = 0;
         this.comboDeadlineMs = null;
         this.lastInsertionMs = null;
         this.insertedCount = 0;
@@ -82,7 +84,7 @@ class ScoreSession {
             : defaults.timeBonusTiers.map(tier => Object.freeze({ ...tier }));
 
         return Object.freeze({
-            baseInsertPoints: ScoreSession.nonNegative(
+            baseInsertPoints: ScoreSession.nonNegativeInteger(
                 merged.baseInsertPoints,
                 defaults.baseInsertPoints
             ),
@@ -90,19 +92,19 @@ class ScoreSession {
                 merged.precisionClearancePx,
                 defaults.precisionClearancePx
             ),
-            closeBonus: ScoreSession.nonNegative(
+            closeBonus: ScoreSession.nonNegativeInteger(
                 merged.closeBonus,
                 defaults.closeBonus
             ),
-            threadedBonus: ScoreSession.nonNegative(
+            threadedBonus: ScoreSession.nonNegativeInteger(
                 merged.threadedBonus,
                 defaults.threadedBonus
             ),
-            comboStepPoints: ScoreSession.nonNegative(
+            comboStepPoints: ScoreSession.nonNegativeInteger(
                 merged.comboStepPoints,
                 defaults.comboStepPoints
             ),
-            comboBonusCap: ScoreSession.nonNegative(
+            comboBonusCap: ScoreSession.nonNegativeInteger(
                 merged.comboBonusCap,
                 defaults.comboBonusCap
             ),
@@ -164,11 +166,12 @@ class ScoreSession {
         if (
             this.combo > 0
             && Number.isFinite(this.comboDeadlineMs)
-            && this.elapsedMs > this.comboDeadlineMs
+            && this.elapsedMs >= this.comboDeadlineMs
         ) {
             this.combo = 0;
             this.comboDeadlineMs = null;
             this.comboBreaks++;
+            this.comboTimeouts++;
             return true;
         }
         return false;
@@ -184,13 +187,22 @@ class ScoreSession {
             ? null
             : this.elapsedMs - this.lastInsertionMs;
         const comboExpired = this.expireComboIfNeeded();
-        const comboContinued = this.combo > 0;
+        const precision = this.evaluatePrecision(placement);
+        const precisionHit = precision.kind === 'close'
+            || precision.kind === 'threaded';
+        const activeCombo = this.combo > 0;
+        const comboContinued = activeCombo && precisionHit;
+        const comboRestarted = intervalMs !== null && !comboContinued;
+
+        if (activeCombo && !precisionHit) {
+            this.comboBreaks++;
+            this.comboPrecisionBreaks++;
+        }
 
         this.insertedCount++;
         this.combo = comboContinued ? this.combo + 1 : 1;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
 
-        const precision = this.evaluatePrecision(placement);
         const graceMs = precision.kind === 'threaded'
             ? this.rules.comboPrecisionGraceMs
             : (precision.kind === 'close'
@@ -231,7 +243,8 @@ class ScoreSession {
             maxCombo: this.maxCombo,
             intervalMs,
             comboContinued,
-            comboBroken: comboExpired || (intervalMs !== null && !comboContinued),
+            comboRestarted,
+            comboBroken: comboExpired || comboRestarted,
             comboWindowMs: this.rules.comboWindowMs,
             comboDeadlineMs: this.comboDeadlineMs,
             precision,
@@ -331,6 +344,8 @@ class ScoreSession {
             combo: this.combo,
             maxCombo: this.maxCombo,
             comboBreaks: this.comboBreaks,
+            comboTimeouts: this.comboTimeouts,
+            comboPrecisionBreaks: this.comboPrecisionBreaks,
             comboWindowMs: this.rules.comboWindowMs,
             comboRemainingMs,
             insertedCount: this.insertedCount,
@@ -359,5 +374,9 @@ class ScoreSession {
         return Number.isFinite(Number(value)) && Number(value) >= 0
             ? Number(value)
             : fallback;
+    }
+
+    static nonNegativeInteger(value, fallback) {
+        return Math.round(ScoreSession.nonNegative(value, fallback));
     }
 }

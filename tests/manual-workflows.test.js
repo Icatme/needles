@@ -45,3 +45,23 @@ test('every GitHub Actions workflow is manually triggered only', () => {
     });
   });
 });
+
+test('Tests workflow runs the frozen full validation gate', () => {
+  const source = fs.readFileSync(
+    path.join(workflowDirectory, 'tests.yml'),
+    'utf8'
+  );
+  const packageJson = JSON.parse(fs.readFileSync(
+    path.resolve(__dirname, '..', 'package.json'),
+    'utf8'
+  ));
+
+  assert.equal(
+    packageJson.scripts['test:all'],
+    'npm test && npm run validate:packs && npm run test:e2e'
+  );
+  assert.match(source, /^\s*run: npm ci --no-audit --no-fund$/m);
+  assert.match(source, /^\s*run: npx playwright install --with-deps chromium$/m);
+  assert.match(source, /^\s*run: npm run test:all$/m);
+  assert.doesNotMatch(source, /^\s*run: npm install(?:\s|$)/m);
+});

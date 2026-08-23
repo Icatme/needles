@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { TextEncoder } = require('node:util');
+const Ajv2020 = require('ajv/dist/2020');
 
 const root = path.resolve(__dirname, '..');
 
@@ -159,6 +160,27 @@ test('digest and outcome verification reject replay tampering', () => {
     assert.throws(
         () => new context.ReplayRunner().run(changedWithDigest, level),
         /outcome does not match/
+    );
+});
+
+test('rehashed non-canonical geometry cannot change replay collision rules', () => {
+    const { level, replay } = recordCompletedReplay();
+    const schema = JSON.parse(fs.readFileSync(
+        path.join(root, 'schemas/replay.v1.schema.json'),
+        'utf8'
+    ));
+    const validateSchema = new Ajv2020({ strict: true }).compile(schema);
+    assert.equal(validateSchema(replay), true);
+
+    const changedGeometry = JSON.parse(JSON.stringify(replay));
+    changedGeometry.geometry.needleRadius = 0.0001;
+    changedGeometry.geometry.obstacleRadius = 0.0001;
+    changedGeometry.digest = context.ReplayProtocol.digest(changedGeometry);
+    assert.equal(validateSchema(changedGeometry), false);
+
+    assert.throws(
+        () => new context.ReplayRunner().run(changedGeometry, level),
+        /geometry does not match the engine contract/
     );
 });
 

@@ -85,6 +85,53 @@ test('threaded precision and combo bonuses accumulate deterministically', () => 
     assert.equal(second.totalScore, 395);
 });
 
+test('ordinary insertions restart the precision combo instead of advancing it', () => {
+    const score = new context.ScoreSession(makeLevel());
+    score.start();
+    score.recordInsertion({ nearest: {} });
+    const precision = score.recordInsertion({
+        nearest: {
+            clockwise: { clearance: 4 },
+            counterClockwise: null
+        }
+    });
+    const clear = score.recordInsertion({ nearest: {} });
+
+    assert.equal(precision.combo, 2);
+    assert.equal(precision.comboPoints, 15);
+    assert.equal(clear.combo, 1);
+    assert.equal(clear.comboPoints, 0);
+    assert.equal(clear.comboContinued, false);
+    assert.equal(clear.comboRestarted, true);
+    assert.equal(clear.snapshot.comboPrecisionBreaks, 1);
+    assert.equal(clear.snapshot.comboBreaks, 1);
+});
+
+test('direct scoring overrides are normalized to integer points', () => {
+    const score = new context.ScoreSession(makeLevel({
+        scoring: {
+            baseInsertPoints: 100.5,
+            closeBonus: 60.4,
+            threadedBonus: 180.2,
+            comboStepPoints: 15.6,
+            comboBonusCap: 150.4,
+            timeBonusTiers: [
+                { maxRatio: 1, points: 99.5, kind: 'par' }
+            ]
+        }
+    }));
+    score.start();
+    const first = score.recordInsertion({ nearest: {} });
+    const second = score.recordInsertion({
+        nearest: { clockwise: { clearance: 1 } }
+    });
+
+    assert.equal(first.points, 101);
+    assert.equal(second.points, 177);
+    assert.equal(Number.isInteger(second.totalScore), true);
+    assert.equal(score.complete().points, 100);
+});
+
 test('time bonus depends on active play time and is frame-split invariant', () => {
     const a = new context.ScoreSession(
         makeLevel({ needleCount: 1 }),

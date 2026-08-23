@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 
@@ -35,6 +36,37 @@ test('GameScene retains only animation and view responsibilities', () => {
     assert.match(source, /this\.createImpactFeedback\(\)/);
     assert.match(source, /this\.createExplosion\(/);
     assert.match(source, /this\.createCelebration\(\)/);
+});
+
+test('GameScene ignores repeated Space keydown events', () => {
+    const source = read('js/scenes/GameScene.js');
+    const context = vm.createContext({
+        Phaser: { Scene: class {} }
+    });
+    vm.runInContext(`${source}\nthis.GameScene = GameScene;`, context);
+    const scene = new context.GameScene();
+    let clickCount = 0;
+    scene.onScreenClick = () => { clickCount++; };
+
+    scene.onSpaceKeyDown({ repeat: true });
+    assert.equal(clickCount, 0);
+
+    scene.onSpaceKeyDown({ repeat: false });
+    assert.equal(clickCount, 1);
+});
+
+test('GameScene uses the unsmoothed active-frame delta without a 50ms cap', () => {
+    const source = read('js/scenes/GameScene.js');
+    const context = vm.createContext({
+        Phaser: { Scene: class {} }
+    });
+    vm.runInContext(`${source}\nthis.GameScene = GameScene;`, context);
+    const scene = new context.GameScene();
+    scene.game = { loop: { rawDelta: 1000 } };
+
+    assert.equal(scene.getActiveDeltaMs(50), 1000);
+    scene.game.loop.rawDelta = Number.NaN;
+    assert.equal(scene.getActiveDeltaMs(75), 75);
 });
 
 test('render loop consumes lightweight frames instead of full snapshots', () => {

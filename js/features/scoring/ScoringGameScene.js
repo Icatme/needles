@@ -450,7 +450,7 @@ class ScoringGameScene extends GameScene {
 
     update(time, delta) {
         if (this.scoreSession && this.session?.status !== 'failed') {
-            this.scoreSession.advance(Math.min(delta, 50));
+            this.scoreSession.advance(this.getActiveDeltaMs(delta));
         }
         super.update(time, delta);
         const scoreSnapshot = this.scoreSession?.getSnapshot();

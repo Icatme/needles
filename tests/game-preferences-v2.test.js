@@ -168,3 +168,18 @@ test('configurable feedback remains a presentation-only component', () => {
     assert.match(component, /showInsertion/);
     assert.match(component, /showCompletion/);
 });
+
+test('precision-combo milestones take precedence over placement copy', () => {
+    const { ConfigurableScoringFeedback } = loadSupport();
+    const feedback = ConfigurableScoringFeedback.prototype;
+    const award = {
+        combo: 3,
+        comboMilestone: 'triple',
+        comboRestarted: false,
+        precision: { kind: 'threaded' }
+    };
+
+    const kind = feedback.getInsertionKind(award);
+    assert.equal(kind, 'combo');
+    assert.equal(feedback.getInsertionLabel(award, kind), '精准连击 ×3');
+});

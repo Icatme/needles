@@ -63,7 +63,7 @@ function level(overrides = {}) {
     };
 }
 
-test('run objectives derive a bounded tempo target and track progress', () => {
+test('run objectives derive a bounded precision-combo target and track progress', () => {
     const { RunObjectiveTracker } = loadSupport();
     const tracker = new RunObjectiveTracker(level());
     let snapshot = tracker.update({
@@ -71,7 +71,7 @@ test('run objectives derive a bounded tempo target and track progress', () => {
         maxCombo: 3,
         precisionCounts: { close: 0, threaded: 0 }
     });
-    const tempo = snapshot.objectives.find(item => item.id === 'tempo-chain');
+    const tempo = snapshot.objectives.find(item => item.id === 'precision-chain');
     assert.equal(tempo.target, 4);
     assert.equal(tempo.progress, 3);
     assert.equal(tempo.completed, false);
@@ -107,6 +107,7 @@ test('badge evaluator awards independent gameplay milestones', () => {
             insertedCount: 6,
             maxCombo: 6,
             comboBreaks: 0,
+            comboTimeouts: 0,
             precisionCounts: { close: 3, threaded: 2 }
         },
         timeBonus: { kind: 'blazing' },
@@ -118,7 +119,7 @@ test('badge evaluator awards independent gameplay milestones', () => {
         'edge-specialist',
         'thread-the-needle',
         'tempo-keeper',
-        'full-chain',
+        'precision-full-chain',
         'blazing-clear',
         'precision-master',
         'objective-sweep'
@@ -145,6 +146,7 @@ test('disabled scoring cannot unlock badges', () => {
                 insertedCount: 8,
                 maxCombo: 8,
                 comboBreaks: 0,
+                comboTimeouts: 0,
                 precisionCounts: { close: 8, threaded: 8 }
             },
             timeBonus: { kind: 'blazing' },
@@ -165,6 +167,7 @@ test('badge store unlocks once and persists objective bests', () => {
             insertedCount: 5,
             maxCombo: 5,
             comboBreaks: 0,
+            comboTimeouts: 0,
             precisionCounts: { close: 0, threaded: 0 }
         },
         timeBonus: { kind: 'steady' },
@@ -173,7 +176,7 @@ test('badge store unlocks once and persists objective bests', () => {
             totalCount: 3,
             objectives: [
                 { id: 'complete', completed: true },
-                { id: 'tempo-chain', completed: true },
+                { id: 'precision-chain', completed: true },
                 { id: 'close-pair', completed: false }
             ]
         }
@@ -200,4 +203,33 @@ test('all stored badge definitions have unique stable ids', () => {
     const ids = Array.from(BADGE_DEFINITIONS, item => item.id);
     assert.equal(new Set(ids).size, ids.length);
     assert.ok(ids.every(id => /^[a-z0-9-]+$/.test(id)));
+});
+
+test('badge state v1 is not mixed with precision-combo achievements', () => {
+    const { BadgeStore } = loadSupport();
+    const storage = createStorage();
+    storage.setItem('badges', JSON.stringify({
+        version: 1,
+        unlocked: {
+            'full-chain': {
+                unlockedAt: '2026-08-22T00:00:00.000Z',
+                packId: 'pack',
+                levelId: 'level-1'
+            }
+        },
+        levelObjectives: {
+            pack: {
+                'level-1': {
+                    completedCount: 3,
+                    totalCount: 3,
+                    completedIds: ['complete', 'tempo-chain', 'under-par']
+                }
+            }
+        }
+    }));
+
+    const store = new BadgeStore({ storage, storageKey: 'badges' });
+    assert.equal(store.countUnlocked(), 0);
+    assert.equal(store.getLevelObjectives('pack', 'level-1'), null);
+    assert.equal(store.state.version, 2);
 });

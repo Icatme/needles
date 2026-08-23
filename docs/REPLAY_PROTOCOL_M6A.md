@@ -60,9 +60,10 @@ const result = new ReplayRunner().run(parsed, levelConfig);
 - pack ID；
 - pack version；
 - stable level ID；
-- gameplay content hash。
+- gameplay content hash；
+- 回放记录的 geometry 必须与当前 engine version 的规范几何完全一致。
 
-运行过程中逐条验证命令结果，结束后验证最终状态、转盘角度、已插针、碰撞对象和领域事件摘要。
+运行时从已解析关卡和引擎契约重新建立规范几何并创建 `GameSession`，不把回放自带的 geometry 当作碰撞参数。回放中的 geometry 是需校验的证据字段。逐条命令结束后，还会推进 `durationMs` 中最后一条命令之后的尾时长，再验证最终状态、转盘角度、已插针、碰撞对象和领域事件摘要。
 
 ## 顶层结构
 
@@ -102,7 +103,8 @@ schemas/replay.v1.schema.json
 - 对象键排序，数组顺序保留；
 - pack version 默认必须完全一致；
 - 可通过 `ignorePackVersion: true` 仅在明确确认内容哈希相同的迁移场景中放宽版本；
-- 关卡内容哈希只包含 needleCount、obstacleAngles 和 rhythm，不包含名称、文案、难度分析或视觉表现。
+- 关卡内容哈希包含 needleCount、obstacleAngles、rhythm 和当前 engine version 的规范碰撞几何，不包含名称、文案、难度分析或视觉表现；
+- `classic-v1` 的规范几何为 impactAngle `π / 2`、ringRadius `172`、needleRadius `15`、obstacleRadius `17`。自定义几何不能作为正式 v1 回放通过验证。
 
 ## 非目标
 

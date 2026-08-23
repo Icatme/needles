@@ -10,14 +10,10 @@ class ReplayRunner {
         const descriptor = ReplayProtocol.createLevelDescriptor(levelConfig);
         this.verifyLevelIdentity(replay.level, descriptor, options);
 
-        const geometry = replay.geometry || {};
+        const geometry = ReplayProtocol.canonicalGeometry(levelConfig);
         const session = this.sessionFactory(levelConfig, {
             impactAngle: geometry.impactAngle,
-            geometry: {
-                ringRadius: geometry.ringRadius,
-                needleRadius: geometry.needleRadius,
-                obstacleRadius: geometry.obstacleRadius
-            }
+            geometry
         });
         const events = [];
         const outcomes = [];

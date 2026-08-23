@@ -57,7 +57,10 @@ class GameScene extends Phaser.Scene {
         this.initializeNeedles();
 
         this.input.on('pointerdown', () => this.onScreenClick());
-        this.input.keyboard.on('keydown-SPACE', () => this.onScreenClick());
+        this.input.keyboard.on(
+            'keydown-SPACE',
+            event => this.onSpaceKeyDown(event)
+        );
     }
 
     createBackground() {
@@ -117,10 +120,22 @@ class GameScene extends Phaser.Scene {
         this.currentNeedle.launch(targetX, targetY);
     }
 
+    onSpaceKeyDown(event) {
+        if (event.repeat) return;
+        this.onScreenClick();
+    }
+
+    getActiveDeltaMs(delta) {
+        const rawDelta = this.game?.loop?.rawDelta;
+        return Number.isFinite(rawDelta)
+            ? Math.max(0, rawDelta)
+            : Math.max(0, Number(delta) || 0);
+    }
+
     update(time, delta) {
         if (!this.session || this.session.status === 'failed') return;
 
-        const frameDelta = Math.min(delta, 50);
+        const frameDelta = this.getActiveDeltaMs(delta);
         const frame = this.session.advance(frameDelta);
         this.wheel.rotateBy(frame.rotationDelta);
         this.uiManager.updateRhythm(frame.rhythm);

@@ -32,8 +32,22 @@ class ReplayProtocol {
             layout: {
                 obstacleAngles: [...(level.layout?.obstacleAngles || [])]
             },
-            rhythm: JSON.parse(JSON.stringify(level.rhythm || {}))
+            rhythm: JSON.parse(JSON.stringify(level.rhythm || {})),
+            geometry: ReplayProtocol.canonicalGeometry(level)
         };
+    }
+
+    static canonicalGeometry(level = null) {
+        if (level) {
+            return ReplayProtocol.createGeometry(new GameSession(level));
+        }
+        const collisionRules = new AngularCollisionRules();
+        return Object.freeze({
+            impactAngle: Number(GameSession.defaultImpactAngle()),
+            ringRadius: Number(collisionRules.ringRadius),
+            needleRadius: Number(collisionRules.needleRadius),
+            obstacleRadius: Number(collisionRules.obstacleRadius)
+        });
     }
 
     static createGeometry(session) {
@@ -112,6 +126,14 @@ class ReplayProtocol {
         }
         if (!replay.level?.levelId || !replay.level?.contentHash) {
             errors.push('replay level identity is incomplete');
+        }
+        const expectedGeometry = ReplayProtocol.canonicalGeometry();
+        if (
+            !replay.geometry
+            || ReplayProtocol.stableStringify(replay.geometry)
+                !== ReplayProtocol.stableStringify(expectedGeometry)
+        ) {
+            errors.push('replay geometry does not match the engine contract');
         }
         if (!Number.isFinite(replay.durationMs) || replay.durationMs < 0) {
             errors.push('durationMs must be non-negative');

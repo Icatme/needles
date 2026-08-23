@@ -131,11 +131,11 @@ class ScoringHUD {
             const ui = SceneUI.getPalette();
             if (snapshot.combo > 1) {
                 this.comboText.setText(
-                    `COMBO ×${snapshot.combo} · ${(remainingTenths / 10).toFixed(1)}s`
+                    `PRECISION ×${snapshot.combo} · ${(remainingTenths / 10).toFixed(1)}s`
                 );
             } else if (snapshot.combo === 1 && remainingTenths > 0) {
                 this.comboText.setText(
-                    `节奏窗 · ${(remainingTenths / 10).toFixed(1)}s`
+                    `精准窗 · ${(remainingTenths / 10).toFixed(1)}s`
                 );
             } else {
                 this.comboText.setText(this.getIdleLabel());

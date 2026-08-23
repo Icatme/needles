@@ -17,12 +17,12 @@ const BADGE_DEFINITIONS = Object.freeze([
     Object.freeze({
         id: 'tempo-keeper',
         name: '稳拍者',
-        description: '至少 5 针且节奏连击从未超时'
+        description: '至少 5 针且精准连击从未超时'
     }),
     Object.freeze({
-        id: 'full-chain',
+        id: 'precision-full-chain',
         name: '一气呵成',
-        description: '最高连击覆盖整关全部插针'
+        description: '除第一针外，每针都以精准命中延续连击'
     }),
     Object.freeze({
         id: 'blazing-clear',
@@ -68,8 +68,8 @@ class RunObjectiveTracker {
                 completed: false
             },
             {
-                id: 'tempo-chain',
-                label: `节奏连击达到 ×${comboTarget}`,
+                id: 'precision-chain',
+                label: `精准连击达到 ×${comboTarget}`,
                 kind: 'maxCombo',
                 target: comboTarget,
                 progress: 0,
@@ -221,13 +221,15 @@ class BadgeEvaluator {
         const threaded = Number(score.precisionCounts?.threaded) || 0;
         const insertedCount = Number(score.insertedCount) || 0;
         const maxCombo = Number(score.maxCombo) || 0;
-        const comboBreaks = Number(score.comboBreaks) || 0;
+        const comboTimeouts = Number(score.comboTimeouts) || 0;
         const earned = ['first-clear'];
 
         if (close >= 3) earned.push('edge-specialist');
         if (threaded >= 2) earned.push('thread-the-needle');
-        if (insertedCount >= 5 && comboBreaks === 0) earned.push('tempo-keeper');
-        if (insertedCount >= 5 && maxCombo >= insertedCount) earned.push('full-chain');
+        if (insertedCount >= 5 && comboTimeouts === 0) earned.push('tempo-keeper');
+        if (insertedCount >= 5 && maxCombo >= insertedCount) {
+            earned.push('precision-full-chain');
+        }
         if (timeBonus.kind === 'blazing') earned.push('blazing-clear');
         if (
             insertedCount > 0
@@ -271,7 +273,7 @@ class BadgeStore {
 
     createEmptyState() {
         return {
-            version: 1,
+            version: 2,
             unlocked: {},
             levelObjectives: {}
         };
@@ -290,7 +292,9 @@ class BadgeStore {
 
     normalizeState(value) {
         const state = this.createEmptyState();
-        if (!value || typeof value !== 'object') return state;
+        if (!value || typeof value !== 'object' || value.version !== 2) {
+            return state;
+        }
         const validIds = new Set(BADGE_DEFINITIONS.map(item => item.id));
         Object.entries(value.unlocked || {}).forEach(([id, record]) => {
             if (!validIds.has(id)) return;

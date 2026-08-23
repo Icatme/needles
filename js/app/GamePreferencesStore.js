@@ -331,19 +331,19 @@ class ConfigurableScoringFeedback {
     }
 
     getInsertionKind(award) {
+        if (award.comboMilestone || award.comboRestarted) return 'combo';
         if (award.precision?.kind === 'threaded') return 'threaded';
         if (award.precision?.kind === 'close') return 'close';
-        if (award.comboMilestone || award.comboRestarted) return 'combo';
         return 'insert';
     }
 
     getInsertionLabel(award, kind) {
+        if (award.comboMilestone) return `精准连击 ×${award.combo}`;
+        if (award.comboRestarted) return `精准链重启 ×${award.combo}`;
         if (kind === 'threaded') return '双侧穿隙';
         if (kind === 'close') return '贴边好针';
-        if (award.comboBroken) return '节奏中断';
-        if (award.comboRestarted) return `连击重启 ×${award.combo}`;
-        if (award.comboMilestone) return `节奏连击 ×${award.combo}`;
-        return award.combo >= 2 ? `连击 ×${award.combo}` : '';
+        if (award.comboBroken) return '精准链中断';
+        return award.combo >= 2 ? `精准连击 ×${award.combo}` : '';
     }
 
     createRewardText(x, y, label, points, kind) {

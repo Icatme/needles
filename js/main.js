@@ -1,3 +1,102 @@
+class DailyChallengeIdentity {
+    static schema() {
+        return 'needles-daily-v1';
+    }
+
+    static create(input = {}) {
+        const challenge = {
+            schema: DailyChallengeIdentity.schema(),
+            dateKey: input.dateKey,
+            packId: input.packId,
+            packVersion: input.packVersion,
+            levelId: input.levelId,
+            levelOrder: input.levelOrder,
+            levelName: input.levelName,
+            seed: input.seed,
+            seedDigest: input.seedDigest
+        };
+        challenge.id = DailyChallengeIdentity.createId(challenge);
+        return DailyChallengeIdentity.normalize(challenge);
+    }
+
+    static normalize(value) {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) {
+            return null;
+        }
+        if (value.schema !== DailyChallengeIdentity.schema()) return null;
+        if (!DailyChallengeIdentity.isDateKey(value.dateKey)) return null;
+        if (typeof value.packId !== 'string' || value.packId.length === 0) return null;
+        if (
+            typeof value.packVersion !== 'string'
+            || value.packVersion.length === 0
+        ) return null;
+        if (typeof value.levelId !== 'string' || value.levelId.length === 0) return null;
+        if (!Number.isInteger(value.levelOrder) || value.levelOrder < 1) return null;
+        if (typeof value.levelName !== 'string') return null;
+        if (
+            !Number.isInteger(value.seed)
+            || value.seed < 0
+            || value.seed > 0xffffffff
+        ) return null;
+        if (
+            typeof value.seedDigest !== 'string'
+            || !/^[0-9a-f]{8}$/.test(value.seedDigest)
+        ) return null;
+
+        const normalized = {
+            schema: DailyChallengeIdentity.schema(),
+            dateKey: value.dateKey,
+            packId: value.packId,
+            packVersion: value.packVersion,
+            levelId: value.levelId,
+            levelOrder: value.levelOrder,
+            levelName: value.levelName,
+            seed: value.seed,
+            seedDigest: value.seedDigest
+        };
+        normalized.id = DailyChallengeIdentity.createId(normalized);
+        if (value.id !== normalized.id) return null;
+        return Object.freeze(normalized);
+    }
+
+    static createId(challenge) {
+        return [
+            'daily',
+            challenge.dateKey,
+            `${challenge.packId}@${challenge.packVersion}`,
+            challenge.levelId
+        ].join(':');
+    }
+
+    static isDateKey(value) {
+        if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            return false;
+        }
+        const date = new Date(`${value}T00:00:00.000Z`);
+        return !Number.isNaN(date.getTime())
+            && date.toISOString().slice(0, 10) === value;
+    }
+
+    static equal(left, right) {
+        const normalizedLeft = DailyChallengeIdentity.normalize(left);
+        const normalizedRight = DailyChallengeIdentity.normalize(right);
+        return Boolean(
+            normalizedLeft
+            && normalizedRight
+            && ReplayProtocol.stableStringify(normalizedLeft)
+                === ReplayProtocol.stableStringify(normalizedRight)
+        );
+    }
+
+    static matchesLevel(challenge, descriptor, levelConfig = {}) {
+        return challenge.packId === descriptor.packId
+            && challenge.packVersion === descriptor.packVersion
+            && challenge.levelId === descriptor.levelId
+            && challenge.levelOrder === descriptor.order
+            && challenge.levelName === levelConfig.name;
+    }
+}
+
 class DailyChallengeStore {
     constructor(options = {}) {
         this.storage = options.storage === undefined
@@ -23,7 +122,7 @@ class DailyChallengeStore {
 
     createEmptyState() {
         return {
-            version: 1,
+            version: 2,
             bestByChallenge: {},
             history: []
         };
@@ -42,7 +141,9 @@ class DailyChallengeStore {
 
     normalizeState(value) {
         const state = this.createEmptyState();
-        if (!value || typeof value !== 'object') return state;
+        if (!value || typeof value !== 'object' || value.version !== 2) {
+            return state;
+        }
         Object.entries(value.bestByChallenge || {}).forEach(([id, recordValue]) => {
             const record = this.normalizeRecord(recordValue);
             if (record && record.challengeId === id) {
@@ -59,23 +160,34 @@ class DailyChallengeStore {
     normalizeRecord(value) {
         if (!value || typeof value !== 'object') return null;
         if (typeof value.challengeId !== 'string') return null;
-        if (typeof value.dateKey !== 'string') return null;
-        if (typeof value.packId !== 'string' || typeof value.levelId !== 'string') {
-            return null;
-        }
+        const challenge = DailyChallengeIdentity.normalize({
+            schema: value.challengeSchema,
+            id: value.challengeId,
+            dateKey: value.dateKey,
+            packId: value.packId,
+            packVersion: value.packVersion,
+            levelId: value.levelId,
+            levelOrder: value.levelOrder,
+            levelName: value.levelName,
+            seed: value.seed,
+            seedDigest: value.seedDigest
+        });
+        if (!challenge) return null;
         if (!Number.isFinite(value.score) || value.score < 0) return null;
         if (typeof value.replayDigest !== 'string') return null;
         if (typeof value.verificationDigest !== 'string') return null;
 
         return {
-            challengeId: value.challengeId,
-            dateKey: value.dateKey,
-            packId: value.packId,
-            levelId: value.levelId,
-            levelOrder: Number.isFinite(value.levelOrder)
-                ? Math.max(1, Math.floor(value.levelOrder))
-                : null,
-            levelName: typeof value.levelName === 'string' ? value.levelName : '',
+            challengeSchema: challenge.schema,
+            challengeId: challenge.id,
+            dateKey: challenge.dateKey,
+            packId: challenge.packId,
+            packVersion: challenge.packVersion,
+            levelId: challenge.levelId,
+            levelOrder: challenge.levelOrder,
+            levelName: challenge.levelName,
+            seed: challenge.seed,
+            seedDigest: challenge.seedDigest,
             score: Math.max(0, Math.round(value.score)),
             elapsedMs: Math.max(0, Number(value.elapsedMs) || 0),
             maxCombo: Math.max(0, Math.floor(Number(value.maxCombo) || 0)),
@@ -93,7 +205,7 @@ class DailyChallengeStore {
                 reason: input.verification?.reason || 'unverified',
                 isDailyBest: false,
                 record: null,
-                best: this.getBest(input.challenge?.id)
+                best: this.getBest(input.verification?.challenge?.id)
             });
         }
         if (input.verification.score?.status !== 'completed') {
@@ -102,18 +214,48 @@ class DailyChallengeStore {
                 reason: 'incomplete-replay',
                 isDailyBest: false,
                 record: null,
-                best: this.getBest(input.challenge?.id)
+                best: this.getBest(input.verification?.challenge?.id)
             });
         }
-        const challenge = input.challenge || {};
+        const challenge = DailyChallengeIdentity.normalize(
+            input.verification.challenge
+        );
+        if (!challenge) {
+            return Object.freeze({
+                accepted: false,
+                reason: 'challenge-identity',
+                isDailyBest: false,
+                record: null,
+                best: null
+            });
+        }
         const score = input.verification.score || {};
+        const expectedVerificationDigest = ReplayProtocol.hashValue({
+            replayDigest: input.verification.replayDigest,
+            profileId: input.verification.profileId || null,
+            challenge,
+            score: ScoreReplayVerifier.scoreSummary(score)
+        });
+        if (input.verification.verificationDigest !== expectedVerificationDigest) {
+            return Object.freeze({
+                accepted: false,
+                reason: 'verification-digest',
+                isDailyBest: false,
+                record: null,
+                best: this.getBest(challenge.id)
+            });
+        }
         const record = this.normalizeRecord({
+            challengeSchema: challenge.schema,
             challengeId: challenge.id,
             dateKey: challenge.dateKey,
             packId: challenge.packId,
+            packVersion: challenge.packVersion,
             levelId: challenge.levelId,
             levelOrder: challenge.levelOrder,
             levelName: challenge.levelName,
+            seed: challenge.seed,
+            seedDigest: challenge.seedDigest,
             score: score.score,
             elapsedMs: score.elapsedMs,
             maxCombo: score.maxCombo,
@@ -213,6 +355,7 @@ class ScoreReplayVerifier {
         const replay = input.replay;
         const levelConfig = input.levelConfig;
         const claimedScore = input.score;
+        const challenge = DailyChallengeIdentity.normalize(input.challenge);
         if (!replay || typeof replay !== 'object') {
             return this.failure('missing-replay');
         }
@@ -221,6 +364,9 @@ class ScoreReplayVerifier {
         }
         if (!claimedScore || typeof claimedScore !== 'object') {
             return this.failure('missing-score');
+        }
+        if (!challenge) {
+            return this.failure('invalid-challenge');
         }
 
         try {
@@ -235,6 +381,13 @@ class ScoreReplayVerifier {
             const descriptor = ReplayProtocol.createLevelDescriptor(levelConfig);
             if (!ScoreReplayVerifier.equalCanonical(descriptor, replay.level)) {
                 return this.failure('level-descriptor');
+            }
+            if (!DailyChallengeIdentity.matchesLevel(
+                challenge,
+                descriptor,
+                levelConfig
+            )) {
+                return this.failure('challenge-mismatch', { replayDigest });
             }
             const replayed = this.replayScore(replay, levelConfig);
             if (
@@ -269,6 +422,7 @@ class ScoreReplayVerifier {
             const verificationDigest = ReplayProtocol.hashValue({
                 replayDigest,
                 profileId,
+                challenge,
                 score: actual
             });
             return Object.freeze({
@@ -276,6 +430,7 @@ class ScoreReplayVerifier {
                 reason: null,
                 replayDigest,
                 profileId,
+                challenge,
                 verificationDigest,
                 score: actual
             });
@@ -287,11 +442,9 @@ class ScoreReplayVerifier {
     }
 
     replayScore(replay, levelConfig) {
-        const geometry = replay.geometry || {};
+        const geometry = ReplayProtocol.canonicalGeometry(levelConfig);
         const session = new GameSession(levelConfig, {
-            impactAngle: Number.isFinite(geometry.impactAngle)
-                ? geometry.impactAngle
-                : undefined,
+            impactAngle: geometry.impactAngle,
             geometry
         });
         const score = new ScoreSession(levelConfig, { enabled: true });
@@ -340,6 +493,10 @@ class ScoreReplayVerifier {
                 throw new Error(`Replay outcome diverged at command ${command.sequence}`);
             }
         });
+
+        const tailMs = replay.durationMs - cursorMs;
+        session.advance(tailMs);
+        score.advance(tailMs);
 
         return Object.freeze({
             game: session.getSnapshot(),
@@ -404,6 +561,9 @@ class DailyChallengeService {
     getToday(packId = null, date = new Date()) {
         const resolvedPackId = packId || this.context.getActivePackId();
         const pack = this.context.catalog.getPack(resolvedPackId);
+        if (typeof pack.version !== 'string' || pack.version.length === 0) {
+            throw new Error(`Pack ${pack.id} has no version`);
+        }
         const levels = this.context.catalog.listLevels(pack.id);
         if (levels.length === 0) {
             throw new Error(`Pack ${pack.id} has no daily challenge levels`);
@@ -422,15 +582,14 @@ class DailyChallengeService {
             5381
         );
         const level = levels[seed % levels.length];
-        return Object.freeze({
-            schema: 'needles-daily-v1',
-            id: `daily:${dateKey}:${pack.id}:${level.packLevelId || level.id}`,
+        return DailyChallengeIdentity.create({
             dateKey,
             packId: pack.id,
-            packVersion: pack.version || null,
-            levelId: level.packLevelId || level.id,
+            packVersion: pack.version,
+            levelId: String(level.packLevelId || level.id),
             levelOrder: level.order,
             levelName: level.name,
+            seed,
             seedDigest: digest
         });
     }
@@ -448,7 +607,9 @@ class DailyChallengeService {
     }
 
     matchRoute(route) {
-        const active = this.active || this.loadActive();
+        const active = this.resolveCanonicalChallenge(
+            this.active || this.loadActive()
+        );
         if (!active || !route) return null;
         const matches = route.mode === 'daily'
             && route.packId === active.packId
@@ -457,13 +618,52 @@ class DailyChallengeService {
     }
 
     recordVerifiedRun(input = {}) {
+        const challenge = this.resolveCanonicalChallenge(
+            this.active || this.loadActive()
+        );
+        const descriptor = input.levelConfig
+            ? ReplayProtocol.createLevelDescriptor(input.levelConfig)
+            : null;
+        if (
+            !challenge
+            || !descriptor
+            || !DailyChallengeIdentity.matchesLevel(
+                challenge,
+                descriptor,
+                input.levelConfig
+            )
+            || (
+                input.challenge
+                && !DailyChallengeIdentity.equal(input.challenge, challenge)
+            )
+        ) {
+            const verification = Object.freeze({
+                verified: false,
+                reason: 'challenge-mismatch',
+                replayDigest: null,
+                profileId: null,
+                verificationDigest: null,
+                score: null,
+                expected: null,
+                detail: null
+            });
+            return Object.freeze({
+                accepted: false,
+                verified: false,
+                reason: 'challenge-mismatch',
+                isDailyBest: false,
+                record: null,
+                best: null,
+                verification
+            });
+        }
         const verification = this.verifier.verify({
             replay: input.replay,
             levelConfig: input.levelConfig,
-            score: input.score
+            score: input.score,
+            challenge
         });
         const stored = this.store.recordVerified({
-            challenge: input.challenge,
             verification
         });
         return Object.freeze({
@@ -501,7 +701,23 @@ class DailyChallengeService {
         try {
             const saved = this.activeStorage.getItem(this.activeKey);
             const parsed = saved ? JSON.parse(saved) : null;
-            return parsed && typeof parsed.id === 'string' ? parsed : null;
+            return DailyChallengeIdentity.normalize(parsed);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    resolveCanonicalChallenge(value) {
+        const challenge = DailyChallengeIdentity.normalize(value);
+        if (!challenge) return null;
+        try {
+            const canonical = this.getToday(
+                challenge.packId,
+                new Date(`${challenge.dateKey}T00:00:00.000Z`)
+            );
+            return DailyChallengeIdentity.equal(challenge, canonical)
+                ? canonical
+                : null;
         } catch (error) {
             return null;
         }

@@ -130,6 +130,22 @@ test('schemas are strict about unknown authoring fields', () => {
     );
 });
 
+test('level scoring schema rejects fractional point values', () => {
+    const schemas = createSchemaValidators(root);
+    const bundle = currentBundle();
+    const fractionalBase = clone(bundle.levels);
+    fractionalBase.levels[0].scoring = { baseInsertPoints: 100.5 };
+    assert.equal(schemas.levels(fractionalBase), false);
+
+    const fractionalTier = clone(bundle.levels);
+    fractionalTier.levels[0].scoring = {
+        timeBonusTiers: [
+            { maxRatio: 1, points: 99.5, kind: 'par' }
+        ]
+    };
+    assert.equal(schemas.levels(fractionalTier), false);
+});
+
 test('VS Code maps every pack authoring file to its schema', () => {
     const settings = readJson(path.join(root, '.vscode/settings.json'));
     const matches = settings['json.schemas'].flatMap(entry => entry.fileMatch);

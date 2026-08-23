@@ -10,20 +10,21 @@ class ScoringFeedback {
         if (!award?.enabled || !position) return;
         const ui = SceneUI.getPalette(this.levelVisual?.theme);
         const precisionLabel = {
-            close: '贴边好�',
+            close: '贴边好针',
             threaded: '双侧穿隙'
         }[award.precision?.kind] || '';
         const comboLabel = {
             triple: '三连精准',
-            hot: '连击升温',
-            unstoppable: '势不可挡',
-            mastery: '大师连击'
+            hot: '精准连击升温',
+            unstoppable: '精准势不可挡',
+            mastery: '精准大师连击'
         }[award.comboMilestone] || '';
-        const primary = precisionLabel
-            || comboLabel
+        const primary = comboLabel
+            || (award.comboRestarted ? '精准链重启' : '')
+            || precisionLabel
             || (award.comboBroken
-                ? '重新起拍'
-                : (award.combo > 1 ? `节奏连击 ×${award.combo}` : '稳定命中'));
+                ? '精准链重启'
+                : (award.combo > 1 ? `精准连击 ×${award.combo}` : '稳定命中'));
         const accentColor = award.precision?.kind === 'threaded'
             ? ui.TEXT_SUCCESS
             : (award.comboBroken ? ui.TEXT_ERROR : ui.TEXT_ACCENT);

@@ -36,12 +36,12 @@ function makeLevel(overrides = {}) {
     };
 }
 
-test('resolver creates deterministic per-level timing and tempo rules', () => {
+test('resolver creates deterministic per-level timing and precision-combo rules', () => {
     const profile = context.ScoringProfileResolver.resolve(makeLevel());
-    assert.equal(profile.schema, 'needles.scoring-profile/v2');
+    assert.equal(profile.schema, 'needles.scoring-profile/v3');
     assert.match(
         profile.profileId,
-        /^pack@legacy:level-1:score-v2:[0-9a-f]{8}$/
+        /^pack@legacy:level-1:score-v3:[0-9a-f]{8}$/
     );
     assert.ok(profile.comboWindowMs >= 2200 && profile.comboWindowMs <= 5000);
     assert.ok(profile.parTimeMs >= 10000);
@@ -104,7 +104,7 @@ test('profile identity changes with pack version and resolved scoring rules', ()
     assert.notEqual(original.profileId, newRules.profileId);
 });
 
-test('tempo combo expires after the resolved window', () => {
+test('precision combo expires at the resolved deadline', () => {
     const profile = context.ScoringProfileResolver.resolve(makeLevel(), {
         comboWindowMs: 2000,
         comboPrecisionGraceMs: 0
@@ -116,9 +116,13 @@ test('tempo combo expires after the resolved window', () => {
     score.start();
     const first = score.recordInsertion({ nearest: {} });
     score.advance(1500);
-    const second = score.recordInsertion({ nearest: {} });
-    score.advance(2100);
-    const third = score.recordInsertion({ nearest: {} });
+    const second = score.recordInsertion({
+        nearest: { clockwise: { clearance: 3 } }
+    });
+    score.advance(2000);
+    const third = score.recordInsertion({
+        nearest: { clockwise: { clearance: 3 } }
+    });
 
     assert.equal(first.combo, 1);
     assert.equal(second.combo, 2);
@@ -127,6 +131,7 @@ test('tempo combo expires after the resolved window', () => {
     assert.equal(third.comboPoints, 0);
     assert.equal(third.comboBroken, true);
     assert.equal(third.snapshot.comboBreaks, 1);
+    assert.equal(third.snapshot.comboTimeouts, 1);
 });
 
 test('precision extends the active tempo window', () => {
@@ -144,7 +149,9 @@ test('precision extends the active tempo window', () => {
         }
     });
     score.advance(2400);
-    const second = score.recordInsertion({ nearest: {} });
+    const second = score.recordInsertion({
+        nearest: { clockwise: { clearance: 3 } }
+    });
     assert.equal(second.combo, 2);
     assert.equal(second.comboContinued, true);
 });
@@ -188,7 +195,7 @@ test('catalog attaches a resolved scoring profile to every level config', () => 
     const config = catalog.getLevelConfig('pack', 'level-1');
     assert.match(
         config.scoring.profileId,
-        /^pack@1\.0\.0:level-1:score-v2:[0-9a-f]{8}$/
+        /^pack@1\.0\.0:level-1:score-v3:[0-9a-f]{8}$/
     );
     assert.equal(config.scoring.comboWindowMs, 2875);
     assert.ok(config.scoring.parTimeMs > 0);

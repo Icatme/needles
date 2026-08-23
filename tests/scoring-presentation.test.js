@@ -89,6 +89,11 @@ test('scoring scene starts timing on the first accepted shot and reports awards'
             this.session.status = 'in-flight';
         }
 
+        getActiveDeltaMs(delta) {
+            const rawDelta = this.game?.loop?.rawDelta;
+            return Number.isFinite(rawDelta) ? rawDelta : delta;
+        }
+
         update() {}
 
         onNeedleInserted() {
@@ -231,6 +236,10 @@ test('scoring scene starts timing on the first accepted shot and reports awards'
     assert.equal(scene.scoreSession.status, 'running');
     scene.update(0, 33);
     assert.equal(scene.scoreSession.elapsedMs, 33);
+
+    scene.game = { loop: { rawDelta: 1000 } };
+    scene.update(0, 50);
+    assert.equal(scene.scoreSession.elapsedMs, 1033);
 
     scene.session.status = 'completed';
     scene.onNeedleInserted({

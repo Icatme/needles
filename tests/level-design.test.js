@@ -298,6 +298,6 @@ test('legacy progress beyond the finite catalog is migrated and clamped to level
     const manager = new context.LevelManager('legacy', { context: app });
     assert.equal(manager.maxUnlockedLevel, 50);
     const progress = app.progress.getPackProgress(app.catalog.getPack('legacy'));
-    assert.equal(progress.maxUnlockedOrder, 50);
+    assert.equal(app.progress.getResumeLevel(app.catalog.getPack('legacy')).order, 50);
     assert.equal(progress.completedLevelIds.length, 49);
 });

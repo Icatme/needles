@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: 24
       - name: Install test dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps chromium
       - name: Run all tests
-        run: npm test
-      - name: Validate level packs against formal schemas
-        run: npm run validate:packs
+        run: npm run test:all

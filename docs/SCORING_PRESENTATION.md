@@ -15,7 +15,7 @@ The centre of the existing game header now shows:
 
 - current score;
 - active play time in tenths of a second;
-- current combo once it reaches two successful insertions.
+- current precision combo once a close or threaded insertion advances it to two.
 
 Timing starts only when the first shot is accepted, not when the scene loads.
 

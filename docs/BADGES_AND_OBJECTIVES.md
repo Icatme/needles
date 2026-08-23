@@ -9,7 +9,7 @@ challenge disables objective presentation and badge evaluation together with the
 rest of the scoring layer.
 
 1. complete the level;
-2. reach a tempo-combo target derived from needle count;
+2. reach a precision-combo target derived from needle count;
 3. complete a focus-aware objective:
    - speed/rhythm/timing levels use an under-par target;
    - dense or obstacle-heavy levels use one threaded placement;
@@ -22,8 +22,8 @@ Objective progress is derived from the immutable score snapshot. Completing an o
 - First clear
 - Three close placements in one run
 - Two threaded placements in one run
-- Five or more needles without a tempo timeout
-- A combo covering the entire level
+- Five or more needles without a precision-combo timeout
+- A full chain where every insertion after the first earns a precision result
 - The highest time-bonus tier
 - Precision on at least half of all insertions
 - All three run objectives in one attempt
@@ -32,7 +32,7 @@ Badges are global local achievements. The best objective count is also retained 
 
 ## Persistence
 
-The versioned local key is `needle_game_badges`. Unlocking is idempotent: repeating a qualifying run does not create duplicate awards. Resetting all game progress clears badge and objective records together with scores and best-run trajectories.
+The versioned local key is `needle_game_badges`. Precision-combo semantics use badge state v2; v1 achievements and objective summaries are not carried into the new contract. Unlocking is idempotent: repeating a qualifying run does not create duplicate awards. Resetting all game progress clears badge and objective records together with scores and best-run trajectories.
 
 ## UI
 

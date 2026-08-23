@@ -141,6 +141,26 @@ async function clickCanvasPoint(page, x, y) {
   );
 }
 
+async function fireInCollisionWindow(page) {
+  const lowerBound = 8 * Math.PI / 180;
+  const upperBound = 20 * Math.PI / 180;
+  await page.waitForFunction(({ lowerBound, upperBound }) => {
+    const scene = game?.scene?.getScene('GameScene');
+    const rotation = scene?.session?.getSnapshot().wheelRotation;
+    if (
+      scene?.session?.status !== 'ready'
+      || !Number.isFinite(rotation)
+      || rotation < lowerBound
+      || rotation > upperBound
+    ) {
+      return false;
+    }
+
+    scene.onScreenClick();
+    return scene.session.status === 'in-flight';
+  }, { lowerBound, upperBound }, { timeout: 15_000 });
+}
+
 async function expectCleanBrowser(failures) {
   expect(failures.consoleErrors, 'browser console errors').toEqual([]);
   expect(failures.pageErrors, 'uncaught page errors').toEqual([]);
@@ -210,18 +230,14 @@ test('test mode completes and retries without modifying progression', async ({ p
 
   expect(await page.evaluate(() => (
     APP_CONTEXT.progress.getPackProgress(APP_CONTEXT.catalog.getPack('e2e'))
-  ))).toMatchObject({ completedLevelIds: [], maxUnlockedOrder: 1 });
+  ))).toMatchObject({ completedLevelIds: [], resumeLevelId: 'e2e-01' });
 
   await page.keyboard.press('Enter');
   await waitForScene(page, 'GameScene');
   expect(await page.evaluate(() => game.scene.getScene('GameScene').route))
     .toMatchObject({ packId: 'e2e', levelId: 'e2e-02', mode: 'test' });
 
-  await page.waitForFunction(() => (
-    game.scene.getScene('GameScene').session.getSnapshot().wheelRotation
-      >= 8 * Math.PI / 180
-  ));
-  await page.keyboard.press('Space');
+  await fireInCollisionWindow(page);
   await waitForScene(page, 'GameOverScene');
   expect(await page.evaluate(() => {
     const result = game.scene.getScene('GameOverScene');
@@ -265,7 +281,7 @@ test('test mode completes and retries without modifying progression', async ({ p
     .toMatchObject({ packId: 'e2e', levelId: 'e2e-02', mode: 'test' });
   expect(await page.evaluate(() => (
     APP_CONTEXT.progress.getPackProgress(APP_CONTEXT.catalog.getPack('e2e'))
-  ))).toMatchObject({ completedLevelIds: [], maxUnlockedOrder: 1 });
+  ))).toMatchObject({ completedLevelIds: [], resumeLevelId: 'e2e-01' });
   await expectCleanBrowser(failures);
 });
 
@@ -284,7 +300,7 @@ test('progression unlocks the next stable id and survives reload', async ({ page
     APP_CONTEXT.progress.getPackProgress(APP_CONTEXT.catalog.getPack('e2e'))
   ))).toMatchObject({
     completedLevelIds: ['e2e-01'],
-    maxUnlockedOrder: 2
+    resumeLevelId: 'e2e-02'
   });
 
   await page.reload({ waitUntil: 'domcontentloaded' });
@@ -297,11 +313,7 @@ test('progression unlocks the next stable id and survives reload', async ({ page
   expect(await page.evaluate(() => game.scene.getScene('GameScene').route))
     .toMatchObject({ packId: 'e2e', levelId: 'e2e-02', mode: 'progression' });
 
-  await page.waitForFunction(() => (
-    game.scene.getScene('GameScene').session.getSnapshot().wheelRotation
-      >= 8 * Math.PI / 180
-  ));
-  await page.keyboard.press('Space');
+  await fireInCollisionWindow(page);
   await waitForScene(page, 'GameOverScene');
   expect(await page.evaluate(() => game.scene.getScene('GameOverScene').success))
     .toBe(false);

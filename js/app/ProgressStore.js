@@ -21,7 +21,7 @@ class ProgressStore {
 
     createEmptyState() {
         return {
-            version: 2,
+            version: 3,
             activePackId: null,
             packs: {},
             legacyMaxLevel: null
@@ -54,9 +54,9 @@ class ProgressStore {
     normalizeState(value) {
         if (!value || typeof value !== 'object') return this.createEmptyState();
 
-        if (value.version === 2) {
+        if (value.version === 2 || value.version === 3) {
             return {
-                version: 2,
+                version: 3,
                 activePackId: typeof value.activePackId === 'string'
                     ? value.activePackId
                     : null,
@@ -70,7 +70,7 @@ class ProgressStore {
         }
 
         return {
-            version: 2,
+            version: 3,
             activePackId: null,
             packs: value.packs && typeof value.packs === 'object'
                 ? JSON.parse(JSON.stringify(value.packs))
@@ -108,58 +108,102 @@ class ProgressStore {
             this.state.packs[pack.id] = record;
             this.persist();
         } else {
-            record = this.normalizePackRecord(pack, record);
+            const storedRecord = record;
+            record = this.normalizePackRecord(pack, storedRecord);
             this.state.packs[pack.id] = record;
+            if (JSON.stringify(record) !== JSON.stringify(storedRecord)) {
+                this.persist();
+            }
         }
 
         return JSON.parse(JSON.stringify(record));
     }
 
     migrateNumericProgress(pack, legacyOrder) {
-        const maxOrder = this.clampOrder(pack, legacyOrder || 1);
-        const completedLevelIds = pack.levels
-            .filter(level => level.order < maxOrder)
+        const levels = this.orderedLevels(pack);
+        const requestedPosition = Math.floor(Number(legacyOrder) || 1);
+        const resumeIndex = Math.max(
+            0,
+            Math.min(requestedPosition - 1, levels.length - 1)
+        );
+
+        const completedLevelIds = levels
+            .slice(0, resumeIndex)
             .map(level => this.levelId(level));
 
         return {
             packVersion: pack.version || 'legacy',
             completedLevelIds,
-            maxUnlockedOrder: maxOrder
+            resumeLevelId: this.levelId(levels[resumeIndex])
         };
     }
 
     normalizePackRecord(pack, record) {
-        const validIds = new Set(pack.levels.map(level => this.levelId(level)));
-        const completedLevelIds = [...new Set(record.completedLevelIds || [])]
+        const levels = this.orderedLevels(pack);
+        const validIds = new Set(levels.map(level => this.levelId(level)));
+        let completedLevelIds = [...new Set(record.completedLevelIds || [])]
             .filter(levelId => validIds.has(levelId));
-        const derivedOrder = completedLevelIds.reduce((maximum, levelId) => {
-            const level = pack.levels.find(candidate => this.levelId(candidate) === levelId);
-            return Math.max(maximum, level ? level.order + 1 : 1);
-        }, 1);
-        const requestedOrder = Number.isFinite(record.maxUnlockedOrder)
-            ? record.maxUnlockedOrder
-            : derivedOrder;
+        let completed = new Set(completedLevelIds);
+
+        let resumeLevel = typeof record.resumeLevelId === 'string'
+            ? levels.find(level => this.levelId(level) === record.resumeLevelId)
+            : null;
+
+        if (!resumeLevel && completedLevelIds.length === 0
+            && Number.isFinite(record.maxUnlockedOrder)) {
+            const migrated = this.migrateNumericProgress(
+                pack,
+                record.maxUnlockedOrder
+            );
+            completedLevelIds = migrated.completedLevelIds;
+            completed = new Set(completedLevelIds);
+            resumeLevel = levels.find(level => (
+                this.levelId(level) === migrated.resumeLevelId
+            ));
+        }
+
+        if (!resumeLevel) {
+            resumeLevel = levels.find(level => !completed.has(this.levelId(level)))
+                || levels.at(-1);
+        } else if (completed.has(this.levelId(resumeLevel))) {
+            const resumeIndex = levels.indexOf(resumeLevel);
+            resumeLevel = levels.slice(resumeIndex + 1)
+                .find(level => !completed.has(this.levelId(level)))
+                || levels.find(level => !completed.has(this.levelId(level)))
+                || levels.at(-1);
+        }
 
         return {
             packVersion: pack.version || record.packVersion || 'legacy',
             completedLevelIds,
-            maxUnlockedOrder: this.clampOrder(
-                pack,
-                Math.max(requestedOrder, derivedOrder)
-            )
+            resumeLevelId: this.levelId(resumeLevel)
         };
     }
 
     getResumeLevel(pack) {
         const progress = this.getPackProgress(pack);
-        return pack.levels.find(level => level.order === progress.maxUnlockedOrder)
-            || pack.levels.at(-1);
+        return pack.levels.find(level => (
+            this.levelId(level) === progress.resumeLevelId
+        ));
     }
 
     isUnlocked(pack, levelRef) {
         const level = this.resolveLevel(pack, levelRef);
         if (!level) return false;
-        return level.order <= this.getPackProgress(pack).maxUnlockedOrder;
+
+        const levels = this.orderedLevels(pack);
+        const progress = this.getPackProgress(pack);
+        const completed = new Set(progress.completedLevelIds);
+        const levelId = this.levelId(level);
+        if (completed.has(levelId)) return true;
+
+        const resumeIndex = levels.findIndex(candidate => (
+            this.levelId(candidate) === progress.resumeLevelId
+        ));
+        const levelIndex = levels.findIndex(candidate => (
+            this.levelId(candidate) === levelId
+        ));
+        return levelIndex >= 0 && levelIndex <= resumeIndex;
     }
 
     completeLevel(pack, levelRef, mode = 'progression') {
@@ -170,12 +214,24 @@ class ProgressStore {
         const record = this.getPackProgress(pack);
         const completed = new Set(record.completedLevelIds);
         completed.add(this.levelId(level));
-        const next = pack.levels.find(candidate => candidate.order > level.order);
-        record.completedLevelIds = [...completed];
-        record.maxUnlockedOrder = this.clampOrder(
-            pack,
-            Math.max(record.maxUnlockedOrder, next?.order || level.order)
+        const levels = this.orderedLevels(pack);
+        const levelIndex = levels.findIndex(candidate => (
+            this.levelId(candidate) === this.levelId(level)
+        ));
+        const resumeIndex = levels.findIndex(candidate => (
+            this.levelId(candidate) === record.resumeLevelId
+        ));
+        let nextIndex = levelIndex + 1;
+        while (nextIndex < levels.length
+            && completed.has(this.levelId(levels[nextIndex]))) {
+            nextIndex += 1;
+        }
+        const unlockedIndex = Math.max(
+            resumeIndex,
+            Math.min(nextIndex, levels.length - 1)
         );
+        record.completedLevelIds = [...completed];
+        record.resumeLevelId = this.levelId(levels[unlockedIndex]);
         record.packVersion = pack.version || record.packVersion;
         this.state.packs[pack.id] = record;
         this.persist();
@@ -223,11 +279,7 @@ class ProgressStore {
         return level.packLevelId || String(level.id);
     }
 
-    clampOrder(pack, value) {
-        const orders = pack.levels.map(level => level.order);
-        const minimum = Math.min(...orders);
-        const maximum = Math.max(...orders);
-        const parsed = Math.floor(Number(value) || minimum);
-        return Math.max(minimum, Math.min(parsed, maximum));
+    orderedLevels(pack) {
+        return [...pack.levels].sort((left, right) => left.order - right.order);
     }
 }

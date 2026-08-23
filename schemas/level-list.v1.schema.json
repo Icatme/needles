@@ -135,12 +135,12 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "baseInsertPoints": { "type": "number", "minimum": 0 },
+        "baseInsertPoints": { "type": "integer", "minimum": 0 },
         "precisionClearancePx": { "type": "number", "minimum": 0, "maximum": 30 },
-        "closeBonus": { "type": "number", "minimum": 0 },
-        "threadedBonus": { "type": "number", "minimum": 0 },
-        "comboStepPoints": { "type": "number", "minimum": 0 },
-        "comboBonusCap": { "type": "number", "minimum": 0 },
+        "closeBonus": { "type": "integer", "minimum": 0 },
+        "threadedBonus": { "type": "integer", "minimum": 0 },
+        "comboStepPoints": { "type": "integer", "minimum": 0 },
+        "comboBonusCap": { "type": "integer", "minimum": 0 },
         "comboWindowMs": { "type": "number", "minimum": 800, "maximum": 10000 },
         "comboPrecisionGraceMs": { "type": "number", "minimum": 0, "maximum": 3000 },
         "minimumParTimeMs": { "type": "number", "exclusiveMinimum": 0 },
@@ -160,7 +160,7 @@
       "required": ["maxRatio", "points", "kind"],
       "properties": {
         "maxRatio": { "type": "number", "exclusiveMinimum": 0 },
-        "points": { "type": "number", "minimum": 0 },
+        "points": { "type": "integer", "minimum": 0 },
         "kind": { "type": "string", "minLength": 1 }
       }
     },
