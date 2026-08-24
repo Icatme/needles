@@ -1,0 +1,131 @@
+name: Temporary Needles Dist Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: temporary-needles-dist
+  cancel-in-progress: true
+
+jobs:
+  build-dist:
+    name: Build verified static dist
+    if: github.head_ref == 'automation/dist-build-20260824'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out exact main source commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install test dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run regression tests
+        run: npm test
+
+      - name: Validate exported level packs
+        run: |
+          node scripts/export-level-packs.js --check
+          npm run validate:packs
+
+      - name: Assemble static site dist
+        id: dist
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          short_sha="${SOURCE_SHA:0:8}"
+          dist_name="needles-dist-${short_sha}"
+          stage_root="build/dist-stage"
+          site_dir="${stage_root}/${dist_name}"
+          output_dir="build/dist"
+
+          rm -rf "$stage_root" "$output_dir"
+          mkdir -p "$site_dir" "$output_dir"
+          cp index.html "$site_dir/"
+          cp -R css js packs assets "$site_dir/"
+          touch "$site_dir/.nojekyll"
+          cat > "$site_dir/BUILD_INFO.txt" <<EOF
+          Project: Icatme/needles
+          Source commit: ${SOURCE_SHA}
+          Source branch: main
+          Artifact type: static web dist
+          EOF
+
+          python - "$stage_root" "$dist_name" "$output_dir" <<'PY'
+          from pathlib import Path
+          import sys
+          import zipfile
+
+          stage_root = Path(sys.argv[1])
+          dist_name = sys.argv[2]
+          output_dir = Path(sys.argv[3])
+          source_root = stage_root / dist_name
+          zip_path = output_dir / f"{dist_name}.zip"
+          fixed_time = (2026, 8, 24, 0, 0, 0)
+
+          with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+              for path in sorted(source_root.rglob("*")):
+                  if not path.is_file():
+                      continue
+                  relative = Path(dist_name) / path.relative_to(source_root)
+                  info = zipfile.ZipInfo(relative.as_posix(), fixed_time)
+                  info.compress_type = zipfile.ZIP_DEFLATED
+                  info.external_attr = 0o100644 << 16
+                  archive.writestr(info, path.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+          print(zip_path)
+          PY
+
+          zip_path="${output_dir}/${dist_name}.zip"
+          sha_path="${zip_path}.sha256"
+          sha256sum "$zip_path" > "$sha_path"
+
+          test -s "$zip_path"
+          test -s "$sha_path"
+          unzip -t "$zip_path"
+
+          echo "dist_name=$dist_name" >> "$GITHUB_OUTPUT"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "sha_path=$sha_path" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "$zip_path" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "size_bytes=$(stat -c '%s' "$zip_path")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.dist.outputs.dist_name }}
+          path: |
+            ${{ steps.dist.outputs.zip_path }}
+            ${{ steps.dist.outputs.sha_path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Write build summary
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          {
+            echo '### Needles dist generated'
+            echo "- Source: \`main@${SOURCE_SHA}\`"
+            echo "- File: \`${{ steps.dist.outputs.dist_name }}.zip\`"
+            echo "- Size: \`${{ steps.dist.outputs.size_bytes }}\` bytes"
+            echo "- SHA-256: \`${{ steps.dist.outputs.sha256 }}\`"
+            echo '- Deployment: **not performed**'
+          } >> "$GITHUB_STEP_SUMMARY"
