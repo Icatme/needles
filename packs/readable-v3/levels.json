@@ -1,0 +1,1579 @@
+{
+  "schema": "needles.level-list/v1",
+  "levels": [
+    {
+      "id": "readable-v3-01",
+      "legacyNumericId": 1,
+      "chapterId": "chapter-1",
+      "order": 1,
+      "title": "起针校准",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 10
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.36
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-02",
+      "legacyNumericId": 2,
+      "chapterId": "chapter-1",
+      "order": 2,
+      "title": "留白加一",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z0",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.36
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-03",
+      "legacyNumericId": 3,
+      "chapterId": "chapter-1",
+      "order": 3,
+      "title": "单门巡航",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 11
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.42
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-04",
+      "legacyNumericId": 4,
+      "chapterId": "chapter-1",
+      "order": 4,
+      "title": "单门提速",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z1",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-05",
+      "legacyNumericId": 5,
+      "chapterId": "chapter-1",
+      "order": 5,
+      "title": "双门分区",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.46
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-06",
+      "legacyNumericId": 6,
+      "chapterId": "chapter-1",
+      "order": 6,
+      "title": "稳住间隔",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.5
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-07",
+      "legacyNumericId": 7,
+      "chapterId": "chapter-1",
+      "order": 7,
+      "title": "三门观察",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.52
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-08",
+      "legacyNumericId": 8,
+      "chapterId": "chapter-1",
+      "order": 8,
+      "title": "密度练习",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.56
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-09",
+      "legacyNumericId": 9,
+      "chapterId": "chapter-1",
+      "order": 9,
+      "title": "匀速冲刺",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.6
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-10",
+      "legacyNumericId": 10,
+      "chapterId": "chapter-1",
+      "order": 10,
+      "title": "基础验收",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.62
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 1,
+        "milestone": true,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-11",
+      "legacyNumericId": 11,
+      "chapterId": "chapter-2",
+      "order": 11,
+      "title": "两拍入门",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 12
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.46
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.68
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-12",
+      "legacyNumericId": 12,
+      "chapterId": "chapter-2",
+      "order": 12,
+      "title": "两拍加针",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z2A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.46
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.68
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-13",
+      "legacyNumericId": 13,
+      "chapterId": "chapter-2",
+      "order": 13,
+      "title": "分区两拍",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.5
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.72
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-14",
+      "legacyNumericId": 14,
+      "chapterId": "chapter-2",
+      "order": 14,
+      "title": "匀速歇拍",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.54
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-15",
+      "legacyNumericId": 15,
+      "chapterId": "chapter-2",
+      "order": 15,
+      "title": "快慢分明",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.52
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.76
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-16",
+      "legacyNumericId": 16,
+      "chapterId": "chapter-2",
+      "order": 16,
+      "title": "四门读拍",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 13
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.54
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.78
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-17",
+      "legacyNumericId": 17,
+      "chapterId": "chapter-2",
+      "order": 17,
+      "title": "四门加针",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.54
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.78
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-18",
+      "legacyNumericId": 18,
+      "chapterId": "chapter-2",
+      "order": 18,
+      "title": "稳定快车",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z3A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.7
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-19",
+      "legacyNumericId": 19,
+      "chapterId": "chapter-2",
+      "order": 19,
+      "title": "两拍提速",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.58
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.82
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-20",
+      "legacyNumericId": 20,
+      "chapterId": "chapter-2",
+      "order": 20,
+      "title": "双速验收",
+      "instruction": "同向快慢 · 每段3秒",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.6
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.84
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 2,
+        "milestone": true,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-21",
+      "legacyNumericId": 21,
+      "chapterId": "chapter-3",
+      "order": 21,
+      "title": "中场稳针",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 14
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.68
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-22",
+      "legacyNumericId": 22,
+      "chapterId": "chapter-3",
+      "order": 22,
+      "title": "节拍紧凑",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.62
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.88
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-23",
+      "legacyNumericId": 23,
+      "chapterId": "chapter-3",
+      "order": 23,
+      "title": "五门切口",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.64
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.9
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-24",
+      "legacyNumericId": 24,
+      "chapterId": "chapter-3",
+      "order": 24,
+      "title": "密度进阶",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.76
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-25",
+      "legacyNumericId": 25,
+      "chapterId": "chapter-3",
+      "order": 25,
+      "title": "满环两拍",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.64
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.92
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-26",
+      "legacyNumericId": 26,
+      "chapterId": "chapter-3",
+      "order": 26,
+      "title": "窄门快慢",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.68
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.94
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-27",
+      "legacyNumericId": 27,
+      "chapterId": "chapter-3",
+      "order": 27,
+      "title": "窄门加针",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.68
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.94
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-28",
+      "legacyNumericId": 28,
+      "chapterId": "chapter-3",
+      "order": 28,
+      "title": "匀速挑战",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.82
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-29",
+      "legacyNumericId": 29,
+      "chapterId": "chapter-3",
+      "order": 29,
+      "title": "双速巡航",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 0.98
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-30",
+      "legacyNumericId": 30,
+      "chapterId": "chapter-3",
+      "order": 30,
+      "title": "中阶验收",
+      "instruction": "同向快慢 · 每段2.8秒",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2800,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 2800,
+            "velocity": 1.0
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 3,
+        "milestone": true,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-31",
+      "legacyNumericId": 31,
+      "chapterId": "chapter-4",
+      "order": 31,
+      "title": "再校准",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.8
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-32",
+      "legacyNumericId": 32,
+      "chapterId": "chapter-4",
+      "order": 32,
+      "title": "快慢专注",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.74
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.02
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-33",
+      "legacyNumericId": 33,
+      "chapterId": "chapter-4",
+      "order": 33,
+      "title": "六门视线",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.76
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.04
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-34",
+      "legacyNumericId": 34,
+      "chapterId": "chapter-4",
+      "order": 34,
+      "title": "密环匀速",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.88
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-35",
+      "legacyNumericId": 35,
+      "chapterId": "chapter-4",
+      "order": 35,
+      "title": "六门两拍",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.76
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.06
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-36",
+      "legacyNumericId": 36,
+      "chapterId": "chapter-4",
+      "order": 36,
+      "title": "快段留白",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.78
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.08
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-37",
+      "legacyNumericId": 37,
+      "chapterId": "chapter-4",
+      "order": 37,
+      "title": "直行快车",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.92
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-38",
+      "legacyNumericId": 38,
+      "chapterId": "chapter-4",
+      "order": 38,
+      "title": "稳拍密环",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.8
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.1
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-39",
+      "legacyNumericId": 39,
+      "chapterId": "chapter-4",
+      "order": 39,
+      "title": "恒速高压",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 0.96
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-40",
+      "legacyNumericId": 40,
+      "chapterId": "chapter-4",
+      "order": 40,
+      "title": "可读终考",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.82
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.12
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 4,
+        "milestone": true,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-41",
+      "legacyNumericId": 41,
+      "chapterId": "chapter-5",
+      "order": 41,
+      "title": "对称折返",
+      "instruction": "每8秒换向 · 转速不变",
+      "objective": {
+        "insertCount": 15
+      },
+      "layoutRef": "Z4B",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 8000,
+            "velocity": 0.82
+          },
+          {
+            "durationMs": 8000,
+            "velocity": -0.82
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-42",
+      "legacyNumericId": 42,
+      "chapterId": "chapter-5",
+      "order": 42,
+      "title": "熟拍回归",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.84
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.14
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-43",
+      "legacyNumericId": 43,
+      "chapterId": "chapter-5",
+      "order": 43,
+      "title": "折返加密",
+      "instruction": "每8秒换向 · 转速不变",
+      "objective": {
+        "insertCount": 16
+      },
+      "layoutRef": "Z5A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 8000,
+            "velocity": 0.9
+          },
+          {
+            "durationMs": 8000,
+            "velocity": -0.9
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-44",
+      "legacyNumericId": 44,
+      "chapterId": "chapter-5",
+      "order": 44,
+      "title": "三阶直行",
+      "instruction": "同向三阶 · 每段3秒",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.72
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 0.92
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 1.12
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-45",
+      "legacyNumericId": 45,
+      "chapterId": "chapter-5",
+      "order": 45,
+      "title": "高速稳针",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 1.02
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-46",
+      "legacyNumericId": 46,
+      "chapterId": "chapter-5",
+      "order": 46,
+      "title": "折返进阶",
+      "instruction": "每7秒换向 · 转速不变",
+      "objective": {
+        "insertCount": 17
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 7000,
+            "velocity": 0.98
+          },
+          {
+            "durationMs": 7000,
+            "velocity": -0.98
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "direction"
+      },
+      "tags": [
+        "direction",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-47",
+      "legacyNumericId": 47,
+      "chapterId": "chapter-5",
+      "order": 47,
+      "title": "双速强拍",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.88
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.18
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-48",
+      "legacyNumericId": 48,
+      "chapterId": "chapter-5",
+      "order": 48,
+      "title": "三阶密环",
+      "instruction": "同向三阶 · 每段3秒",
+      "objective": {
+        "insertCount": 18
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 3000,
+            "velocity": 0.78
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 1.0
+          },
+          {
+            "durationMs": 3000,
+            "velocity": 1.2
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-49",
+      "legacyNumericId": 49,
+      "chapterId": "chapter-5",
+      "order": 49,
+      "title": "匀速极限",
+      "instruction": "匀速顺时针 · 稳住间隔",
+      "objective": {
+        "insertCount": 19
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 4000,
+            "velocity": 1.08
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": false,
+        "focus": "density"
+      },
+      "tags": [
+        "density",
+        "readable-v3"
+      ]
+    },
+    {
+      "id": "readable-v3-50",
+      "legacyNumericId": 50,
+      "chapterId": "chapter-5",
+      "order": 50,
+      "title": "双拍终曲",
+      "instruction": "同向快慢 · 每段2.6秒",
+      "objective": {
+        "insertCount": 19
+      },
+      "layoutRef": "Z6A",
+      "rhythm": {
+        "segments": [
+          {
+            "durationMs": 2600,
+            "velocity": 0.9
+          },
+          {
+            "durationMs": 2600,
+            "velocity": 1.22
+          }
+        ]
+      },
+      "presentation": {
+        "tier": 5,
+        "milestone": true,
+        "focus": "rhythm"
+      },
+      "tags": [
+        "rhythm",
+        "readable-v3"
+      ]
+    }
+  ]
+}

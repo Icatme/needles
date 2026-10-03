@@ -9,6 +9,10 @@
     {
       "id": "legacy",
       "manifest": "legacy/manifest.json"
+    },
+    {
+      "id": "readable-v3",
+      "manifest": "readable-v3/manifest.json"
     }
   ]
 }
