@@ -32,11 +32,11 @@ test('all committed packs pass formal schemas and runtime relationships', () => 
     const result = validatePackRepository(root);
     assert.equal(result.valid, true);
     assert.equal(result.defaultPackId, 'balanced-v2');
-    assert.equal(result.packCount, 2);
-    assert.equal(result.levelCount, 100);
+    assert.equal(result.packCount, 3);
+    assert.equal(result.levelCount, 150);
     assert.deepEqual(
         result.packs.map(pack => [pack.id, pack.levelCount]),
-        [['balanced-v2', 50], ['legacy', 50]]
+        [['balanced-v2', 50], ['legacy', 50], ['readable-v3', 50]]
     );
 });
 
@@ -175,6 +175,6 @@ test('validate:packs CLI prints a machine-readable summary', () => {
     assert.equal(result.status, 0, result.stderr);
     const summary = JSON.parse(result.stdout);
     assert.equal(summary.valid, true);
-    assert.equal(summary.packCount, 2);
-    assert.equal(summary.levelCount, 100);
+    assert.equal(summary.packCount, 3);
+    assert.equal(summary.levelCount, 150);
 });

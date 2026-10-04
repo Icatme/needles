@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('loads both level packs and reaches the menu without browser errors', async ({ page }) => {
+test('loads all three level packs and reaches the menu without browser errors', async ({ page }) => {
   const consoleErrors = [];
   const pageErrors = [];
   const requestFailures = [];
@@ -25,7 +25,7 @@ test('loads both level packs and reaches the menu without browser errors', async
   await page.waitForFunction(() => {
     try {
       return typeof LEVEL_PACK_REGISTRY !== 'undefined'
-        && LEVEL_PACK_REGISTRY.size === 2
+        && LEVEL_PACK_REGISTRY.size === 3
         && typeof game !== 'undefined'
         && Boolean(game?.scene?.isActive('MenuScene'));
     } catch (error) {
@@ -41,8 +41,8 @@ test('loads both level packs and reaches the menu without browser errors', async
     canvasCount: document.querySelectorAll('#game-container canvas').length
   }));
 
-  expect(runtime.packIds).toEqual(['balanced-v2', 'legacy']);
-  expect(runtime.levelCounts).toEqual([50, 50]);
+  expect(runtime.packIds).toEqual(['balanced-v2', 'legacy', 'readable-v3']);
+  expect(runtime.levelCounts).toEqual([50, 50, 50]);
   expect(runtime.defaultPackId).toBe('balanced-v2');
   expect(runtime.menuActive).toBe(true);
   expect(runtime.canvasCount).toBe(1);

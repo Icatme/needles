@@ -118,13 +118,22 @@ packs.forEach(pack => exportPack({
     levels: Array.from(pack.levels)
 }));
 
+// Migration exports own the two legacy catalogs, not independently authored packs.
+// Keep authored registrations when checking or regenerating the migration index.
+const indexPath = path.join(root, 'packs/index.json');
+const existingIndex = fs.existsSync(indexPath)
+    ? JSON.parse(fs.readFileSync(indexPath, 'utf8'))
+    : { packs: [] };
+const migratedIds = new Set(packs.map(pack => pack.id));
+const authoredEntries = existingIndex.packs.filter(pack => !migratedIds.has(pack.id));
+
 writeJson('packs/index.json', {
     schema: 'needles.pack-index/v1',
     defaultPackId: context.DEFAULT_LEVEL_PACK_ID,
-    packs: packs.map(pack => ({
+    packs: [...packs.map(pack => ({
         id: pack.id,
         manifest: `${pack.id}/manifest.json`
-    }))
+    })), ...authoredEntries]
 });
 
 console.log(

@@ -114,7 +114,7 @@ test('pack CLI validate and report commands emit machine-readable output', () =>
         root
     ], { encoding: 'utf8' });
     assert.equal(validate.status, 0, validate.stderr);
-    assert.equal(JSON.parse(validate.stdout).levelCount, 100);
+    assert.equal(JSON.parse(validate.stdout).levelCount, 150);
 
     const directory = temporaryDirectory('needles-pack-report-');
     const jsonPath = path.join(directory, 'report.json');

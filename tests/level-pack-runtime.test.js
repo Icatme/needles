@@ -68,11 +68,11 @@ function comparable(level) {
     };
 }
 
-test('pack index discovers two independent JSON packs', () => {
+test('pack index discovers three independent JSON packs', () => {
     const validator = new runtimeContext.PackValidator();
     assert.equal(validator.validateIndex(index), true);
     assert.equal(index.defaultPackId, 'balanced-v2');
-    assert.deepEqual(index.packs.map(pack => pack.id), ['balanced-v2', 'legacy']);
+    assert.deepEqual(index.packs.map(pack => pack.id), ['balanced-v2', 'legacy', 'readable-v3']);
 
     const balanced = resolveFromDisk('balanced-v2');
     const legacy = resolveFromDisk('legacy');
@@ -123,11 +123,11 @@ test('pack loader resolves relative resources and registers the default pack', a
         state => progress.push(plain(state))
     );
 
-    assert.equal(registry.size, 2);
+    assert.equal(registry.size, 3);
     assert.equal(registry.defaultPackId, 'balanced-v2');
     assert.equal(registry.getDefault().levels[0].name, '起针校准');
     assert.equal(result.errors.length, 0);
-    assert.equal(progress.at(-1).completed, 2);
+    assert.equal(progress.at(-1).completed, 3);
 });
 
 test('one invalid pack is isolated while valid packs remain available', async () => {

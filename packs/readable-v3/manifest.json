@@ -1,0 +1,40 @@
+{
+  "schema": "needles.level-pack/v1",
+  "id": "readable-v3",
+  "version": "1.0.0",
+  "title": "清晰节拍 V3",
+  "caption": "先读懂节奏，再挑战密度与速度",
+  "engineCompatibility": "classic-v1",
+  "difficultyModel": "nonlinear-v2",
+  "chapters": [
+    {
+      "id": "chapter-1",
+      "order": 1,
+      "title": "匀速入门"
+    },
+    {
+      "id": "chapter-2",
+      "order": 2,
+      "title": "同向两拍"
+    },
+    {
+      "id": "chapter-3",
+      "order": 3,
+      "title": "密度进阶"
+    },
+    {
+      "id": "chapter-4",
+      "order": 4,
+      "title": "清晰高压"
+    },
+    {
+      "id": "chapter-5",
+      "order": 5,
+      "title": "克制终曲"
+    }
+  ],
+  "resources": {
+    "presets": "presets.json",
+    "levels": "levels.json"
+  }
+}
